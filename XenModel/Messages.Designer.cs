@@ -19530,7 +19530,7 @@ namespace XenAdmin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Xen.
+        ///   Looks up a localized string similar to XenServer.
         /// </summary>
         public static string MEMORY_XEN {
             get {
