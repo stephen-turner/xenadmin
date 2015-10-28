@@ -662,7 +662,6 @@ namespace XenAdmin.Wizards
                                                         srDescriptor.Description,
                                                         m_srWizardType.Type,
                                                         m_srWizardType.ContentType,
-                                                        !master.RestrictPoolAttachedStorage,
                                                         srDescriptor.DeviceConfig,
                                                         srDescriptor.SMConfig));
                 }
@@ -685,7 +684,6 @@ namespace XenAdmin.Wizards
                                                                srDescriptor.Description,
                                                                m_srWizardType.Type,
                                                                m_srWizardType.ContentType,
-                                                               !master.RestrictPoolAttachedStorage,
                                                                srDescriptor.DeviceConfig));
                 }
                 else
