@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConsoleDialog));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.consolePanel1 = new XenAdmin.Controls.ConsolePanel();
             this.consolePanel2 = new XenAdmin.Controls.ConsolePanel();
@@ -49,12 +50,7 @@
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 5;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
             this.tableLayoutPanel1.Controls.Add(this.consolePanel1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.consolePanel2, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.consolePanel3, 2, 0);
@@ -70,165 +66,92 @@
             this.tableLayoutPanel1.Controls.Add(this.consolePanel13, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.consolePanel14, 3, 2);
             this.tableLayoutPanel1.Controls.Add(this.consolePanel15, 4, 2);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1305, 725);
-            this.tableLayoutPanel1.TabIndex = 0;
             // 
             // consolePanel1
             // 
-            this.consolePanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.consolePanel1.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.consolePanel1.Location = new System.Drawing.Point(3, 3);
+            resources.ApplyResources(this.consolePanel1, "consolePanel1");
             this.consolePanel1.Name = "consolePanel1";
-            this.consolePanel1.Size = new System.Drawing.Size(255, 235);
-            this.consolePanel1.TabIndex = 0;
             // 
             // consolePanel2
             // 
-            this.consolePanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.consolePanel2.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.consolePanel2.Location = new System.Drawing.Point(264, 3);
+            resources.ApplyResources(this.consolePanel2, "consolePanel2");
             this.consolePanel2.Name = "consolePanel2";
-            this.consolePanel2.Size = new System.Drawing.Size(255, 235);
-            this.consolePanel2.TabIndex = 1;
             // 
             // consolePanel3
             // 
-            this.consolePanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.consolePanel3.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.consolePanel3.Location = new System.Drawing.Point(525, 3);
+            resources.ApplyResources(this.consolePanel3, "consolePanel3");
             this.consolePanel3.Name = "consolePanel3";
-            this.consolePanel3.Size = new System.Drawing.Size(255, 235);
-            this.consolePanel3.TabIndex = 2;
             // 
             // consolePanel4
             // 
-            this.consolePanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.consolePanel4.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.consolePanel4.Location = new System.Drawing.Point(786, 3);
+            resources.ApplyResources(this.consolePanel4, "consolePanel4");
             this.consolePanel4.Name = "consolePanel4";
-            this.consolePanel4.Size = new System.Drawing.Size(255, 235);
-            this.consolePanel4.TabIndex = 3;
             // 
             // consolePanel5
             // 
-            this.consolePanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.consolePanel5.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.consolePanel5.Location = new System.Drawing.Point(1047, 3);
+            resources.ApplyResources(this.consolePanel5, "consolePanel5");
             this.consolePanel5.Name = "consolePanel5";
-            this.consolePanel5.Size = new System.Drawing.Size(255, 235);
-            this.consolePanel5.TabIndex = 4;
             // 
             // consolePanel6
             // 
-            this.consolePanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.consolePanel6.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.consolePanel6.Location = new System.Drawing.Point(3, 244);
+            resources.ApplyResources(this.consolePanel6, "consolePanel6");
             this.consolePanel6.Name = "consolePanel6";
-            this.consolePanel6.Size = new System.Drawing.Size(255, 235);
-            this.consolePanel6.TabIndex = 5;
             // 
             // consolePanel7
             // 
-            this.consolePanel7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.consolePanel7.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.consolePanel7.Location = new System.Drawing.Point(264, 244);
+            resources.ApplyResources(this.consolePanel7, "consolePanel7");
             this.consolePanel7.Name = "consolePanel7";
-            this.consolePanel7.Size = new System.Drawing.Size(255, 235);
-            this.consolePanel7.TabIndex = 6;
             // 
             // consolePanel8
             // 
-            this.consolePanel8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.consolePanel8.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.consolePanel8.Location = new System.Drawing.Point(525, 244);
+            resources.ApplyResources(this.consolePanel8, "consolePanel8");
             this.consolePanel8.Name = "consolePanel8";
-            this.consolePanel8.Size = new System.Drawing.Size(255, 235);
-            this.consolePanel8.TabIndex = 7;
             // 
             // consolePanel9
             // 
-            this.consolePanel9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.consolePanel9.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.consolePanel9.Location = new System.Drawing.Point(786, 244);
+            resources.ApplyResources(this.consolePanel9, "consolePanel9");
             this.consolePanel9.Name = "consolePanel9";
-            this.consolePanel9.Size = new System.Drawing.Size(255, 235);
-            this.consolePanel9.TabIndex = 8;
             // 
             // consolePanel10
             // 
-            this.consolePanel10.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.consolePanel10.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.consolePanel10.Location = new System.Drawing.Point(1047, 244);
+            resources.ApplyResources(this.consolePanel10, "consolePanel10");
             this.consolePanel10.Name = "consolePanel10";
-            this.consolePanel10.Size = new System.Drawing.Size(255, 235);
-            this.consolePanel10.TabIndex = 9;
             // 
             // consolePanel11
             // 
-            this.consolePanel11.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.consolePanel11.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.consolePanel11.Location = new System.Drawing.Point(3, 485);
+            resources.ApplyResources(this.consolePanel11, "consolePanel11");
             this.consolePanel11.Name = "consolePanel11";
-            this.consolePanel11.Size = new System.Drawing.Size(255, 237);
-            this.consolePanel11.TabIndex = 10;
             // 
             // consolePanel12
             // 
-            this.consolePanel12.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.consolePanel12.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.consolePanel12.Location = new System.Drawing.Point(264, 485);
+            resources.ApplyResources(this.consolePanel12, "consolePanel12");
             this.consolePanel12.Name = "consolePanel12";
-            this.consolePanel12.Size = new System.Drawing.Size(255, 237);
-            this.consolePanel12.TabIndex = 11;
             // 
             // consolePanel13
             // 
-            this.consolePanel13.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.consolePanel13.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.consolePanel13.Location = new System.Drawing.Point(525, 485);
+            resources.ApplyResources(this.consolePanel13, "consolePanel13");
             this.consolePanel13.Name = "consolePanel13";
-            this.consolePanel13.Size = new System.Drawing.Size(255, 237);
-            this.consolePanel13.TabIndex = 12;
             // 
             // consolePanel14
             // 
-            this.consolePanel14.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.consolePanel14.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.consolePanel14.Location = new System.Drawing.Point(786, 485);
+            resources.ApplyResources(this.consolePanel14, "consolePanel14");
             this.consolePanel14.Name = "consolePanel14";
-            this.consolePanel14.Size = new System.Drawing.Size(255, 237);
-            this.consolePanel14.TabIndex = 13;
             // 
             // consolePanel15
             // 
-            this.consolePanel15.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.consolePanel15.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.consolePanel15.Location = new System.Drawing.Point(1047, 485);
+            resources.ApplyResources(this.consolePanel15, "consolePanel15");
             this.consolePanel15.Name = "consolePanel15";
-            this.consolePanel15.Size = new System.Drawing.Size(255, 237);
-            this.consolePanel15.TabIndex = 14;
             // 
             // ConsoleDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1305, 725);
+            resources.ApplyResources(this, "$this");
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.MaximizeBox = true;
             this.MinimizeBox = true;
             this.Name = "ConsoleDialog";
-            this.Text = "Consoles";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
