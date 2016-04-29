@@ -78,6 +78,8 @@ namespace XenAdmin.ConsoleView
 
         private bool ignoreScaleChange = false;
 
+        private bool minimalMode = false;
+
         internal readonly ConsoleKeyHandler KeyHandler = new ConsoleKeyHandler();
 
         private bool hasRDP { get { return source != null ? source.HasRDP : false; } }
@@ -87,6 +89,14 @@ namespace XenAdmin.ConsoleView
         private bool RDPControlEnabled { get { return source != null ? source.RDPControlEnabled : false; } }
 
         public bool IsRDPControlEnabled() { return RDPControlEnabled; }
+
+        public void MinimalMode()
+        {
+            minimalMode = true;
+            bottomPanel.Visible = false;
+            panel2.Visible = false;
+            hideTopBarContents();
+        }
 
         public VNCTabView(VNCView parent, VM source, string elevatedUsername, string elevatedPassword)
         {
@@ -684,7 +694,8 @@ namespace XenAdmin.ConsoleView
                 log.DebugFormat("'{0}' console: Hide top bar contents, powerstate='{1}'", source.Name, vm_power_state_helper.ToString(source.power_state));
                 if (source.power_state == vm_power_state.Halted)
                 {
-                    if (source.allowed_operations.Contains(vm_operations.start) &&
+                    if (!minimalMode &&
+                        source.allowed_operations.Contains(vm_operations.start) &&
                         Helpers.EnabledTargetExists(targetHost, source.Connection))
                     {
                         EnablePowerStateLabel(Messages.CONSOLE_POWER_STATE_HALTED_START);

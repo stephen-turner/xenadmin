@@ -68,6 +68,14 @@ namespace XenAdmin.Controls
             pictureBox2.Image = SystemIcons.Warning.ToBitmap();
         }
 
+        bool minimalMode = false;
+        public void MinimalMode()
+        {
+            minimalMode = true;
+            if (activeVNCView != null)
+                activeVNCView.MinimalMode();
+        }
+
         public void PauseAllViews()
         {
             // We're going to pause all of our VNCViews here, as this gets called when the VNC tab is not selected.
@@ -156,6 +164,8 @@ namespace XenAdmin.Controls
                 activeVNCView = new VNCView(source, null, null);
                 vncViews[source] = activeVNCView;
             }
+            if (minimalMode)
+                activeVNCView.MinimalMode();
             activeVNCView.refreshIsoList();
             this.Controls.Add(activeVNCView);
             this.ClearErrorMessage();

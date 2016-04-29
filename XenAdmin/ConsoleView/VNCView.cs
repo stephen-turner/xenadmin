@@ -45,6 +45,11 @@ namespace XenAdmin.ConsoleView
         public readonly VNCTabView vncTabView;
         public Form undockedForm = null;
 
+        public void MinimalMode()
+        {
+            vncTabView.MinimalMode();
+        }
+
         public bool isDocked
         {
             get

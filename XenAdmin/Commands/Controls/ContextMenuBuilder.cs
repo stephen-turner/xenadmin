@@ -530,6 +530,8 @@ namespace XenAdmin.Commands
             {
                 Host host = (Host)selection[0].XenObject;
 
+                items.Add(new ConsoleDialogCommand(mainWindow, selection));
+                items.AddSeparator();
                 items.AddIfEnabled(new NewVMCommand(mainWindow, selection));
                 items.AddIfEnabled(new NewSRCommand(mainWindow, selection));
 				items.AddIfEnabled(new ImportCommand(mainWindow, selection));
@@ -580,6 +582,8 @@ namespace XenAdmin.Commands
             {
                 Host host = (Host)selection[0].XenObject;
 
+                items.Add(new ConsoleDialogCommand(mainWindow, selection));
+                items.AddSeparator();
                 items.AddIfEnabled(new NewVMCommand(mainWindow, selection));
                 items.AddIfEnabled(new NewSRCommand(mainWindow, selection));
 				items.AddIfEnabled(new ImportCommand(mainWindow, selection));
@@ -698,6 +702,8 @@ namespace XenAdmin.Commands
         {
             public override void Build(IMainWindow mainWindow, SelectedItemCollection selection, ContextMenuItemCollection items)
             {
+                items.Add(new ConsoleDialogCommand(mainWindow, selection));
+                items.AddSeparator();
                 items.Add(new NewVMCommand(mainWindow, selection));
                 items.Add(new NewSRCommand(mainWindow, selection));
 				items.Add(new ImportCommand(mainWindow, selection));
@@ -860,6 +866,8 @@ namespace XenAdmin.Commands
             {
                 VM vm = (VM)selection[0].XenObject;
 
+                items.Add(new ConsoleDialogCommand(mainWindow, selection));
+                items.AddSeparator();
                 items.AddIfEnabled(new ShutDownVMCommand(mainWindow, selection));
                 items.AddIfEnabled(new StartVMCommand(mainWindow, selection), vm.power_state == vm_power_state.Halted);
                 items.AddIfEnabled(new ResumeVMCommand(mainWindow, selection));
@@ -1061,6 +1069,9 @@ namespace XenAdmin.Commands
         {
             public override void Build(IMainWindow mainWindow, SelectedItemCollection selection, ContextMenuItemCollection items)
             {
+                items.Add(new ConsoleDialogCommand(mainWindow, selection));
+                items.AddSeparator();
+
                 items.AddIfEnabled(new ShutDownVMCommand(mainWindow, selection));
                 items.AddIfEnabled(new StartVMCommand(mainWindow, selection));
                 items.AddIfEnabled(new ResumeVMCommand(mainWindow, selection));
@@ -1122,6 +1133,9 @@ namespace XenAdmin.Commands
         {
             public override void Build(IMainWindow mainWindow, SelectedItemCollection selection, ContextMenuItemCollection items)
             {
+                items.Add(new ConsoleDialogCommand(mainWindow, selection));
+                items.AddSeparator();
+                
                 items.AddIfEnabled(new ShutDownVMCommand(mainWindow, selection));
                 items.AddIfEnabled(new StartVMCommand(mainWindow, selection));
                 items.AddIfEnabled(new ResumeVMCommand(mainWindow, selection));
