@@ -96,9 +96,10 @@ namespace XenAdmin
             this.TitleBackPanel = new XenAdmin.Controls.GradientPanel.GradientPanel();
             this.TitleIcon = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.TitleLabel = new System.Windows.Forms.Label();
+            this.LicenseStatusTitleLabel = new System.Windows.Forms.Label();
             this.toolTipContainer1 = new XenAdmin.Controls.ToolTipContainer();
             this.loggedInLabel1 = new XenAdmin.Controls.LoggedInLabel();
-            this.TitleLabel = new System.Windows.Forms.Label();
             this.ToolStrip = new XenAdmin.Controls.ToolStripEx();
             this.backButton = new System.Windows.Forms.ToolStripSplitButton();
             this.forwardButton = new System.Windows.Forms.ToolStripSplitButton();
@@ -240,7 +241,6 @@ namespace XenAdmin
             this.ReattachStorageRepositoryToolStripMenuItem = new XenAdmin.Commands.CommandToolStripMenuItem();
             this.ForgetStorageRepositoryToolStripMenuItem = new XenAdmin.Commands.CommandToolStripMenuItem();
             this.DestroyStorageRepositoryToolStripMenuItem = new XenAdmin.Commands.CommandToolStripMenuItem();
-            this.ConvertToThinStorageRepositoryToolStripMenuItem = new XenAdmin.Commands.CommandToolStripMenuItem();
             this.toolStripSeparator18 = new System.Windows.Forms.ToolStripSeparator();
             this.pluginItemsPlaceHolderToolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
             this.SRPropertiesToolStripMenuItem = new XenAdmin.Commands.CommandToolStripMenuItem();
@@ -286,6 +286,8 @@ namespace XenAdmin
             this.StatusStrip = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusProgressBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.TabPageUSB = new System.Windows.Forms.TabPage();
+            this.disableCbtToolStripMenuItem = new XenAdmin.Commands.CommandToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -367,6 +369,7 @@ namespace XenAdmin
             this.TheTabControl.Controls.Add(this.TabPageSearch);
             this.TheTabControl.Controls.Add(this.TabPageDockerProcess);
             this.TheTabControl.Controls.Add(this.TabPageDockerDetails);
+            this.TheTabControl.Controls.Add(this.TabPageUSB);
             this.TheTabControl.Name = "TheTabControl";
             this.TheTabControl.SelectedIndex = 4;
             // 
@@ -557,9 +560,25 @@ namespace XenAdmin
             // tableLayoutPanel1
             // 
             resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
-            this.tableLayoutPanel1.Controls.Add(this.toolTipContainer1, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.TitleLabel, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.LicenseStatusTitleLabel, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.toolTipContainer1, 3, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            // 
+            // TitleLabel
+            // 
+            resources.ApplyResources(this.TitleLabel, "TitleLabel");
+            this.TitleLabel.AutoEllipsis = true;
+            this.TitleLabel.ForeColor = System.Drawing.SystemColors.HighlightText;
+            this.TitleLabel.Name = "TitleLabel";
+            this.TitleLabel.UseMnemonic = false;
+            // 
+            // LicenseStatusTitleLabel
+            // 
+            resources.ApplyResources(this.LicenseStatusTitleLabel, "LicenseStatusTitleLabel");
+            this.LicenseStatusTitleLabel.ForeColor = System.Drawing.SystemColors.HighlightText;
+            this.LicenseStatusTitleLabel.Name = "LicenseStatusTitleLabel";
+            this.LicenseStatusTitleLabel.UseMnemonic = false;
             // 
             // toolTipContainer1
             // 
@@ -573,14 +592,6 @@ namespace XenAdmin
             this.loggedInLabel1.BackColor = System.Drawing.Color.Transparent;
             this.loggedInLabel1.Connection = null;
             this.loggedInLabel1.Name = "loggedInLabel1";
-            // 
-            // TitleLabel
-            // 
-            resources.ApplyResources(this.TitleLabel, "TitleLabel");
-            this.TitleLabel.AutoEllipsis = true;
-            this.TitleLabel.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.TitleLabel.Name = "TitleLabel";
-            this.TitleLabel.UseMnemonic = false;
             // 
             // ToolStrip
             // 
@@ -1309,6 +1320,7 @@ namespace XenAdmin
             this.snapshotToolStripMenuItem,
             this.convertToTemplateToolStripMenuItem,
             this.exportToolStripMenuItem,
+            this.disableCbtToolStripMenuItem,
             this.enablePVSReadcachingToolStripMenuItem,
             this.disablePVSReadcachingToolStripMenuItem,
             this.toolStripMenuItem12,
@@ -1476,7 +1488,6 @@ namespace XenAdmin
             this.ReattachStorageRepositoryToolStripMenuItem,
             this.ForgetStorageRepositoryToolStripMenuItem,
             this.DestroyStorageRepositoryToolStripMenuItem,
-            this.ConvertToThinStorageRepositoryToolStripMenuItem,
             this.toolStripSeparator18,
             this.pluginItemsPlaceHolderToolStripMenuItem5,
             this.SRPropertiesToolStripMenuItem});
@@ -1569,12 +1580,6 @@ namespace XenAdmin
             this.DestroyStorageRepositoryToolStripMenuItem.Command = new XenAdmin.Commands.DestroySRCommand();
             this.DestroyStorageRepositoryToolStripMenuItem.Name = "DestroyStorageRepositoryToolStripMenuItem";
             resources.ApplyResources(this.DestroyStorageRepositoryToolStripMenuItem, "DestroyStorageRepositoryToolStripMenuItem");
-            // 
-            // ConvertToThinStorageRepositoryToolStripMenuItem
-            // 
-            this.ConvertToThinStorageRepositoryToolStripMenuItem.Command = new XenAdmin.Commands.ConvertToThinSRCommand();
-            this.ConvertToThinStorageRepositoryToolStripMenuItem.Name = "ConvertToThinStorageRepositoryToolStripMenuItem";
-            resources.ApplyResources(this.ConvertToThinStorageRepositoryToolStripMenuItem, "ConvertToThinStorageRepositoryToolStripMenuItem");
             // 
             // toolStripSeparator18
             // 
@@ -1887,6 +1892,17 @@ namespace XenAdmin
             this.statusProgressBar.Name = "statusProgressBar";
             this.statusProgressBar.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             // 
+            // TabPageUSB
+            // 
+            resources.ApplyResources(this.TabPageUSB, "TabPageUSB");
+            this.TabPageUSB.Name = "TabPageUSB";
+            this.TabPageUSB.UseVisualStyleBackColor = true;
+            // disableCbtToolStripMenuItem
+            // 
+            this.disableCbtToolStripMenuItem.Command = new XenAdmin.Commands.DisableChangedBlockTrackingCommand();
+            this.disableCbtToolStripMenuItem.Name = "disableCbtToolStripMenuItem";
+            resources.ApplyResources(this.disableCbtToolStripMenuItem, "disableCbtToolStripMenuItem");
+            // 
             // MainWindow
             // 
             resources.ApplyResources(this, "$this");
@@ -2012,7 +2028,6 @@ namespace XenAdmin
         private CommandToolStripMenuItem ReattachStorageRepositoryToolStripMenuItem;
         private CommandToolStripMenuItem ForgetStorageRepositoryToolStripMenuItem;
         private CommandToolStripMenuItem DestroyStorageRepositoryToolStripMenuItem;
-        private CommandToolStripMenuItem ConvertToThinStorageRepositoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem templatesToolStripMenuItem;
         private CommandToolStripMenuItem exportTemplateToolStripMenuItem;
@@ -2155,6 +2170,9 @@ namespace XenAdmin
         private CommandToolStripMenuItem controlDomainMemoryToolStripMenuItem;
         private CommandToolStripMenuItem enablePVSReadcachingToolStripMenuItem;
         private CommandToolStripMenuItem disablePVSReadcachingToolStripMenuItem;
+        private TabPage TabPageUSB;
+        private CommandToolStripMenuItem disableCbtToolStripMenuItem;
+        private Label LicenseStatusTitleLabel;
     }
 
 }

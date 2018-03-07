@@ -41,6 +41,7 @@ using XenAdmin.Controls.DataGridViewEx;
 using XenAdmin.Core;
 using XenAdmin.Actions;
 using XenAdmin.Properties;
+using XenCenterLib;
 
 namespace XenAdmin.TabPages
 {
@@ -637,11 +638,11 @@ namespace XenAdmin.TabPages
                     roles.Reverse();
                     foreach (Role r in roles)
                     {
-                        s = String.Format("{0}\n{1}", s, r.FriendlyName);
+                        s = String.Format("{0}\n{1}", s, r.FriendlyName());
                     }
                     expandedRoles = s;
-                    contractedRoles = roles.Count > 0 ?
-                        roles.Count > 1 ? roles[0].FriendlyName.AddEllipsis() : roles[0].FriendlyName
+                    contractedRoles = roles.Count > 0
+                        ? roles.Count > 1 ? roles[0].FriendlyName().AddEllipsis() : roles[0].FriendlyName()
                         : "";
 
                     contractedSubjectInfo = new List<KeyValuePair<String, String>>();
@@ -1040,8 +1041,8 @@ namespace XenAdmin.TabPages
             if (Helpers.FeatureForbidden(pool.Connection, Host.RestrictRBAC))
             {
                 // Show upsell dialog
-                using (var dlg = new UpsellDialog(HiddenFeatures.LinkLabelHidden ? Messages.UPSELL_BLURB_RBAC : Messages.UPSELL_BLURB_RBAC + Messages.UPSELL_BLURB_RBAC_MORE,
-                                                    InvisibleMessages.UPSELL_LEARNMOREURL_RBAC))
+                using (var dlg = new UpsellDialog(HiddenFeatures.LinkLabelHidden ? Messages.UPSELL_BLURB_RBAC : Messages.UPSELL_BLURB_RBAC + Messages.UPSELL_BLURB_TRIAL,
+                                                    InvisibleMessages.UPSELL_LEARNMOREURL_TRIAL))
                     dlg.ShowDialog(this);
                 return;
 

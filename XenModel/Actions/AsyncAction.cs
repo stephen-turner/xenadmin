@@ -90,7 +90,7 @@ namespace XenAdmin.Actions
         }
 
         /// <summary>
-        /// If you wish the action to run a pre-check that the current user can perform all the necessary api calls, list them under this field.
+        /// If you want the action to run a pre-check that the current user can perform all the necessary api calls, list them under this field.
         /// If empty, then no checks will be run.
         /// </summary>
         protected RbacMethodList ApiMethodsToRoleCheck = new RbacMethodList();
@@ -249,7 +249,7 @@ namespace XenAdmin.Actions
                     }
                     catch(Failure ex)
                     {
-                        log.Debug("Session.logout() failed for Session uuid " + Session.uuid, ex);
+                        log.Debug("Session.logout() failed for Session uuid " + Session.opaque_ref, ex);
                     }
                 }
 
@@ -262,7 +262,7 @@ namespace XenAdmin.Actions
         {
             //Program.AssertOffEventThread();
 
-            if (Session == null || string.IsNullOrEmpty(Session.uuid) || RelatedTask == null)
+            if (Session == null || string.IsNullOrEmpty(Session.opaque_ref) || RelatedTask == null)
                 return;
 
             try
@@ -321,7 +321,7 @@ namespace XenAdmin.Actions
             bool ableToCompleteAction = Role.CanPerform(rbacMethodList, Connection, out rolesAbleToCompleteAction);
 
             log.DebugFormat("Roles able to complete action: {0}", Role.FriendlyCSVRoleList(rolesAbleToCompleteAction));
-            log.DebugFormat("Subject {0} has roles: {1}", Connection.Session.UserLogName, Role.FriendlyCSVRoleList(Connection.Session.Roles));
+            log.DebugFormat("Subject {0} has roles: {1}", Connection.Session.UserLogName(), Role.FriendlyCSVRoleList(Connection.Session.Roles));
 
             if (ableToCompleteAction)
             {

@@ -48,7 +48,7 @@ using System.IO;
 using XenAdmin.Dialogs;
 using System.Security.Cryptography;
 using XenAdmin.Network;
-
+using XenCenterLib;
 using Console = XenAPI.Console;
 using Message = System.Windows.Forms.Message;
 using Timer = System.Threading.Timer;
@@ -117,12 +117,14 @@ namespace XenAdmin.ConsoleView
         public event Action<bool> GpuStatusChanged;
         public event Action<string> ConnectionNameChanged;
 
+        public bool RdpVersionWarningNeeded { get { return rdpClient != null && rdpClient.needsRdpVersionWarning; }}
+
         internal readonly VNCTabView parentVNCTabView;
 
         [DefaultValue(false)]
         public bool UserWantsToSwitchProtocol { get; set; }
 
-        private bool hasRDP { get { return Source != null ? Source.HasRDP : false; } }
+        private bool hasRDP { get { return Source != null && Source.HasRDP(); } }
 
         /// <summary>
         /// Whether we have tried to login without providing a password (covers the case where the user
@@ -204,7 +206,7 @@ namespace XenAdmin.ConsoleView
                 Dictionary<string, string> newNetworks = (sender as VM_guest_metrics).networks;
                 if (!equateDictionary<string, string>(newNetworks, cachedNetworks))
                 {
-                    Log.InfoFormat("Detected IP address change in vm {0}, repolling for VNC/RDP...", Source.Name);
+                    Log.InfoFormat("Detected IP address change in vm {0}, repolling for VNC/RDP...", Source.Name());
 
                     cachedNetworks = newNetworks;
 
@@ -366,11 +368,11 @@ namespace XenAdmin.ConsoleView
                     PIF pif = Helpers.FindPIF(network, host);
                     foreach (var networkInfo in networks.Where(n => n.Key.StartsWith(String.Format("{0}/ip", vif.device))))
                     {
-                        if (networkInfo.Key.EndsWith("ip")) // IPv4 address
+                        if (networkInfo.Key.EndsWith("ip") || networkInfo.Key.Contains("ipv4")) // IPv4 address
                         {
                             if (pif == null)
                                 ipAddressesForNetworksWithoutPifs.Add(networkInfo.Value);
-                            else if (pif.LinkStatus == PIF.LinkState.Connected)
+                            else if (pif.LinkStatus() == PIF.LinkState.Connected)
                                 ipAddresses.Add(networkInfo.Value);
                         }
                         else
@@ -379,7 +381,7 @@ namespace XenAdmin.ConsoleView
                             {
                                 if (pif == null)
                                     ipv6AddressesForNetworksWithoutPifs.Add(String.Format("[{0}]", networkInfo.Value));
-                                else if (pif.LinkStatus == PIF.LinkState.Connected)
+                                else if (pif.LinkStatus() == PIF.LinkState.Connected)
                                     ipv6Addresses.Add(String.Format("[{0}]", networkInfo.Value));
                             }
                             else
@@ -387,6 +389,7 @@ namespace XenAdmin.ConsoleView
                         }
                     }
                 }
+                ipAddresses = ipAddresses.Distinct().ToList();
 
                 ipAddresses.AddRange(ipv6Addresses); // make sure IPv4 addresses are scanned first (CA-102755)
                 // add IP addresses for networks without PIFs
@@ -588,7 +591,7 @@ namespace XenAdmin.ConsoleView
         internal bool MustConnectRemoteDesktop()
         {
             return (UseVNC || string.IsNullOrEmpty(rdpIP)) &&
-                Source.HasGPUPassthrough && Source.power_state == vm_power_state.Running;
+                Source.HasGPUPassthrough() && Source.power_state == vm_power_state.Running;
         }
 
         private void SetKeyboardAndMouseCapture(bool value)
@@ -705,7 +708,7 @@ namespace XenAdmin.ConsoleView
                 {
                     value.PropertyChanged += new PropertyChangedEventHandler(VM_PropertyChanged);
 
-                    sourceIsPV = !value.IsHVM;
+                    sourceIsPV = !value.IsHVM();
                     
                     startPolling();
 
@@ -726,13 +729,13 @@ namespace XenAdmin.ConsoleView
                 if (Source == null)
                     return null;
 
-                if (Source.IsControlDomainZero)
-                    return string.Format(Messages.CONSOLE_HOST, Source.AffinityServerString);
+                if (Source.IsControlDomainZero())
+                    return string.Format(Messages.CONSOLE_HOST, Source.AffinityServerString());
                 
                 if (Source.is_control_domain)
-                    return string.Format(Messages.CONSOLE_HOST_NUTANIX, Source.AffinityServerString);
+                    return string.Format(Messages.CONSOLE_HOST_NUTANIX, Source.AffinityServerString());
                 
-                return Source.Name;
+                return Source.Name();
             }
         }
 
@@ -764,9 +767,9 @@ namespace XenAdmin.ConsoleView
                 }
 
                 //Start the polling again
-                if (Source != null && !Source.IsControlDomainZero)
+                if (Source != null && !Source.IsControlDomainZero())
                 {
-                    if (!Source.IsHVM)
+                    if (!Source.IsHVM())
                     {
                         connectionPoller = new Timer(PollVNCPort, null, RETRY_SLEEP_TIME, RDP_POLL_INTERVAL);
                     }
@@ -1084,17 +1087,17 @@ namespace XenAdmin.ConsoleView
             }
 
             Uri uri = new Uri(console.location);
-            String SessionUUID;
+            string sesssionRef;
 
             lock (activeSessionLock)
             {
                 // use the elevated credentials, if provided, for connecting to the console (CA-91132)
                 activeSession = (string.IsNullOrEmpty(ElevatedUsername) || string.IsNullOrEmpty(ElevatedPassword)) ?
                     console.Connection.DuplicateSession() : console.Connection.ElevatedSession(ElevatedUsername, ElevatedPassword);
-                SessionUUID = activeSession.uuid;
+                sesssionRef = activeSession.opaque_ref;
             }
 
-            Stream stream = HTTPHelper.CONNECT(uri, console.Connection, SessionUUID, false, true);
+            Stream stream = HTTPHelper.CONNECT(uri, console.Connection, sesssionRef, false, true);
 
             InvokeConnection(v, stream, console);
         }

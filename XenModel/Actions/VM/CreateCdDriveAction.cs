@@ -43,7 +43,7 @@ namespace XenAdmin.Actions
         private Action _showVBDWarningBox;
 
         public CreateCdDriveAction(VM vm, bool installingTools, Action showMustRebootBoxCD, Action showVBDWarningBox)
-            : base(vm.Connection, string.Format(Messages.NEW_DVD_DRIVE_CREATE_TITLE, vm.Name))
+            : base(vm.Connection, string.Format(Messages.NEW_DVD_DRIVE_CREATE_TITLE, vm.Name()))
         {
             _showMustRebootBoxCD = showMustRebootBoxCD;
             _showVBDWarningBox = showVBDWarningBox;
@@ -64,7 +64,7 @@ namespace XenAdmin.Actions
                 Description = Messages.NEW_DVD_DRIVE_CREATING;
                 // could not find a cd, try and make one
 
-                if (VM.VBDs.Count >= VM.MaxVBDsAllowed)
+                if (VM.VBDs.Count >= VM.MaxVBDsAllowed())
                 {
                     throw new Exception(Messages.CDDRIVE_MAX_ALLOWED_VBDS);
                 }
@@ -76,15 +76,16 @@ namespace XenAdmin.Actions
                     throw new Exception(Messages.CDDRIVE_MAX_ALLOWED_VBDS);
                 }
 
-                XenAPI.VBD cdDrive = new XenAPI.VBD();
-                cdDrive.VM = new XenAPI.XenRef<XenAPI.VM>(VM.opaque_ref);
-                cdDrive.VDI = null;
-                cdDrive.bootable = false;
-                cdDrive.device = "";
-                cdDrive.userdevice = allowedDevices.Contains("3") ? "3" : allowedDevices[0];
-                cdDrive.empty = true;
-                cdDrive.type = XenAPI.vbd_type.CD;
-                cdDrive.mode = XenAPI.vbd_mode.RO;
+                XenAPI.VBD cdDrive = new XenAPI.VBD
+                {
+                    VM = new XenAPI.XenRef<XenAPI.VM>(VM.opaque_ref),
+                    bootable = false,
+                    device = "",
+                    userdevice = allowedDevices.Contains("3") ? "3" : allowedDevices[0],
+                    empty = true,
+                    type = XenAPI.vbd_type.CD,
+                    mode = XenAPI.vbd_mode.RO
+                };
 
                 VbdSaveAndPlugAction cdCreate = new VbdSaveAndPlugAction(VM, cdDrive, Messages.DVD_DRIVE, Session, InstallingTools, true,_showMustRebootBoxCD,_showVBDWarningBox);
                 cdCreate.RunExternal(Session);

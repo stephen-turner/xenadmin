@@ -36,7 +36,7 @@ using System.Threading;
 using System.IO;
 using System.Xml;
 
-using Citrix.XenCenter;
+using XenCenterLib;
 using XenAPI;
 
 using XenAdmin.Core;
@@ -353,7 +353,7 @@ namespace XenAdmin.XenSearch
             builder.Host = host.address;
             builder.Port = host.Connection.Port;
             builder.Path = RrdUpdatesPath;
-            builder.Query = string.Format(RrdHostAndVmUpdatesQuery, Uri.EscapeDataString(session.uuid), TimeUtil.TicksToSecondsSince1970(DateTime.UtcNow.Ticks - (host.Connection.ServerTimeOffset.Ticks + TicksInTenSeconds)), RrdCFAverage, 5);
+            builder.Query = string.Format(RrdHostAndVmUpdatesQuery, Uri.EscapeDataString(session.opaque_ref), TimeUtil.TicksToSecondsSince1970(DateTime.UtcNow.Ticks - (host.Connection.ServerTimeOffset.Ticks + TicksInTenSeconds)), RrdCFAverage, 5);
             return builder.Uri;
         }
 

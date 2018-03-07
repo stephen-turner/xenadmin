@@ -82,7 +82,7 @@ namespace XenAdmin.Actions.VMActions
                     catch (Failure exn)
                     {
                         // VM is not agile, but it is 'Protected' by HA. This is an inconsistent state (see CA-20820).
-                        // Warn the user about this and ask if they wish to fix it.
+                        // Warn the user about this and ask if they want to fix it.
                         log.Debug("VM is not agile, but protected", exn);
                         _WarningDialogHAInvalidConfig(VM,IsStart);
                         new HAUnprotectVMAction(VM).RunExternal(Session);
@@ -106,7 +106,7 @@ namespace XenAdmin.Actions.VMActions
     public class VMStartAction : VMStartAbstractAction
     {
         public VMStartAction(VM vm, Action<VM, bool> warningDialogHAInvalidConfig,Action<VMStartAbstractAction,Failure> startDiagnosticForm)
-            : base(vm, string.Format(Messages.ACTION_VM_STARTING_TITLE, vm.Name), warningDialogHAInvalidConfig, startDiagnosticForm)
+            : base(vm, string.Format(Messages.ACTION_VM_STARTING_TITLE, vm.Name()), warningDialogHAInvalidConfig, startDiagnosticForm)
         {
             ApiMethodsToRoleCheck.Add("vm.start");
         }
@@ -138,7 +138,7 @@ namespace XenAdmin.Actions.VMActions
     public class VMStartOnAction : VMStartAbstractAction
     {
         public VMStartOnAction(VM vm, Host hostToStart, Action<VM, bool> warningDialogHAInvalidConfig, Action<VMStartAbstractAction, Failure> startDiagnosticForm)
-            : base(vm, string.Format(Messages.ACTION_VM_STARTING_ON_TITLE, vm.Name, hostToStart.Name),warningDialogHAInvalidConfig,startDiagnosticForm)
+            : base(vm, string.Format(Messages.ACTION_VM_STARTING_ON_TITLE, vm.Name(), hostToStart.Name()),warningDialogHAInvalidConfig,startDiagnosticForm)
         {
             Host = hostToStart;
             ApiMethodsToRoleCheck.Add("vm.start_on");
@@ -171,7 +171,7 @@ namespace XenAdmin.Actions.VMActions
     public class VMResumeAction : VMStartAbstractAction
     {
         public VMResumeAction(VM vm, Action<VM, bool> warningDialogHAInvalidConfig,Action<VMStartAbstractAction, Failure> startDiagnosticForm)
-            : base(vm,string.Format(Messages.ACTION_VM_RESUMING_TITLE, vm.Name),warningDialogHAInvalidConfig,startDiagnosticForm)
+            : base(vm,string.Format(Messages.ACTION_VM_RESUMING_TITLE, vm.Name()),warningDialogHAInvalidConfig,startDiagnosticForm)
         {
 
             ApiMethodsToRoleCheck.Add("vm.resume");
@@ -204,7 +204,7 @@ namespace XenAdmin.Actions.VMActions
     public class VMResumeOnAction : VMStartAbstractAction
     {
         public VMResumeOnAction(VM vm, Host hostToStart, Action<VM, bool> warningDialogHAInvalidConfig,Action<VMStartAbstractAction, Failure> startDiagnosticForm)
-            : base(vm, string.Format(Messages.ACTION_VM_RESUMING_ON_TITLE, vm.Name, hostToStart.Name), warningDialogHAInvalidConfig,startDiagnosticForm)
+            : base(vm, string.Format(Messages.ACTION_VM_RESUMING_ON_TITLE, vm.Name(), hostToStart.Name()), warningDialogHAInvalidConfig,startDiagnosticForm)
         {
             Host = hostToStart; 
             ApiMethodsToRoleCheck.Add("vm.resume_on");
@@ -237,7 +237,7 @@ namespace XenAdmin.Actions.VMActions
     public class VMStartPausedAction : VMStartAbstractAction
     {
         public VMStartPausedAction(VM vm, Action<VM, bool> warningDialogHAInvalidConfig,Action<VMStartAbstractAction,Failure> startDiagnosticForm)
-            : base(vm, string.Format(Messages.ACTION_VM_STARTING_PAUSED_TITLE, vm.Name), warningDialogHAInvalidConfig, startDiagnosticForm)
+            : base(vm, string.Format(Messages.ACTION_VM_STARTING_PAUSED_TITLE, vm.Name()), warningDialogHAInvalidConfig, startDiagnosticForm)
         {
             ApiMethodsToRoleCheck.Add("vm.start");
         }
@@ -269,7 +269,7 @@ namespace XenAdmin.Actions.VMActions
     public class VMStartPausedOnAction  : VMStartAbstractAction
     {
         public VMStartPausedOnAction(VM vm, Host hostToStart, Action<VM, bool> warningDialogHAInvalidConfig, Action<VMStartAbstractAction, Failure> startDiagnosticForm)
-            : base(vm, string.Format(Messages.ACTION_VM_STARTING_PAUSED_ON_TITLE, vm.Name, hostToStart.Name), warningDialogHAInvalidConfig, startDiagnosticForm)
+            : base(vm, string.Format(Messages.ACTION_VM_STARTING_PAUSED_ON_TITLE, vm.Name(), hostToStart.Name()), warningDialogHAInvalidConfig, startDiagnosticForm)
         {
             Host = hostToStart;
             ApiMethodsToRoleCheck.Add("vm.start_on");

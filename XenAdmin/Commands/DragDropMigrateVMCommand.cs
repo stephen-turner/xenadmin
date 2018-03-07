@@ -74,12 +74,7 @@ namespace XenAdmin.Commands
                                 !draggedVM.allowed_operations.Contains(vm_operations.migrate_send))
                             {
                                 if (draggedVM.power_state == vm_power_state.Running)
-                                {
-                                    if (draggedVM.HasVGPUs)
-                                        return Messages.MIGRATION_NOT_ALLOWED_GPU;
-                                    else
-                                        return Messages.MIGRATION_NOT_ALLOWED;
-                                }
+                                    return Messages.MIGRATION_NOT_ALLOWED;
                                 return null;
                             }
 
@@ -116,7 +111,7 @@ namespace XenAdmin.Commands
 
         private bool IsAnIntraPoolMigrate(Host targetHost, VM draggedVM)
         {
-            List<SR> draggedSRs = new List<SR>(draggedVM.SRs);
+            List<SR> draggedSRs = new List<SR>(draggedVM.SRs());
             bool allStorageShared = draggedSRs.TrueForAll(sr => sr.shared);
             return !IsACrossPoolMigrate(targetHost, draggedVM) && !allStorageShared;
         }
@@ -259,10 +254,10 @@ namespace XenAdmin.Commands
 
             if (draggedVMs.Count == 1)
             {
-                return Program.MainWindow.Confirm(null, Messages.MESSAGEBOX_CONFIRM, Messages.MAINWINDOW_CONFIRM_MIGRATE, draggedVMs[0].Name, targetHost.Name);
+                return Program.MainWindow.Confirm(null, Messages.MESSAGEBOX_CONFIRM, Messages.MAINWINDOW_CONFIRM_MIGRATE, draggedVMs[0].Name(), targetHost.Name());
             }
 
-            return Program.MainWindow.Confirm(null, Messages.MESSAGEBOX_CONFIRM, Messages.MAINWINDOW_CONFIRM_MIGRATE_MULTIPLE, targetHost.Name);
+            return Program.MainWindow.Confirm(null, Messages.MESSAGEBOX_CONFIRM, Messages.MAINWINDOW_CONFIRM_MIGRATE_MULTIPLE, targetHost.Name());
         }
 
         public override VirtualTreeNode HighlightNode

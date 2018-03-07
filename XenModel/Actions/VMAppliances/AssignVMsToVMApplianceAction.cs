@@ -30,6 +30,7 @@
  */
 
 using System.Collections.Generic;
+using System.Linq;
 using XenAdmin.Core;
 using XenAPI;
 
@@ -43,8 +44,8 @@ namespace XenAdmin.Actions
 
         public AssignVMsToVMApplianceAction(VM_appliance vmAppliance, List<XenRef<VM>> selectedVMs, bool suppressHistory)
             : base(vmAppliance.Connection, selectedVMs.Count == 1 ?
-            string.Format(Messages.ASSIGN_VM_TO_VAPP, vmAppliance.Connection.Resolve(selectedVMs[0]), vmAppliance.Name)
-            : string.Format(Messages.ASSIGN_VMS_TO_VAPP, vmAppliance.Name), suppressHistory)
+            string.Format(Messages.ASSIGN_VM_TO_VAPP, vmAppliance.Connection.Resolve(selectedVMs[0]), vmAppliance.Name())
+            : string.Format(Messages.ASSIGN_VMS_TO_VAPP, vmAppliance.Name()), suppressHistory)
         {
             _vmAppliance = vmAppliance;
             _selectedVMs = selectedVMs;
@@ -55,13 +56,17 @@ namespace XenAdmin.Actions
         protected override void Run()
         {
             Description = Messages.ASSIGNING_VM_APPLIANCE;
-            foreach (var xenRef in _vmAppliance.VMs)
+            var removedItems = _vmAppliance.VMs.Except(_selectedVMs);
+            foreach (var xenRef in removedItems)
             {
                 VM.set_appliance(Session, xenRef, null);
             }
-            foreach (var xenRef in _selectedVMs)
+
+            foreach (var vmRef in _selectedVMs)
             {
-                VM.set_appliance(Session, xenRef, _vmAppliance.opaque_ref);
+                var vm = _vmAppliance.Connection.Resolve(vmRef);
+                if (vm != null && (vm.appliance == null || vm.appliance.opaque_ref != _vmAppliance.opaque_ref))
+                    VM.set_appliance(Session, vm.opaque_ref, _vmAppliance.opaque_ref);
             }
             Description = Messages.ASSIGNED_VM_APPLIANCE;
         }
@@ -73,8 +78,8 @@ namespace XenAdmin.Actions
 
         public RemoveVMsFromVMApplianceAction(VM_appliance vmAppliance, List<XenRef<VM>> selectedVMs)
             : base(vmAppliance.Connection, selectedVMs.Count == 1 ?
-            string.Format(Messages.REMOVE_VM_FROM_APPLIANCE, vmAppliance.Connection.Resolve(selectedVMs[0]), vmAppliance.Name)
-            : string.Format(Messages.REMOVE_VMS_FROM_APPLIANCE, vmAppliance.Name))
+            string.Format(Messages.REMOVE_VM_FROM_APPLIANCE, vmAppliance.Connection.Resolve(selectedVMs[0]), vmAppliance.Name())
+            : string.Format(Messages.REMOVE_VMS_FROM_APPLIANCE, vmAppliance.Name()))
         {
             _selectedVMs = selectedVMs;
             Pool = Helpers.GetPool(vmAppliance.Connection);

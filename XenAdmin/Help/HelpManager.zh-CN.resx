@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -1059,9 +1059,6 @@
   <data name="VMAppliancesDialog" xml:space="preserve">
     <value>9800</value>
   </data>
-  <data name="VMProtectionPoliciesDialog" xml:space="preserve">
-    <value>6536</value>
-  </data>
   <data name="VMSnapshotSchedulesDialog" xml:space="preserve">
     <value>6550</value>
   </data>
@@ -1070,6 +1067,9 @@
   </data>
   <data name="VMSnapshotPage" xml:space="preserve">
     <value>6530</value>
+  </data>
+  <data name="WarningVmDisableChangedBlockTracking" xml:space="preserve">
+    <value>8106</value>
   </data>
   <data name="WarningVmLifeCycleForceReboot" xml:space="preserve">
     <value>8101</value>
@@ -1147,6 +1147,12 @@
     <value>9910</value>
   </data>
   <data name="EnableRDPonVM" xml:space="preserve">
+    <value>1020</value>
+  </data>
+  <data name="EditVMSSGeneralSettingsDialog" xml:space="preserve">
+    <value>6553</value>
+  </data>
+  <data name="TabPageUSB" xml:space="preserve">
     <value>1020</value>
   </data>
 </root>

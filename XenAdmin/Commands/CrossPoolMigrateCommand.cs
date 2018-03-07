@@ -70,8 +70,8 @@ namespace XenAdmin.Commands
 
                 var cantExecuteReason = CantExecuteReason;
                 return string.IsNullOrEmpty(cantExecuteReason)
-                    ? preSelectedHost.Name.EscapeAmpersands()
-                    : string.Format(Messages.MAINWINDOW_CONTEXT_REASON, preSelectedHost.Name.EscapeAmpersands(), cantExecuteReason);
+                    ? preSelectedHost.Name().EscapeAmpersands()
+                    : string.Format(Messages.MAINWINDOW_CONTEXT_REASON, preSelectedHost.Name().EscapeAmpersands(), cantExecuteReason);
             }
         }
 
@@ -104,8 +104,8 @@ namespace XenAdmin.Commands
 
         public static void ShowUpsellDialog(IWin32Window parent)
         {
-            using (var  dlg = new UpsellDialog(HiddenFeatures.LinkLabelHidden ? Messages.UPSELL_BLURB_CPM : Messages.UPSELL_BLURB_CPM + Messages.UPSELL_BLURB_CPM_MORE,
-                                                InvisibleMessages.UPSELL_LEARNMOREURL_CPM))
+            using (var dlg = new UpsellDialog(HiddenFeatures.LinkLabelHidden ? Messages.UPSELL_BLURB_CPM : Messages.UPSELL_BLURB_CPM + Messages.UPSELL_BLURB_TRIAL,
+                                                InvisibleMessages.UPSELL_LEARNMOREURL_TRIAL))
                 dlg.ShowDialog(parent);
         }
 
@@ -140,7 +140,7 @@ namespace XenAdmin.Commands
                    vm.allowed_operations != null &&
                    vm.allowed_operations.Contains(vm_operations.migrate_send) &&
                    !Helpers.CrossPoolMigrationRestrictedWithWlb(vm.Connection) &&
-                   vm.SRs.ToList().All(sr=> sr != null && !sr.HBALunPerVDI) &&
+                   vm.SRs().ToList().All(sr=> sr != null && !sr.HBALunPerVDI()) &&
                    (preselectedHost == null || vm.Connection.Resolve(vm.resident_on) != preselectedHost); //Not the same as the pre-selected host
         }
 

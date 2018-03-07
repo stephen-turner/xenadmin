@@ -197,7 +197,7 @@ namespace XenAdmin.Actions
             bool ableToCompleteAction = Role.CanPerform(methodsToCheck, xenConnection, out rolesAbleToCompleteAction);
             
             log.DebugFormat("Roles able to complete action: {0}", Role.FriendlyCSVRoleList(rolesAbleToCompleteAction));
-            log.DebugFormat("Subject {0} has roles: {1}", xenConnection.Session.UserLogName, Role.FriendlyCSVRoleList(xenConnection.Session.Roles));
+            log.DebugFormat("Subject {0} has roles: {1}", xenConnection.Session.UserLogName(), Role.FriendlyCSVRoleList(xenConnection.Session.Roles));
 
             if (ableToCompleteAction)
             {
@@ -207,7 +207,7 @@ namespace XenAdmin.Actions
 
             // Can't run on this connection, bail out
             string desc = string.Format(FriendlyErrorNames.RBAC_PERMISSION_DENIED_FRIENDLY_CONNECTION,
-                xenConnection.Session.FriendlyRoleDescription,
+                xenConnection.Session.FriendlyRoleDescription(),
                 Role.FriendlyCSVRoleList(rolesAbleToCompleteAction),
                 xenConnection.Name);
             throw new Exception(desc);
@@ -260,7 +260,7 @@ namespace XenAdmin.Actions
                 WriteTrustedCertificates(master.Connection);
             }
 
-            string sessionRef = connection.Session != null ? connection.Session.uuid : EmptyParameter;
+            string sessionRef = connection.Session != null ? connection.Session.opaque_ref : EmptyParameter;
             string objCls = obj != null ? obj.GetType().Name : EmptyParameter;
             string objUuid = obj != null && connection.Session != null ? Helpers.GetUuid(obj) : EmptyParameter;
             return new List<string>(new string[] { masterAddress, sessionRef, objCls, objUuid });
@@ -278,7 +278,7 @@ namespace XenAdmin.Actions
                 WriteTrustedCertificates(master.Connection);
             }
 
-            string sessionRef = connection.Session != null ? connection.Session.uuid : EmptyParameter;
+            string sessionRef = connection.Session != null ? connection.Session.opaque_ref : EmptyParameter;
             string objCls = BlankParamter;
             string objUuid = BlankParamter;
             return new List<string>(new string[] { masterAddress, sessionRef, objCls, objUuid });

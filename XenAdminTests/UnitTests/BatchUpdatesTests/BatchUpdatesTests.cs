@@ -64,9 +64,9 @@ namespace XenAdminTests.UnitTests
             mom.MockConnectionFor(id).Setup(c => c.Cache.Pools).Returns(new Pool[] { pool.Object });
 
             master.Setup(h => h.software_version).Returns(new Dictionary<string, string>());
-            master.Setup(h => h.ProductVersion).Returns(productVersion);
+            master.Setup(h => h.ProductVersion()).Returns(productVersion);
             master.Setup(h => h.AppliedPatches()).Returns(applied_patches ?? new List<Pool_patch>());
-            master.Setup(h => h.BuildNumberRaw).Returns(buildNumber);
+            master.Setup(h => h.BuildNumberRaw()).Returns(buildNumber);
             master.Setup(h => h.uuid).Returns(id);
             return master;
         }
@@ -76,7 +76,7 @@ namespace XenAdminTests.UnitTests
         {
             var serverVersions = new List<XenServerVersion>();
 
-            var version = new XenServerVersion("7.0.0", "XenServer Test 7", true, "", new List<XenServerPatch>(), new List<XenServerPatch>(), DateTime.MinValue.ToString(), "buildNo");
+            var version = new XenServerVersion("7.0.0", "XenServer Test 7", true, false, "", new List<XenServerPatch>(), new List<XenServerPatch>(), DateTime.MinValue.ToString(), "buildNo", "", false);
             for (int ii = 0; ii < numberOfPatches; ii++)
             {
                 var patch = new XenServerPatch("patch_uuid_" + ii, "patch name " + ii, "patch description" + ii, "", "", "1.0", "", "", "1970-01-01T00:00:00Z", "", "1000");

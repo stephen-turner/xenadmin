@@ -31,12 +31,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 
 using XenAPI;
+using XenCenterLib;
 
-using XenAdmin.Core;
 
 namespace XenAdmin.Model
 {
@@ -186,12 +185,9 @@ namespace XenAdmin.Model
             return Parent.IsChildOf(target);
         }
 
-        public override string Name
+        public override string Name()
         {
-            get
-            {
-                return name_label;
-            }
+            return name_label;
         }
     }
 }

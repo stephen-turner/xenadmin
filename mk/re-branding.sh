@@ -152,7 +152,7 @@ RESX_rebranding "${REPO}/XenAdmin/Properties/Resources"
 rebranding_global ${REPO}/XenAdmin/app.config
 
 #XenModel rebranding
-RESX_rebranding "${REPO}/XenModel/Messages ${REPO}/XenModel/InvisibleMessages ${REPO}/XenModel/FriendlyNames"
+RESX_rebranding "${REPO}/XenModel/Messages ${REPO}/XenModel/InvisibleMessages ${REPO}/XenModel/FriendlyNames ${REPO}/XenModel/XenAPI/FriendlyErrorNames"
 
 #XenOvfApi rebranding
 RESX_rebranding "${REPO}/XenOvfApi/Messages ${REPO}/XenOvfApi/Content"
@@ -161,10 +161,6 @@ rebranding_global ${REPO}/XenOvfApi/app.config
 #XenOvfTransport XenOvfTransport
 RESX_rebranding ${REPO}/XenOvfTransport/Messages
 rebranding_global ${REPO}/XenOvfTransport/app.config
-
-#dotNetInstaller
-rebranding_global ${REPO}/dotNetInstaller/XenCenterSetupBootstrapper.xml
-rebranding_global ${REPO}/dotNetInstaller/XenCenterSetupBootstrapper_l10n.xml
 
 #mk
 rebranding_global ${REPO}/mk/ISO_files/AUTORUN.INF

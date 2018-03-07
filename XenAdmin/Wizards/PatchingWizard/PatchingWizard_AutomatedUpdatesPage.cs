@@ -48,6 +48,7 @@ using XenAdmin.Core;
 using XenAdmin.Network;
 using System.Text;
 using System.Diagnostics;
+using XenAdmin.Alerts;
 
 namespace XenAdmin.Wizards.PatchingWizard
 {
@@ -62,8 +63,13 @@ namespace XenAdmin.Wizards.PatchingWizard
 
         public List<Pool> SelectedPools { private get; set; }
 
+        public XenServerPatchAlert UpdateAlert { private get; set; }
+        public WizardMode WizardMode { private get; set; }
+        public bool ApplyUpdatesToNewVersion { private get; set; }
+
         private List<PoolPatchMapping> patchMappings = new List<PoolPatchMapping>();
         public Dictionary<XenServerPatch, string> AllDownloadedPatches = new Dictionary<XenServerPatch, string>();
+        public KeyValuePair<XenServerPatch, string> PatchFromDisk { private get; set; }
 
         private List<UpdateProgressBackgroundWorker> backgroundWorkers = new List<UpdateProgressBackgroundWorker>();
 
@@ -135,6 +141,17 @@ namespace XenAdmin.Wizards.PatchingWizard
                 return;
             }
 
+            Debug.Assert(WizardMode == WizardMode.AutomatedUpdates || WizardMode == WizardMode.NewVersion && UpdateAlert != null);
+
+            if (WizardMode == WizardMode.AutomatedUpdates)
+            {
+                labelTitle.Text = Messages.PATCHINGWIZARD_UPLOAD_AND_INSTALL_TITLE_AUTOMATED_MODE;
+            }
+            else if (WizardMode == WizardMode.NewVersion)
+            {
+                labelTitle.Text = Messages.PATCHINGWIZARD_UPLOAD_AND_INSTALL_TITLE_NEW_VERSION_AUTOMATED_MODE;
+            }
+
             foreach (var pool in SelectedPools)
             {
                 var master = Helpers.GetMaster(pool.Connection);
@@ -150,7 +167,12 @@ namespace XenAdmin.Wizards.PatchingWizard
 
                 var hosts = pool.Connection.Cache.Hosts;
 
-                var us = Updates.GetUpgradeSequence(pool.Connection);
+                //if any host is not licensed for automated updates
+                bool automatedUpdatesRestricted = pool.Connection.Cache.Hosts.Any(Host.RestrictBatchHotfixApply);
+
+                var us = WizardMode == WizardMode.NewVersion
+                    ? Updates.GetUpgradeSequence(pool.Connection, UpdateAlert, ApplyUpdatesToNewVersion && !automatedUpdatesRestricted)
+                    : Updates.GetUpgradeSequence(pool.Connection);
 
                 Debug.Assert(us != null, "Update sequence should not be null.");
 
@@ -161,15 +183,28 @@ namespace XenAdmin.Wizards.PatchingWizard
                         var hostsToApply = us.Where(u => u.Value.Contains(patch)).Select(u => u.Key).ToList();
                         hostsToApply.Sort();
 
-                        planActions.Add(new DownloadPatchPlanAction(master.Connection, patch, AllDownloadedPatches));
-                        planActions.Add(new UploadPatchToMasterPlanAction(master.Connection, patch, patchMappings, AllDownloadedPatches));
+                        planActions.Add(new DownloadPatchPlanAction(master.Connection, patch, AllDownloadedPatches, PatchFromDisk));
+                        planActions.Add(new UploadPatchToMasterPlanAction(master.Connection, patch, patchMappings, AllDownloadedPatches, PatchFromDisk));
                         planActions.Add(new PatchPrechecksOnMultipleHostsInAPoolPlanAction(master.Connection, patch, hostsToApply, patchMappings));
 
                         foreach (var host in hostsToApply)
                         {
                             planActions.Add(new ApplyXenServerPatchPlanAction(host, patch, patchMappings));
-                            planActions.AddRange(GetMandatoryActionListForPatch(host, patch));
-                            UpdateDelayedAfterPatchGuidanceActionListForHost(delayedActionsByHost[host], host, patch);
+
+                            var actions = GetAfterApplyGuidanceActionsForPatch(host, patch);
+                            if (patch.GuidanceMandatory)
+                            {
+                                planActions.AddRange(actions);
+                                // remove all delayed actions of the same kind that have already been added
+                                // (because these actions are guidance-mandatory=true, therefore
+                                // they will run immediately, making delayed ones obsolete)
+                                delayedActionsByHost[host].RemoveAll(dg => actions.Any(ma => ma.GetType() == dg.GetType()));
+                            }
+                            else
+                            {
+                                // add any action that is not already in the list
+                                delayedActionsByHost[host].AddRange(actions.Where(a => !delayedActionsByHost[host].Any(dg => a.GetType() == dg.GetType())));
+                            }
                         }
 
                         //clean up master at the end:
@@ -195,10 +230,10 @@ namespace XenAdmin.Wizards.PatchingWizard
 
             foreach (var bgw in backgroundWorkers)
             {
-                bgw.DoWork += new DoWorkEventHandler(WorkerDoWork);
+                bgw.DoWork += WorkerDoWork;
                 bgw.WorkerReportsProgress = true;
-                bgw.ProgressChanged += new ProgressChangedEventHandler(WorkerProgressChanged);
-                bgw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(WorkerCompleted);
+                bgw.ProgressChanged += WorkerProgressChanged;
+                bgw.RunWorkerCompleted += WorkerCompleted;
                 bgw.WorkerSupportsCancellation = true;
                 bgw.RunWorkerAsync();
             }
@@ -270,7 +305,7 @@ namespace XenAdmin.Wizards.PatchingWizard
             {
                 if (pa.Visible)
                 {
-                    sb.Append(pa);
+                    sb.Append(pa.ProgressDescription ?? pa.ToString());
                     sb.AppendLine();
                 }
             }
@@ -414,17 +449,25 @@ namespace XenAdmin.Wizards.PatchingWizard
 
         }
 
-        private static void RunPlanAction(UpdateProgressBackgroundWorker bgw, PlanAction action)
+        private void RunPlanAction(UpdateProgressBackgroundWorker bgw, PlanAction action)
         {
             InitializePlanAction(bgw, action);
+
+            action.OnProgressChange += action_OnProgressChange;
 
             bgw.ReportProgress(0, action);
             action.Run();
 
             Thread.Sleep(1000);
 
+            action.OnProgressChange -= action_OnProgressChange;
             bgw.doneActions.Add(action);
             bgw.ReportProgress((int)((1.0 / (double)bgw.ActionsCount) * 100), action);
+        }
+
+        private void action_OnProgressChange(object sender, EventArgs e)
+        {
+            Program.Invoke(Program.MainWindow, UpdateStatusTextBox);
         }
 
         private static void InitializePlanAction(UpdateProgressBackgroundWorker bgw, PlanAction action)
@@ -467,26 +510,6 @@ namespace XenAdmin.Wizards.PatchingWizard
             OnPageUpdated();
         }
 
-        private void UpdateDelayedAfterPatchGuidanceActionListForHost(List<PlanAction> delayedGuidances, Host host, XenServerPatch patch)
-        {
-            List<PlanAction> actions = GetAfterApplyGuidanceActionsForPatch(host, patch);
-
-            if (actions.Count == 0)
-                return;
-
-            if (!patch.GuidanceMandatory)
-            {
-                // add any action that is not already in the list
-                delayedGuidances.AddRange(actions.Where(a => !delayedGuidances.Any(dg => a.GetType() == dg.GetType())));
-            }
-            else
-            {
-                // remove all delayed action of the same kinds that have already been added (Because these actions are guidance-mandatory=true, therefore
-                // they will run immediately, making delayed ones obsolete)
-                delayedGuidances.RemoveAll(dg => actions.Any(ma => ma.GetType() == dg.GetType()));                 
-            }
-        }
-
         private static List<PlanAction> GetAfterApplyGuidanceActionsForPatch(Host host, XenServerPatch patch)
         {
             List<PlanAction> actions = new List<PlanAction>();
@@ -518,24 +541,12 @@ namespace XenAdmin.Wizards.PatchingWizard
             return actions;
         }
 
-        private List<PlanAction> GetMandatoryActionListForPatch(Host host, XenServerPatch patch)
-        {
-            var actions = new List<PlanAction>();
-
-            if (!patch.GuidanceMandatory)
-                return actions;
-
-            actions = GetAfterApplyGuidanceActionsForPatch(host, patch);
-
-            return actions;
-        }
-
         private static List<XenRef<VM>> RunningHvmVMs(Host host)
         {
             List<XenRef<VM>> vms = new List<XenRef<VM>>();
             foreach (VM vm in host.Connection.ResolveAll(host.resident_VMs))
             {
-                if (!vm.IsHVM || !vm.is_a_real_vm)
+                if (!vm.IsHVM() || !vm.is_a_real_vm())
                     continue;
                 vms.Add(new XenRef<VM>(vm.opaque_ref));
             }
@@ -547,7 +558,7 @@ namespace XenAdmin.Wizards.PatchingWizard
             List<XenRef<VM>> vms = new List<XenRef<VM>>();
             foreach (VM vm in host.Connection.ResolveAll(host.resident_VMs))
             {
-                if (vm.IsHVM || !vm.is_a_real_vm)
+                if (vm.IsHVM() || !vm.is_a_real_vm())
                     continue;
                 vms.Add(new XenRef<VM>(vm.opaque_ref));
             }
@@ -559,7 +570,7 @@ namespace XenAdmin.Wizards.PatchingWizard
             List<XenRef<VM>> vms = new List<XenRef<VM>>();
             foreach (VM vm in host.Connection.ResolveAll(host.resident_VMs))
             {
-                if (!vm.is_a_real_vm)
+                if (!vm.is_a_real_vm())
                     continue;
 
                 vms.Add(new XenRef<VM>(vm.opaque_ref));
@@ -627,7 +638,15 @@ namespace XenAdmin.Wizards.PatchingWizard
 
         private void AllWorkersFinished()
         {
-            labelTitle.Text = Messages.PATCHINGWIZARD_UPDATES_DONE_AUTOMATED_UPDATES_MODE;
+            if (WizardMode == WizardMode.AutomatedUpdates)
+            {
+                labelTitle.Text = Messages.PATCHINGWIZARD_UPDATES_DONE_AUTOMATED_UPDATES_MODE;
+            }
+            else if (WizardMode == WizardMode.NewVersion)
+            {
+                labelTitle.Text = Messages.PATCHINGWIZARD_UPDATES_DONE_AUTOMATED_NEW_VERSION_MODE;
+            }
+
             progressBar.Value = 100;
             pictureBox1.Image = null;
             labelError.Text = Messages.CLOSE_WIZARD_CLICK_FINISH;

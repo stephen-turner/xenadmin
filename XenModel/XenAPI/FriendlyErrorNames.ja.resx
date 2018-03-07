@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,39 +26,39 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
-    -->
+  -->
   <xsd:schema id="root" xmlns="" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element msdata:IsDataSet="true" name="root">
@@ -129,6 +129,9 @@
   <data name="AUTH_DISABLE_FAILED" xml:space="preserve">
     <value>以下のエラーにより、外部認証が無効になりました。現在の Active Directory マシン アカウントが Active Directory サーバー上で正しく無効になっていません。</value>
   </data>
+  <data name="AUTH_DISABLE_FAILED_INVALID_ACCOUNT" xml:space="preserve">
+    <value>次のエラーにより、外部認証が無効になりました: アカウントが無効なため、一部の Active Directory マシン アカウントが Active Directory サーバー上で無効になっていません</value>
+  </data>
   <data name="AUTH_DISABLE_FAILED_PERMISSION_DENIED" xml:space="preserve">
     <value>以下のエラーにより、外部認証が無効になりました。アクセス拒否により、現在の Active Directory マシン アカウントが Active Directory サーバー上で無効になっていません。</value>
   </data>
@@ -140,6 +143,12 @@
   </data>
   <data name="AUTH_ENABLE_FAILED_DOMAIN_LOOKUP_FAILED" xml:space="preserve">
     <value>サーバーでドメイン サーバーに接続できないため外部認証を有効にできません。設定を確認し、ドメイン サーバーに接続できることを確認してください。</value>
+  </data>
+  <data name="AUTH_ENABLE_FAILED_INVALID_ACCOUNT" xml:space="preserve">
+    <value>ホストが外部認証を有効にできませんでした。</value>
+  </data>
+  <data name="AUTH_ENABLE_FAILED_INVALID_OU" xml:space="preserve">
+    <value>ホストが外部認証を有効にできませんでした。</value>
   </data>
   <data name="AUTH_ENABLE_FAILED_PERMISSION_DENIED" xml:space="preserve">
     <value>外部認証を有効にできません。Active Directory サーバーへのアクセスが拒否されました。</value>
@@ -161,6 +170,9 @@
   </data>
   <data name="BACKUP_SCRIPT_FAILED" xml:space="preserve">
     <value>バックアップ スクリプトにエラーが発生したため、バックアップを実行できませんでした。</value>
+  </data>
+  <data name="BALLOONING_TIMEOUT_BEFORE_MIGRATION" xml:space="preserve">
+    <value>仮想マシンの移行前にメモリバルーニングでタイムアウトが発生しました。エラーが繰り返し発生する場合、動的最小メモリ量 (memory-dynamic-min) を増やしてください。</value>
   </data>
   <data name="BOOTLOADER_FAILED" xml:space="preserve">
     <value>この VM のブートローダーからエラーが返されました -- VM が正しくインストールされていることを確認してください。{1}</value>
@@ -217,7 +229,7 @@
     <value>この PIF ボンディング スレーブなので接続できません。</value>
   </data>
   <data name="CANNOT_PLUG_VIF" xml:space="preserve">
-    <value>ネットワーク インターフェイスが接続できないため、この VM を起動できません。既にほかで使用されている NIC があります。</value>
+    <value>ネットワーク インターフェイスが接続できないため、この仮想マシンを起動できません。既にほかで使用されている NIC があります。</value>
   </data>
   <data name="CANNOT_RESET_CONTROL_DOMAIN" xml:space="preserve">
     <value>コントロール ドメインの電源の状態をリセットすることはできません。</value>
@@ -248,6 +260,9 @@
   </data>
   <data name="COULD_NOT_IMPORT_DATABASE" xml:space="preserve">
     <value>メタデータ VDI からのデータベースのインポート時にエラーが発生しました。</value>
+  </data>
+  <data name="COULD_NOT_UPDATE_IGMP_SNOOPING_EVERYWHERE" xml:space="preserve">
+    <value>IGMP スヌーピング設定は、一部のホスト、ネットワークには適用できません。</value>
   </data>
   <data name="CPU_FEATURE_MASKING_NOT_SUPPORTED" xml:space="preserve">
     <value>この CPU は機能のマスキングをサポートしません。</value>
@@ -457,7 +472,7 @@
     <value>サーバーが使用中のため、この処理を完了できません。</value>
   </data>
   <data name="HOST_IS_LIVE" xml:space="preserve">
-    <value>サーバーがライブであるため、この処理を完了できません。</value>
+    <value>サーバーが稼働中であるため、この処理を完了できません。</value>
   </data>
   <data name="HOST_IS_SLAVE" xml:space="preserve">
     <value>対象のサーバーはスレーブです。</value>
@@ -675,6 +690,9 @@
   <data name="NETWORK_CONTAINS_VIF" xml:space="preserve">
     <value>ネットワークにはアクティブな VIF ({0}) があるため、削除できません。</value>
   </data>
+  <data name="NETWORK_INCOMPATIBLE_PURPOSES" xml:space="preserve">
+    <value>ネットワークに追加しようとした目的は、このネットワークまたは他のネットワークの既存の目的と互換性がありません。</value>
+  </data>
   <data name="NETWORK_UNMANAGED" xml:space="preserve">
     <value>ネットワークは xapi で管理されていません。</value>
   </data>
@@ -698,6 +716,9 @@
   </data>
   <data name="NO_MORE_REDO_LOGS_ALLOWED" xml:space="preserve">
     <value>アクティブなやり直しログのインスタンスが上限に達しました。</value>
+  </data>
+  <data name="NVIDIA_TOOLS_ERROR" xml:space="preserve">
+    <value>Nvidia ツールのエラーです。最新の Nvidia ツールをインストールしてください</value>
   </data>
   <data name="OBJECT_NOLONGER_EXISTS" xml:space="preserve">
     <value>指定されたオブジェクトはもう存在していません。</value>
@@ -723,6 +744,9 @@
   <data name="OUT_OF_SPACE" xml:space="preserve">
     <value>アップデートをアップロードするために必要な空き容量がありません。</value>
   </data>
+  <data name="PASSTHROUGH_NOT_ENABLED" xml:space="preserve">
+    <value>USB を VM にパススルーする前に、passthrough_enabled を true に設定する必要があります。</value>
+  </data>
   <data name="PATCH_ALREADY_APPLIED" xml:space="preserve">
     <value>アップデート {0} は適用済みです。</value>
   </data>
@@ -733,7 +757,7 @@
     <value>アップデートの適用に失敗しました。詳しくはログを参照してください。</value>
   </data>
   <data name="PATCH_APPLY_FAILED_BACKUP_FILES_EXIST" xml:space="preserve">
-    <value>パッチの適用に失敗しました。パッチの適用中にバックアップファイルが作成されています。これらのバックアップ ファイルを削除してから、パッチを再び適用してください。</value>
+    <value>パッチの適用に失敗しました。パッチの適用中にバックアップファイルが作成されました。これらのバックアップ ファイルを削除してから、パッチを再び適用してください。</value>
   </data>
   <data name="PATCH_IS_APPLIED" xml:space="preserve">
     <value>指定されたパッチは適用済みであり、破棄できません。</value>
@@ -813,6 +837,9 @@
   <data name="PIF_IS_VLAN" xml:space="preserve">
     <value>VLAN 上に VLAN を作成することはできません。物理 PIF/ボンディングを使用してください。</value>
   </data>
+  <data name="PIF_NOT_PRESENT" xml:space="preserve">
+    <value>このホストには指定されたネットワークの PIF がありません。</value>
+  </data>
   <data name="PIF_TUNNEL_STILL_EXISTS" xml:space="preserve">
     <value>このインターフェイスにトンネルが存在している間は、処理を続行できません。</value>
   </data>
@@ -831,6 +858,9 @@
   <data name="POOL_AUTH_DISABLE_FAILED" xml:space="preserve">
     <value>以下のエラーにより、外部認証が無効になりました。一部の Active Directory マシン アカウントが Active Directory サーバー上で正しく無効になっていません。 </value>
   </data>
+  <data name="POOL_AUTH_DISABLE_FAILED_INVALID_ACCOUNT" xml:space="preserve">
+    <value>次のエラーにより、外部認証が無効になりました: アカウントが無効なため、一部の Active Directory マシン アカウントが Active Directory サーバー上で無効になっていません。</value>
+  </data>
   <data name="POOL_AUTH_DISABLE_FAILED_PERMISSION_DENIED" xml:space="preserve">
     <value>以下のエラーにより、外部認証が無効になりました。アクセス拒否により、一部の Active Directory マシン アカウントが Active Directory サーバー上で無効になっていません。</value>
   </data>
@@ -845,6 +875,9 @@
   </data>
   <data name="POOL_AUTH_ENABLE_FAILED_DUPLICATE_HOSTNAME" xml:space="preserve">
     <value>外部認証を有効にできません。ホスト名の重複が検出されました。</value>
+  </data>
+  <data name="POOL_AUTH_ENABLE_FAILED_INVALID_ACCOUNT" xml:space="preserve">
+    <value>外部認証を有効にできません。指定したアカウントは無効です。</value>
   </data>
   <data name="POOL_AUTH_ENABLE_FAILED_INVALID_OU" xml:space="preserve">
     <value>プールへの外部認証の有効化に失敗しました。</value>
@@ -861,8 +894,26 @@
   <data name="POOL_JOINING_EXTERNAL_AUTH_MISMATCH" xml:space="preserve">
     <value>プールに追加するサーバーの外部認証の構成は、追加先プールの設定と同じである必要があります。</value>
   </data>
+  <data name="POOL_JOINING_HOST_HAS_BONDS" xml:space="preserve">
+    <value>プールに追加しているホストに、ボンディングを含めることができません。</value>
+  </data>
+  <data name="POOL_JOINING_HOST_HAS_NON_MANAGEMENT_VLANS" xml:space="preserve">
+    <value>プールに追加しているホストに、非管理 VLAN を含めることができません。</value>
+  </data>
+  <data name="POOL_JOINING_HOST_HAS_TUNNELS" xml:space="preserve">
+    <value>プールに追加しているホストに、トンネルを含めることができません。</value>
+  </data>
+  <data name="POOL_JOINING_HOST_MANAGEMENT_VLAN_DOES_NOT_MATCH" xml:space="preserve">
+    <value>プールに追加しているホストに、同じ管理 VLAN を含めることができません。</value>
+  </data>
   <data name="POOL_JOINING_HOST_MUST_HAVE_PHYSICAL_MANAGEMENT_NIC" xml:space="preserve">
     <value>プールに追加するサーバーには、物理管理 NIC (つまり VLAN またはボンディングした PIF 以外の NIC) がある必要があります。</value>
+  </data>
+  <data name="POOL_JOINING_HOST_MUST_HAVE_SAME_API_VERSION" xml:space="preserve">
+    <value>プールに追加するホストには、プール マスターと同じ API バージョンが必要です。</value>
+  </data>
+  <data name="POOL_JOINING_HOST_MUST_HAVE_SAME_DB_SCHEMA" xml:space="preserve">
+    <value>プールに追加するホストには、プール マスターと同じデータベース スキーマが必要です。</value>
   </data>
   <data name="POOL_JOINING_HOST_MUST_HAVE_SAME_PRODUCT_VERSION" xml:space="preserve">
     <value>プールに追加するサーバーの製品バージョンは、プール マスターのものと同じである必要があります。</value>
@@ -875,6 +926,9 @@
   </data>
   <data name="PROVISION_ONLY_ALLOWED_ON_TEMPLATE" xml:space="preserve">
     <value>プロビジョン コールは、通常の VM ではなくテンプレートでのみ呼び出すことができます。</value>
+  </data>
+  <data name="PUSB_VDI_CONFLICT" xml:space="preserve">
+    <value>この PUSB に対応する VDI には、既存の VBD があります。</value>
   </data>
   <data name="PVS_CACHE_STORAGE_ALREADY_PRESENT" xml:space="preserve">
     <value>PVS サイトには既にホスト用に構成されたキャッシュ ストレージが存在します。</value>
@@ -1006,6 +1060,9 @@
   </data>
   <data name="SR_BACKEND_FAILURE_120" xml:space="preserve">
     <value>Dconf 文字列に NetApp target パラメーターがありません。</value>
+  </data>
+  <data name="SR_BACKEND_FAILURE_1200" xml:space="preserve">
+    <value>SM が一般的な python の例外をスローしました</value>
   </data>
   <data name="SR_BACKEND_FAILURE_121" xml:space="preserve">
     <value>Dconf 文字列に NetApp username パラメーターがありません。</value>
@@ -1181,6 +1238,12 @@
   <data name="SR_BACKEND_FAILURE_226" xml:space="preserve">
     <value>不正なローカル パスです。</value>
   </data>
+  <data name="SR_BACKEND_FAILURE_227" xml:space="preserve">
+    <value>指定された SMB バージョンは使用できません。1.0 または 3.0 を選択してください</value>
+  </data>
+  <data name="SR_BACKEND_FAILURE_228" xml:space="preserve">
+    <value>xe-mount-isosr には "-o" が必要です</value>
+  </data>
   <data name="SR_BACKEND_FAILURE_24" xml:space="preserve">
     <value>指定した VDI は現在使用中です。</value>
   </data>
@@ -1355,8 +1418,20 @@
   <data name="SR_BACKEND_FAILURE_456" xml:space="preserve">
     <value>空の光学式ドライブを VM に接続することはできません。</value>
   </data>
+  <data name="SR_BACKEND_FAILURE_457" xml:space="preserve">
+    <value>変更ブロック追跡をアクティブにできません。</value>
+  </data>
+  <data name="SR_BACKEND_FAILURE_458" xml:space="preserve">
+    <value>変更ブロック追跡を非アクティブにできません。</value>
+  </data>
+  <data name="SR_BACKEND_FAILURE_459" xml:space="preserve">
+    <value>変更ブロック追跡ログに一貫性がありません。</value>
+  </data>
   <data name="SR_BACKEND_FAILURE_46" xml:space="preserve">
     <value>VDI が使用できません。</value>
+  </data>
+  <data name="SR_BACKEND_FAILURE_460" xml:space="preserve">
+    <value>指定された VDI の変更ブロックを計算できませんでした。</value>
   </data>
   <data name="SR_BACKEND_FAILURE_47" xml:space="preserve">
     <value>ストレージ リポジトリが使用できません。</value>
@@ -1533,7 +1608,7 @@
     <value>SR に PBD が接続されていません。</value>
   </data>
   <data name="SR_HAS_PBD" xml:space="preserve">
-    <value>SR {0} はまだ PBD 経由でサーバーに接続されているため、破棄できません。</value>
+    <value>SR {0} がまだ PBD でサーバーに接続されているため、破棄できません。</value>
   </data>
   <data name="SR_INDESTRUCTIBLE" xml:space="preserve">
     <value>'indestructible' フラグが設定されていないため、SR を破棄できません。</value>
@@ -1586,6 +1661,9 @@
   <data name="TASK_CANCELLED" xml:space="preserve">
     <value>要求が非同期的にキャンセルされました。</value>
   </data>
+  <data name="TLS_CONNECTION_FAILED" xml:space="preserve">
+    <value>指定されたアドレスとポートで TLS を使用して他のホストに通信することができません。</value>
+  </data>
   <data name="TOO_BUSY" xml:space="preserve">
     <value>サーバーがビジー状態であるため、要求が拒否されました。</value>
   </data>
@@ -1594,6 +1672,9 @@
   </data>
   <data name="TOO_MANY_STORAGE_MIGRATES" xml:space="preserve">
     <value>同時に移行可能な VM の最大数に達しました。</value>
+  </data>
+  <data name="TOO_MANY_VUSBS" xml:space="preserve">
+    <value>VM にある VUSB の数が多すぎます。</value>
   </data>
   <data name="TRANSPORT_PIF_NOT_CONFIGURED" xml:space="preserve">
     <value>トンネル トランスポート PIF に IP 構成が設定されていません。</value>
@@ -1640,8 +1721,23 @@
   <data name="UPDATE_PRECHECK_FAILED_WRONG_SERVER_VERSION" xml:space="preserve">
     <value>アップデートの事前チェックに失敗しました。サーバーのバージョンが正しくありません。</value>
   </data>
+  <data name="USB_ALREADY_ATTACHED" xml:space="preserve">
+    <value>USB デバイスは現在 VM に接続されています。</value>
+  </data>
+  <data name="USB_GROUP_CONFLICT" xml:space="preserve">
+    <value>USB_groups には現在 1 つの VUSB しか割り当てることができないよう制限されています。</value>
+  </data>
+  <data name="USB_GROUP_CONTAINS_NO_PUSBS" xml:space="preserve">
+    <value>USB グループに PUSB が割り当てられていません。</value>
+  </data>
+  <data name="USB_GROUP_CONTAINS_PUSB" xml:space="preserve">
+    <value>USB グループにアクティブな PUSB が割り当てられているため、削除できません。</value>
+  </data>
+  <data name="USB_GROUP_CONTAINS_VUSB" xml:space="preserve">
+    <value>USB グループにアクティブな VUSB が割り当てられているため、削除できません。</value>
+  </data>
   <data name="USER_IS_NOT_LOCAL_SUPERUSER" xml:space="preserve">
-    <value>この処理を実行できるのはローカルの superuser だけです。</value>
+    <value>この処理を実行できるのはローカルのスーパー ユーザーだけです。</value>
   </data>
   <data name="UUID_INVALID" xml:space="preserve">
     <value>指定した UUID は無効です。</value>
@@ -1681,6 +1777,9 @@
   </data>
   <data name="VCPUS_MAX_ALLOWED_TITLE" xml:space="preserve">
     <value>許可される仮想 CPU の最大数</value>
+  </data>
+  <data name="VDI_CBT_ENABLED" xml:space="preserve">
+    <value>指定された VDI で CBT が有効になっています。要求された操作は CBT が有効になった VDI またはその VDI がある仮想マシンで許可されていません。</value>
   </data>
   <data name="VDI_CONTAINS_METADATA_OF_THIS_POOL" xml:space="preserve">
     <value>この VDI には現在のプールのメタデータが含まれているため、メタデータの復元に使用できません。</value>
@@ -1724,14 +1823,20 @@
   <data name="VDI_NOT_SPARSE" xml:space="preserve">
     <value>VDI がスパース フォーマットで格納されていません。2 つの VDI での変更ブロック (差分ブロックまたはデルタ ブロック) のみを照会したり操作したりすることはできません。VHD などスパース対応の VDI を選択してください。</value>
   </data>
+  <data name="VDI_NO_CBT_METADATA" xml:space="preserve">
+    <value>指定された VDI に変更ブロック追跡のメタデータがないため、要求された操作は許可されません。</value>
+  </data>
   <data name="VDI_ON_BOOT_MODE_INCOMPATIBLE_WITH_OPERATION" xml:space="preserve">
-    <value>'on-boot=reset' モードの VDI が含まれる VM では、この操作は許可されません</value>
+    <value>この操作は 'on-boot=reset' モードの VDI、またはこのような VDI がある仮想マシンで許可されていません。</value>
   </data>
   <data name="VDI_READONLY" xml:space="preserve">
     <value>この処理では書き込みアクセスが必要ですが VDI {0} は読み取り専用です。</value>
   </data>
   <data name="VDI_TOO_SMALL" xml:space="preserve">
     <value>VDI が小さすぎます。最小サイズよりも大きくしてください。</value>
+  </data>
+  <data name="VGPU_DESTINATION_INCOMPATIBLE" xml:space="preserve">
+    <value>この仮想 GPU は対象の物理 GPU と互換性がありません。</value>
   </data>
   <data name="VGPU_TYPE_NOT_COMPATIBLE_WITH_RUNNING_TYPE" xml:space="preserve">
     <value>すべての GPU が使用中か、ほかの種類の仮想 GPU を実行しているため、VM を起動できません。</value>
@@ -1785,7 +1890,7 @@
     <value>'{1}' 状態の VM に対する処理を、'{2}' 状態の VM に対して実行しようとしました。</value>
   </data>
   <data name="VM_BIOS_STRINGS_ALREADY_SET" xml:space="preserve">
-    <value>この VM の BIOS 文字列は設定済みであり、これ以降変更できません。</value>
+    <value>この VM の BIOS 文字列は設定済みであり、変更できません。</value>
   </data>
   <data name="VM_CALL_PLUGIN_RATE_LIMIT" xml:space="preserve">
     <value>同じ VM でのプラグインの連続呼び出しには、最小限の間隔が必要です。しばらく待ってから再試行してください。</value>
@@ -1814,6 +1919,9 @@
   <data name="VM_HAS_CHECKPOINT" xml:space="preserve">
     <value>チェックポイントが作成された VM を移行しようとしています。</value>
   </data>
+  <data name="VM_HAS_NO_SUSPEND_VDI" xml:space="preserve">
+    <value>一時停止 VDI がないため、仮想マシンを再開できません</value>
+  </data>
   <data name="VM_HAS_PCI_ATTACHED" xml:space="preserve">
     <value>VM で PCI デバイスのパススルーが設定されているため、この処理を実行できません。</value>
   </data>
@@ -1823,11 +1931,14 @@
   <data name="VM_HAS_VGPU" xml:space="preserve">
     <value>VM に 仮想 GPU が割り当てられているため、この処理を実行できません。</value>
   </data>
+  <data name="VM_HAS_VUSBS" xml:space="preserve">
+    <value>VM に VUSB が割り当てられている場合、この操作は許可されません。</value>
+  </data>
   <data name="VM_HOST_INCOMPATIBLE_VERSION" xml:space="preserve">
     <value>古いバージョンのホストをアップグレードするときにこの VM 処理は実行できません。</value>
   </data>
   <data name="VM_HOST_INCOMPATIBLE_VERSION_MIGRATE" xml:space="preserve">
-    <value>移行元ホストより古いバージョンの XenServer を実行している移行先のホストに VM を移行しようとしました。</value>
+    <value>移行元ホストより古いバージョンの移行先ホストに VM を移行しようとしました。</value>
   </data>
   <data name="VM_HOST_INCOMPATIBLE_VIRTUAL_HARDWARE_PLATFORM_VERSION" xml:space="preserve">
     <value>VM のこのバージョンの仮想ハードウェア プラットフォームには、このホストとの互換性がありません。</value>
@@ -1930,6 +2041,9 @@
   </data>
   <data name="VM_REQUIRES_VGPU" xml:space="preserve">
     <value>使用可能な GPU がないため VM を起動できません。</value>
+  </data>
+  <data name="VM_REQUIRES_VUSB" xml:space="preserve">
+    <value>VUSB が必要なホスト上で VM を実行しようとすると、VM に必要な USB_group の任意の PUSBに VM を割り当てることができません。</value>
   </data>
   <data name="VM_REVERT_FAILED" xml:space="preserve">
     <value>仮想マシンをスナップショットの状態に復元するときにエラーが発生しました</value>

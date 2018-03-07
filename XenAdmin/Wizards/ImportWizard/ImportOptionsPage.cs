@@ -36,7 +36,7 @@ using System.Linq;
 using System.Windows.Forms;
 using XenAdmin.Controls;
 using XenAdmin.Controls.Common;
-using XenAdmin.Core;
+using XenCenterLib;
 using XenAdmin.Mappings;
 using XenAPI;
 using XenOvf;
@@ -138,7 +138,7 @@ namespace XenAdmin.Wizards.ImportWizard
 		{
 			return sr.content_type.ToLower() == "iso"
 			       && sr.type.ToLower() == "iso"
-			       && !sr.IsToolsSR
+			       && !sr.IsToolsSR()
 			       && m_hostTargets.All(sr.CanBeSeenFrom); //returns true if the list is empty
 		}
 
@@ -152,7 +152,7 @@ namespace XenAdmin.Wizards.ImportWizard
 
         private string GetSRDropDownItemDisplayString(SR sr)
         {
-            return string.Format("{0} ({1})", sr.Name, Util.DiskSizeString(sr.FreeSpace));
+            return string.Format("{0} ({1})", sr.Name(), Util.DiskSizeString(sr.FreeSpace()));
         }
 
         private void PopulateComboBox()

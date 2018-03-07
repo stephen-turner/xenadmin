@@ -39,9 +39,10 @@ using XenAdmin.Actions;
 using XenAdmin.Core;
 using XenAdmin.Dialogs;
 using XenAdmin.Network;
+using XenAdmin.Plugins;
 using XenAdmin.ServerDBs;
 using XenAPI;
-
+using XenCenterLib;
 
 namespace XenAdmin
 {
@@ -61,7 +62,7 @@ namespace XenAdmin
 
         public Session CreateActionSession(Session session, IXenConnection connection)
         {
-            return SessionFactory.CreateSession(session, connection, ConnectionTimeout);
+            return SessionFactory.DuplicateSession(session, connection, ConnectionTimeout);
         }
 
         public bool Exiting
@@ -93,7 +94,7 @@ namespace XenAdmin
         {
             try
             {
-                if (connection != null && connection.Session != null && connection.Session.uuid == "dummy")
+                if (connection != null && connection.Session != null && connection.Session.opaque_ref == "dummy")
                     return new XenAdminSimulatorWebProxy(DbProxy.proxys[connection]);
 
                 switch ((HTTPHelper.ProxyStyle)XenAdmin.Properties.Settings.Default.ProxySetting)
@@ -196,5 +197,12 @@ namespace XenAdmin
         {
             get { return XenAdmin.Properties.Settings.Default.ShowHiddenVMs; }
         }
+
+        public PluginManager PluginManager;
+
+        public string GetXenCenterMetadata(bool isForXenCenter)
+        {
+            return Metadata.Generate(PluginManager, isForXenCenter);
+        }      
     }
 }

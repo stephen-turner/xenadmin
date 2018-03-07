@@ -55,7 +55,7 @@ namespace XenAdminTests.UnitTests.AlertTests
         [Test]
         public void TestAlertWithConnectionAndHosts()
         {
-            XenServerVersion ver = new XenServerVersion("1.2.3", "name", true, "http://url", new List<XenServerPatch>(), new List<XenServerPatch>(), new DateTime(2011, 4, 1).ToString(), "123");
+            XenServerVersion ver = new XenServerVersion("1.2.3", "name", true, false, "http://url", new List<XenServerPatch>(), new List<XenServerPatch>(), new DateTime(2011, 4, 1).ToString(), "123", "", false);
             var alert = new XenServerVersionAlert(ver);
             alert.IncludeConnection(connA.Object);
             alert.IncludeConnection(connB.Object);
@@ -83,7 +83,7 @@ namespace XenAdminTests.UnitTests.AlertTests
         [Test]
         public void TestAlertWithHostsAndNoConnection()
         {
-            XenServerVersion ver = new XenServerVersion("1.2.3", "name", true, "http://url", new List<XenServerPatch>(), new List<XenServerPatch>(), new DateTime(2011, 4, 1).ToString(), "123");
+            XenServerVersion ver = new XenServerVersion("1.2.3", "name", true, false, "http://url", new List<XenServerPatch>(), new List<XenServerPatch>(), new DateTime(2011, 4, 1).ToString(), "123", "", false);
             var alert = new XenServerVersionAlert(ver);
             alert.IncludeHosts(new List<Host> { hostA.Object, hostB.Object });
 
@@ -109,7 +109,7 @@ namespace XenAdminTests.UnitTests.AlertTests
         [Test]
         public void TestAlertWithConnectionAndNoHosts()
         {
-            XenServerVersion ver = new XenServerVersion("1.2.3", "name", true, "http://url", new List<XenServerPatch>(), new List<XenServerPatch>(), new DateTime(2011, 4, 1).ToString(), "123");
+            XenServerVersion ver = new XenServerVersion("1.2.3", "name", true, false, "http://url", new List<XenServerPatch>(), new List<XenServerPatch>(), new DateTime(2011, 4, 1).ToString(), "123", "", false);
             var alert = new XenServerVersionAlert(ver);
             alert.IncludeConnection(connA.Object);
             alert.IncludeConnection(connB.Object);
@@ -136,7 +136,7 @@ namespace XenAdminTests.UnitTests.AlertTests
         [Test]
         public void TestAlertWithNoConnectionAndNoHosts()
         {
-            XenServerVersion ver = new XenServerVersion("1.2.3", "name", true, "http://url", new List<XenServerPatch>(), new List<XenServerPatch>(), new DateTime(2011, 4, 1).ToString(), "123");
+            XenServerVersion ver = new XenServerVersion("1.2.3", "name", true, false, "http://url", new List<XenServerPatch>(), new List<XenServerPatch>(), new DateTime(2011, 4, 1).ToString(), "123", "", false);
             var alert = new XenServerVersionAlert(ver);
 
             IUnitTestVerifier validator = new VerifyGetters(alert);
@@ -166,14 +166,14 @@ namespace XenAdminTests.UnitTests.AlertTests
 
         private void VerifyConnExpectations(Func<Times> times)
         {
-            connA.VerifyGet(n => n.Name, times());
-            connB.VerifyGet(n => n.Name, times());
+            connA.Verify(n => n.Name, times());
+            connB.Verify(n => n.Name, times());
         }
 
         private void VerifyHostsExpectations(Func<Times> times)
         {
-            hostA.VerifyGet(n => n.Name, times());
-            hostB.VerifyGet(n => n.Name, times());
+            hostA.Verify(n => n.Name(), times());
+            hostB.Verify(n => n.Name(), times());
         }
 
         [SetUp]
@@ -190,11 +190,11 @@ namespace XenAdminTests.UnitTests.AlertTests
             connB.Setup(x => x.Cache).Returns(cacheB);
 
             hostA = new Mock<Host>(MockBehavior.Strict);
-            hostA.Setup(n => n.Name).Returns("HostAName");
+            hostA.Setup(n => n.Name()).Returns("HostAName");
             hostA.Setup(n => n.Equals(It.IsAny<object>())).Returns((object o) => ReferenceEquals(o, hostA.Object));
 
             hostB = new Mock<Host>(MockBehavior.Strict);
-            hostB.Setup(n => n.Name).Returns("HostBName");
+            hostB.Setup(n => n.Name()).Returns("HostBName");
             hostB.Setup(n => n.Equals(It.IsAny<object>())).Returns((object o) => ReferenceEquals(o, hostB.Object));
         }
 

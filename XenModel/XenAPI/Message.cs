@@ -1,19 +1,19 @@
 /*
  * Copyright (c) Citrix Systems, Inc.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  *   1) Redistributions of source code must retain the above copyright
  *      notice, this list of conditions and the following disclaimer.
- * 
+ *
  *   2) Redistributions in binary form must reproduce the above
  *      copyright notice, this list of conditions and the following
  *      disclaimer in the documentation and/or other materials
  *      provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -32,8 +32,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
-using CookComputing.XmlRpc;
+using System.ComponentModel;
+using System.Globalization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 
 namespace XenAPI
@@ -44,7 +46,7 @@ namespace XenAPI
     /// </summary>
     public partial class Message : XenObject<Message>
     {
-        public enum MessageType { POOL_CPU_FEATURES_UP, POOL_CPU_FEATURES_DOWN, HOST_CPU_FEATURES_UP, HOST_CPU_FEATURES_DOWN, BOND_STATUS_CHANGED, VMSS_SNAPSHOT_MISSED_EVENT, VMSS_XAPI_LOGON_FAILURE, VMSS_LICENSE_ERROR, VMSS_SNAPSHOT_FAILED, VMSS_SNAPSHOT_SUCCEEDED, VMSS_SNAPSHOT_LOCK_FAILED, VMPP_SNAPSHOT_ARCHIVE_ALREADY_EXISTS, VMPP_ARCHIVE_MISSED_EVENT, VMPP_SNAPSHOT_MISSED_EVENT, VMPP_XAPI_LOGON_FAILURE, VMPP_LICENSE_ERROR, VMPP_ARCHIVE_TARGET_UNMOUNT_FAILED, VMPP_ARCHIVE_TARGET_MOUNT_FAILED, VMPP_ARCHIVE_SUCCEEDED, VMPP_ARCHIVE_FAILED_0, VMPP_ARCHIVE_LOCK_FAILED, VMPP_SNAPSHOT_FAILED, VMPP_SNAPSHOT_SUCCEEDED, VMPP_SNAPSHOT_LOCK_FAILED, PVS_PROXY_SR_OUT_OF_SPACE, PVS_PROXY_NO_SERVER_AVAILABLE, PVS_PROXY_SETUP_FAILED, PVS_PROXY_NO_CACHE_SR_AVAILABLE, LICENSE_SERVER_VERSION_OBSOLETE, LICENSE_SERVER_UNREACHABLE, LICENSE_NOT_AVAILABLE, GRACE_LICENSE, LICENSE_SERVER_UNAVAILABLE, LICENSE_SERVER_CONNECTED, LICENSE_EXPIRED, LICENSE_EXPIRES_SOON, LICENSE_DOES_NOT_SUPPORT_POOLING, MULTIPATH_PERIODIC_ALERT, EXTAUTH_IN_POOL_IS_NON_HOMOGENEOUS, EXTAUTH_INIT_IN_HOST_FAILED, WLB_OPTIMIZATION_ALERT, WLB_CONSULTATION_FAILED, ALARM, PBD_PLUG_FAILED_ON_SERVER_START, POOL_MASTER_TRANSITION, HOST_CLOCK_WENT_BACKWARDS, HOST_CLOCK_SKEW_DETECTED, HOST_SYNC_DATA_FAILED, VM_CLONED, VM_CRASHED, VM_RESUMED, VM_SUSPENDED, VM_REBOOTED, VM_SHUTDOWN, VM_STARTED, VCPU_QOS_FAILED, VBD_QOS_FAILED, VIF_QOS_FAILED, IP_CONFIGURED_PIF_CAN_UNPLUG, METADATA_LUN_BROKEN, METADATA_LUN_HEALTHY, HA_HOST_WAS_FENCED, HA_HOST_FAILED, HA_PROTECTED_VM_RESTART_FAILED, HA_POOL_DROP_IN_PLAN_EXISTS_FOR, HA_POOL_OVERCOMMITTED, HA_NETWORK_BONDING_ERROR, HA_XAPI_HEALTHCHECK_APPROACHING_TIMEOUT, HA_STATEFILE_APPROACHING_TIMEOUT, HA_HEARTBEAT_APPROACHING_TIMEOUT, HA_STATEFILE_LOST, unknown };
+        public enum MessageType { POOL_CPU_FEATURES_UP, POOL_CPU_FEATURES_DOWN, HOST_CPU_FEATURES_UP, HOST_CPU_FEATURES_DOWN, BOND_STATUS_CHANGED, VDI_CBT_RESIZE_FAILED, VDI_CBT_SNAPSHOT_FAILED, VDI_CBT_METADATA_INCONSISTENT, VMSS_SNAPSHOT_MISSED_EVENT, VMSS_XAPI_LOGON_FAILURE, VMSS_LICENSE_ERROR, VMSS_SNAPSHOT_FAILED, VMSS_SNAPSHOT_SUCCEEDED, VMSS_SNAPSHOT_LOCK_FAILED, VMPP_SNAPSHOT_ARCHIVE_ALREADY_EXISTS, VMPP_ARCHIVE_MISSED_EVENT, VMPP_SNAPSHOT_MISSED_EVENT, VMPP_XAPI_LOGON_FAILURE, VMPP_LICENSE_ERROR, VMPP_ARCHIVE_TARGET_UNMOUNT_FAILED, VMPP_ARCHIVE_TARGET_MOUNT_FAILED, VMPP_ARCHIVE_SUCCEEDED, VMPP_ARCHIVE_FAILED_0, VMPP_ARCHIVE_LOCK_FAILED, VMPP_SNAPSHOT_FAILED, VMPP_SNAPSHOT_SUCCEEDED, VMPP_SNAPSHOT_LOCK_FAILED, PVS_PROXY_SR_OUT_OF_SPACE, PVS_PROXY_NO_SERVER_AVAILABLE, PVS_PROXY_SETUP_FAILED, PVS_PROXY_NO_CACHE_SR_AVAILABLE, LICENSE_SERVER_VERSION_OBSOLETE, LICENSE_SERVER_UNREACHABLE, LICENSE_NOT_AVAILABLE, GRACE_LICENSE, LICENSE_SERVER_UNAVAILABLE, LICENSE_SERVER_CONNECTED, LICENSE_EXPIRED, LICENSE_EXPIRES_SOON, LICENSE_DOES_NOT_SUPPORT_POOLING, MULTIPATH_PERIODIC_ALERT, EXTAUTH_IN_POOL_IS_NON_HOMOGENEOUS, EXTAUTH_INIT_IN_HOST_FAILED, WLB_OPTIMIZATION_ALERT, WLB_CONSULTATION_FAILED, ALARM, PBD_PLUG_FAILED_ON_SERVER_START, POOL_MASTER_TRANSITION, HOST_CLOCK_WENT_BACKWARDS, HOST_CLOCK_SKEW_DETECTED, HOST_SYNC_DATA_FAILED, VM_CLONED, VM_CRASHED, VM_RESUMED, VM_SUSPENDED, VM_REBOOTED, VM_SHUTDOWN, VM_STARTED, VCPU_QOS_FAILED, VBD_QOS_FAILED, VIF_QOS_FAILED, IP_CONFIGURED_PIF_CAN_UNPLUG, METADATA_LUN_BROKEN, METADATA_LUN_HEALTHY, HA_HOST_WAS_FENCED, HA_HOST_FAILED, HA_PROTECTED_VM_RESTART_FAILED, HA_POOL_DROP_IN_PLAN_EXISTS_FOR, HA_POOL_OVERCOMMITTED, HA_NETWORK_BONDING_ERROR, HA_XAPI_HEALTHCHECK_APPROACHING_TIMEOUT, HA_STATEFILE_APPROACHING_TIMEOUT, HA_HEARTBEAT_APPROACHING_TIMEOUT, HA_STATEFILE_LOST, unknown };
 
         public MessageType Type
         {
@@ -62,6 +64,12 @@ namespace XenAPI
                         return MessageType.HOST_CPU_FEATURES_DOWN;
                     case "BOND_STATUS_CHANGED":
                         return MessageType.BOND_STATUS_CHANGED;
+                    case "VDI_CBT_RESIZE_FAILED":
+                        return MessageType.VDI_CBT_RESIZE_FAILED;
+                    case "VDI_CBT_SNAPSHOT_FAILED":
+                        return MessageType.VDI_CBT_SNAPSHOT_FAILED;
+                    case "VDI_CBT_METADATA_INCONSISTENT":
+                        return MessageType.VDI_CBT_METADATA_INCONSISTENT;
                     case "VMSS_SNAPSHOT_MISSED_EVENT":
                         return MessageType.VMSS_SNAPSHOT_MISSED_EVENT;
                     case "VMSS_XAPI_LOGON_FAILURE":
@@ -230,6 +238,10 @@ namespace XenAPI
             this.UpdateFromProxy(proxy);
         }
 
+        /// <summary>
+        /// Updates each field of this instance with the value of
+        /// the corresponding field of a given Message.
+        /// </summary>
         public override void UpdateFrom(Message update)
         {
             uuid = update.uuid;
@@ -255,29 +267,49 @@ namespace XenAPI
         public Proxy_Message ToProxy()
         {
             Proxy_Message result_ = new Proxy_Message();
-            result_.uuid = (uuid != null) ? uuid : "";
-            result_.name = (name != null) ? name : "";
+            result_.uuid = uuid ?? "";
+            result_.name = name ?? "";
             result_.priority = priority.ToString();
             result_.cls = cls_helper.ToString(cls);
-            result_.obj_uuid = (obj_uuid != null) ? obj_uuid : "";
+            result_.obj_uuid = obj_uuid ?? "";
             result_.timestamp = timestamp;
-            result_.body = (body != null) ? body : "";
+            result_.body = body ?? "";
             return result_;
         }
 
         /// <summary>
         /// Creates a new Message from a Hashtable.
+        /// Note that the fields not contained in the Hashtable
+        /// will be created with their default values.
         /// </summary>
         /// <param name="table"></param>
-        public Message(Hashtable table)
+        public Message(Hashtable table) : this()
         {
-            uuid = Marshalling.ParseString(table, "uuid");
-            name = Marshalling.ParseString(table, "name");
-            priority = Marshalling.ParseLong(table, "priority");
-            cls = (cls)Helper.EnumParseDefault(typeof(cls), Marshalling.ParseString(table, "cls"));
-            obj_uuid = Marshalling.ParseString(table, "obj_uuid");
-            timestamp = Marshalling.ParseDateTime(table, "timestamp");
-            body = Marshalling.ParseString(table, "body");
+            UpdateFrom(table);
+        }
+
+        /// <summary>
+        /// Given a Hashtable with field-value pairs, it updates the fields of this Message
+        /// with the values listed in the Hashtable. Note that only the fields contained
+        /// in the Hashtable will be updated and the rest will remain the same.
+        /// </summary>
+        /// <param name="table"></param>
+        public void UpdateFrom(Hashtable table)
+        {
+            if (table.ContainsKey("uuid"))
+                uuid = Marshalling.ParseString(table, "uuid");
+            if (table.ContainsKey("name"))
+                name = Marshalling.ParseString(table, "name");
+            if (table.ContainsKey("priority"))
+                priority = Marshalling.ParseLong(table, "priority");
+            if (table.ContainsKey("cls"))
+                cls = (cls)Helper.EnumParseDefault(typeof(cls), Marshalling.ParseString(table, "cls"));
+            if (table.ContainsKey("obj_uuid"))
+                obj_uuid = Marshalling.ParseString(table, "obj_uuid");
+            if (table.ContainsKey("timestamp"))
+                timestamp = Marshalling.ParseDateTime(table, "timestamp");
+            if (table.ContainsKey("body"))
+                body = Marshalling.ParseString(table, "body");
         }
 
         public bool DeepEquals(Message other)
@@ -294,6 +326,15 @@ namespace XenAPI
                 Helper.AreEqual2(this._obj_uuid, other._obj_uuid) &&
                 Helper.AreEqual2(this._timestamp, other._timestamp) &&
                 Helper.AreEqual2(this._body, other._body);
+        }
+
+        internal static List<Message> ProxyArrayToObjectList(Proxy_Message[] input)
+        {
+            var result = new List<Message>();
+            foreach (var item in input)
+                result.Add(new Message(item));
+
+            return result;
         }
 
         public override string SaveChanges(Session session, string opaqueRef, Message server)
@@ -320,7 +361,10 @@ namespace XenAPI
         /// <param name="_body">The body of the message</param>
         public static XenRef<Message> create(Session session, string _name, long _priority, cls _cls, string _obj_uuid, string _body)
         {
-            return XenRef<Message>.Create(session.proxy.message_create(session.uuid, (_name != null) ? _name : "", _priority.ToString(), cls_helper.ToString(_cls), (_obj_uuid != null) ? _obj_uuid : "", (_body != null) ? _body : "").parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.message_create(session.opaque_ref, _name, _priority, _cls, _obj_uuid, _body);
+            else
+                return XenRef<Message>.Create(session.proxy.message_create(session.opaque_ref, _name ?? "", _priority.ToString(), cls_helper.ToString(_cls), _obj_uuid ?? "", _body ?? "").parse());
         }
 
         /// <summary>
@@ -331,7 +375,10 @@ namespace XenAPI
         /// <param name="_message">The opaque_ref of the given message</param>
         public static void destroy(Session session, string _message)
         {
-            session.proxy.message_destroy(session.uuid, (_message != null) ? _message : "").parse();
+            if (session.JsonRpcClient != null)
+                session.JsonRpcClient.message_destroy(session.opaque_ref, _message);
+            else
+                session.proxy.message_destroy(session.opaque_ref, _message ?? "").parse();
         }
 
         /// <summary>
@@ -344,7 +391,10 @@ namespace XenAPI
         /// <param name="_since">The cutoff time</param>
         public static Dictionary<XenRef<Message>, Message> get(Session session, cls _cls, string _obj_uuid, DateTime _since)
         {
-            return XenRef<Message>.Create<Proxy_Message>(session.proxy.message_get(session.uuid, cls_helper.ToString(_cls), (_obj_uuid != null) ? _obj_uuid : "", _since).parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.message_get(session.opaque_ref, _cls, _obj_uuid, _since);
+            else
+                return XenRef<Message>.Create<Proxy_Message>(session.proxy.message_get(session.opaque_ref, cls_helper.ToString(_cls), _obj_uuid ?? "", _since).parse());
         }
 
         /// <summary>
@@ -354,7 +404,10 @@ namespace XenAPI
         /// <param name="session">The session</param>
         public static List<XenRef<Message>> get_all(Session session)
         {
-            return XenRef<Message>.Create(session.proxy.message_get_all(session.uuid).parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.message_get_all(session.opaque_ref);
+            else
+                return XenRef<Message>.Create(session.proxy.message_get_all(session.opaque_ref).parse());
         }
 
         /// <summary>
@@ -365,7 +418,10 @@ namespace XenAPI
         /// <param name="_since">The cutoff time</param>
         public static Dictionary<XenRef<Message>, Message> get_since(Session session, DateTime _since)
         {
-            return XenRef<Message>.Create<Proxy_Message>(session.proxy.message_get_since(session.uuid, _since).parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.message_get_since(session.opaque_ref, _since);
+            else
+                return XenRef<Message>.Create<Proxy_Message>(session.proxy.message_get_since(session.opaque_ref, _since).parse());
         }
 
         /// <summary>
@@ -376,7 +432,10 @@ namespace XenAPI
         /// <param name="_message">The opaque_ref of the given message</param>
         public static Message get_record(Session session, string _message)
         {
-            return new Message((Proxy_Message)session.proxy.message_get_record(session.uuid, (_message != null) ? _message : "").parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.message_get_record(session.opaque_ref, _message);
+            else
+                return new Message((Proxy_Message)session.proxy.message_get_record(session.opaque_ref, _message ?? "").parse());
         }
 
         /// <summary>
@@ -387,7 +446,10 @@ namespace XenAPI
         /// <param name="_uuid">The uuid of the message</param>
         public static XenRef<Message> get_by_uuid(Session session, string _uuid)
         {
-            return XenRef<Message>.Create(session.proxy.message_get_by_uuid(session.uuid, (_uuid != null) ? _uuid : "").parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.message_get_by_uuid(session.opaque_ref, _uuid);
+            else
+                return XenRef<Message>.Create(session.proxy.message_get_by_uuid(session.opaque_ref, _uuid ?? "").parse());
         }
 
         /// <summary>
@@ -397,7 +459,10 @@ namespace XenAPI
         /// <param name="session">The session</param>
         public static Dictionary<XenRef<Message>, Message> get_all_records(Session session)
         {
-            return XenRef<Message>.Create<Proxy_Message>(session.proxy.message_get_all_records(session.uuid).parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.message_get_all_records(session.opaque_ref);
+            else
+                return XenRef<Message>.Create<Proxy_Message>(session.proxy.message_get_all_records(session.opaque_ref).parse());
         }
 
         /// <summary>
@@ -416,7 +481,7 @@ namespace XenAPI
                 }
             }
         }
-        private string _uuid;
+        private string _uuid = "";
 
         /// <summary>
         /// The name of the message
@@ -434,7 +499,7 @@ namespace XenAPI
                 }
             }
         }
-        private string _name;
+        private string _name = "";
 
         /// <summary>
         /// The message priority, 0 being low priority
@@ -457,6 +522,7 @@ namespace XenAPI
         /// <summary>
         /// The class of the object this message is associated with
         /// </summary>
+        [JsonConverter(typeof(clsConverter))]
         public virtual cls cls
         {
             get { return _cls; }
@@ -488,11 +554,12 @@ namespace XenAPI
                 }
             }
         }
-        private string _obj_uuid;
+        private string _obj_uuid = "";
 
         /// <summary>
         /// The time at which the message was created
         /// </summary>
+        [JsonConverter(typeof(XenDateTimeConverter))]
         public virtual DateTime timestamp
         {
             get { return _timestamp; }
@@ -524,6 +591,6 @@ namespace XenAPI
                 }
             }
         }
-        private string _body;
+        private string _body = "";
     }
 }

@@ -34,7 +34,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using XenAdmin.Controls;
-using XenAdmin.Core;
+using XenCenterLib;
 
 
 namespace XenAdmin.Dialogs
@@ -257,8 +257,7 @@ namespace XenAdmin.Dialogs
             NetworkComboBox.Items.Clear();
 
             if (!AllowManagementOnVLAN && (type == Type.PRIMARY || type == Type.PRIMARY_WITH_HA))
-                networks.RemoveAll(
-                    network=>network.IsVLAN);
+                networks.RemoveAll(network=>network.IsVLAN());
             
             NetworkComboBox.Items.AddRange(networks.ToArray());
 

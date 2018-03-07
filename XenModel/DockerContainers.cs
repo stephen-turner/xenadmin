@@ -35,8 +35,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using XenAPI;
 
-using XenAdmin.Actions;
-using XenAdmin.Core;
+using XenCenterLib;
 using XenAdmin.Network;
 using System.Xml;
 using System.Linq;
@@ -46,10 +45,6 @@ namespace XenAdmin.Model
 {
     public class DockerContainers
     {
-        static DockerContainers()
-        {
-        }
-
         public static void InitDockerContainers()
         {
             Trace.Assert(InvokeHelper.Synchronizer != null);
@@ -64,22 +59,31 @@ namespace XenAdmin.Model
         private static void XenConnections_CollectionChanged(object sender, CollectionChangeEventArgs e)
         {
             InvokeHelper.BeginInvoke(() =>
-                                                        {
-                                                            IXenConnection connection = e.Element as IXenConnection;
-                                                            if (connection == null)
-                                                                return;
+            {
+                IXenConnection connection = e.Element as IXenConnection;
 
-                                                            switch (e.Action)
-                                                            {
-                                                                case CollectionChangeAction.Add:
-                                                                    AddConnection(connection);
-                                                                    break;
+                switch (e.Action)
+                {
+                    case CollectionChangeAction.Add:
+                        if (connection != null)
+                            AddConnection(connection);
+                        break;
 
-                                                                case CollectionChangeAction.Remove:
-                                                                    RemoveConnection(connection);
-                                                                    break;
-                                                            }
-                                                        });
+                    case CollectionChangeAction.Remove:
+                        if (connection != null)
+                        {
+                            RemoveConnection(connection);
+                        }
+                        else
+                        {
+                            var range = e.Element as List<IXenConnection>;
+                            if (range != null)
+                                foreach (var con in range)
+                                    RemoveConnection(con);
+                        }
+                        break;
+                }
+            });
         }
 
         private static CollectionChangeEventHandler CollectionChangedWithInvoke;
@@ -106,9 +110,8 @@ namespace XenAdmin.Model
         {
             InvokeHelper.AssertOnEventThread();
 
-            Trace.Assert(e.Element is VM);
-
             var vm = e.Element as VM;
+            Trace.Assert(vm != null, "The item changed is not a VM");
 
             switch (e.Action)
             {
@@ -251,7 +254,7 @@ namespace XenAdmin.Model
         public static ComparableList<DockerContainer> GetDockerVMs(IXenObject o)
         {
             var vm = o as VM;
-            if (vm != null && vm.is_a_real_vm)
+            if (vm != null && vm.is_a_real_vm())
             {
                 return new ComparableList<DockerContainer>(DockerContainers.GetContainersFromOtherConfig(vm));
             }

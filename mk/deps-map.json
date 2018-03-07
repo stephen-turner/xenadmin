@@ -1,13 +1,8 @@
 {
   "files": [
     {
-      "pattern": "@REMOTE_DOTNET@/manifest",
-      "target": "scratch/dotnet-packages-manifest",
-      "flat": "true"
-    },
-    {
-      "pattern": "@REMOTE_DOTNET@/sign.bat",
-      "target": "xenadmin.git/",
+      "pattern": "@REMOTE_DOTNET@/dotnet-packages-manifest.txt",
+      "target": "scratch/",
       "flat": "true"
     },
     {
@@ -21,7 +16,32 @@
       "flat": "true"
     },
     {
-      "pattern": "@REMOTE_DOTNET@/dotnet46/*.dll",
+      "pattern": "@REMOTE_DOTNET@/dotnet46/CookComputing.XmlRpcV2.dll",
+      "target": "xenadmin.git/packages/",
+      "flat": "true"
+    },
+    {
+      "pattern": "@REMOTE_DOTNET@/dotnet46/Newtonsoft.Json.dll",
+      "target": "xenadmin.git/packages/",
+      "flat": "true"
+    },
+    {
+      "pattern": "@REMOTE_DOTNET@/dotnet46/DiscUtils.dll",
+      "target": "xenadmin.git/packages/",
+      "flat": "true"
+    },
+    {
+      "pattern": "@REMOTE_DOTNET@/dotnet46/ICSharpCode.SharpZipLib.dll",
+      "target": "xenadmin.git/packages/",
+      "flat": "true"
+    },
+    {
+      "pattern": "@REMOTE_DOTNET@/dotnet46/Ionic.Zip.dll",
+      "target": "xenadmin.git/packages/",
+      "flat": "true"
+    },
+    {
+      "pattern": "@REMOTE_DOTNET@/dotnet46/log4net.dll",
       "target": "xenadmin.git/packages/",
       "flat": "true"
     },

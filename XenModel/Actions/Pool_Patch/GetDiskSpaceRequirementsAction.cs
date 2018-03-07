@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using XenAdmin.Core;
 using XenAPI;
 
 
@@ -53,7 +54,7 @@ namespace XenAdmin.Actions
         /// This constructor is used to calculate the disk space requirements for installing or uploading a single patch
         /// </summary>
         public GetDiskSpaceRequirementsAction(Host host, Pool_patch patch, bool suppressHistory)
-            : this(host, patch.Name, patch.size, suppressHistory)
+            : this(host, patch.Name(), patch.size, suppressHistory)
         {
             currentPatch = patch;
         }
@@ -101,24 +102,27 @@ namespace XenAdmin.Actions
 
         protected override void Run()
         {
-            Description = String.Format(Messages.ACTION_GET_DISK_SPACE_REQUIREMENTS_DESCRIPTION, Host.Name);
+            Description = String.Format(Messages.ACTION_GET_DISK_SPACE_REQUIREMENTS_DESCRIPTION, Host.Name());
 
             string result;
 
             // get required disk space
             long requiredDiskSpace = updateSize;
-            try
+            if (!Helpers.ElyOrGreater(Host))  // for ElyOrGreater we don't need to call get_required_space, because it will always return updateSize
             {
-                var args = new Dictionary<string, string>();
-                args.Add("size", updateSize.ToString());
+                try
+                {
+                    var args = new Dictionary<string, string>();
+                    args.Add("size", updateSize.ToString());
 
-                result = Host.call_plugin(Session, Host.opaque_ref, "disk-space", "get_required_space", args);
-                requiredDiskSpace = Convert.ToInt64(result);
-            }
-            catch (Failure failure)
-            {
-                log.WarnFormat("Plugin call disk-space.get_required_space on {0} failed with {1}", Host.Name, failure.Message);
-                requiredDiskSpace = 0;
+                    result = Host.call_plugin(Session, Host.opaque_ref, "disk-space", "get_required_space", args);
+                    requiredDiskSpace = Convert.ToInt64(result);
+                }
+                catch (Failure failure)
+                {
+                    log.WarnFormat("Plugin call disk-space.get_required_space on {0} failed with {1}", Host.Name(), failure.Message);
+                    requiredDiskSpace = 0;
+                }
             }
 
             // get available disk space
@@ -130,13 +134,13 @@ namespace XenAdmin.Actions
             }
             catch (Failure failure)
             {
-                log.WarnFormat("Plugin call disk-space.get_avail_host_disk_space on {0} failed with {1}", Host.Name, failure.Message);
+                log.WarnFormat("Plugin call disk-space.get_avail_host_disk_space on {0} failed with {1}", Host.Name(), failure.Message);
             }
 
             // get reclaimable disk space (excluding current patch)
             long reclaimableDiskSpace = 0;
 
-            if (availableDiskSpace < requiredDiskSpace)
+            if (availableDiskSpace < requiredDiskSpace && !Helpers.ElyOrGreater(Host))  // for ElyOrGreater we shouldn't call get_reclaimable_disk_space
             {
                 try
                 {
@@ -148,7 +152,7 @@ namespace XenAdmin.Actions
                 }
                 catch (Failure failure)
                 {
-                    log.WarnFormat("Plugin call disk-space.get_reclaimable_disk_space on {0} failed with {1}", Host.Name, failure.Message);
+                    log.WarnFormat("Plugin call disk-space.get_reclaimable_disk_space on {0} failed with {1}", Host.Name(), failure.Message);
                 }
             }
 
@@ -193,13 +197,13 @@ namespace XenAdmin.Actions
             switch (Operation)
             {
                 case OperationTypes.install :
-                    sbMessage.AppendFormat(Messages.NOT_ENOUGH_SPACE_MESSAGE_INSTALL, Host.Name, UpdateName);
+                    sbMessage.AppendFormat(Messages.NOT_ENOUGH_SPACE_MESSAGE_INSTALL, Host.Name(), UpdateName);
                     break;
                 case OperationTypes.upload :
-                    sbMessage.AppendFormat(Messages.NOT_ENOUGH_SPACE_MESSAGE_UPLOAD, Host.Name, UpdateName);
+                    sbMessage.AppendFormat(Messages.NOT_ENOUGH_SPACE_MESSAGE_UPLOAD, Host.Name(), UpdateName);
                     break;
                 case OperationTypes.automatedUpdates :
-                    sbMessage.AppendFormat(Messages.NOT_ENOUGH_SPACE_MESSAGE_AUTO_UPDATE, Host.Name);
+                    sbMessage.AppendFormat(Messages.NOT_ENOUGH_SPACE_MESSAGE_AUTO_UPDATE, Host.Name());
                     break;
             }
 

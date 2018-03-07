@@ -40,11 +40,10 @@ using System.Text;
 using System.Windows.Forms;
 
 using XenAdmin.Commands;
-using XenAdmin.Core;
 using XenAdmin.Model;
 using XenAdmin.Network;
 using XenAdmin.XenSearch;
-
+using XenCenterLib;
 using XenAPI;
 
 namespace XenAdmin.Controls.MainWindowControls
@@ -131,19 +130,37 @@ namespace XenAdmin.Controls.MainWindowControls
 
         public void XenConnectionCollectionChanged(CollectionChangeEventArgs e)
         {
-            IXenConnection connection = (IXenConnection)e.Element;
-            if (connection == null)
-                return;
+            IXenConnection connection = e.Element as IXenConnection;
 
             if (e.Action == CollectionChangeAction.Add)
             {
+                if (connection == null)
+                    return;
+
                 connection.BeforeMajorChange += Connection_BeforeMajorChange;
                 connection.AfterMajorChange += Connection_AfterMajorChange;
             }
             else if (e.Action == CollectionChangeAction.Remove)
             {
-                connection.BeforeMajorChange -= Connection_BeforeMajorChange;
-                connection.AfterMajorChange -= Connection_AfterMajorChange;
+                var range = new List<IXenConnection>();
+                if (connection != null)
+                {
+                    range.Add(connection);
+                }
+                else
+                {
+                    var r = e.Element as List<IXenConnection>;
+                    if (r != null)
+                        range = r;
+                    else
+                        return;
+                }
+
+                foreach (var con in range)
+                {
+                    con.BeforeMajorChange -= Connection_BeforeMajorChange;
+                    con.AfterMajorChange -= Connection_AfterMajorChange;
+                }
             }
         }
 

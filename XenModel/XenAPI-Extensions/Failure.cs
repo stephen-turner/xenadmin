@@ -86,6 +86,7 @@ namespace XenAPI
         public const string PVS_SITE_CONTAINS_RUNNING_PROXIES = "PVS_SITE_CONTAINS_RUNNING_PROXIES";
         public const string VM_LACKS_FEATURE = "VM_LACKS_FEATURE";
         public const string VM_LACKS_FEATURE_SUSPEND = "VM_LACKS_FEATURE_SUSPEND";
+        public const string VM_FAILED_SHUTDOWN_ACKNOWLEDGMENT = "VM_FAILED_SHUTDOWN_ACKNOWLEDGMENT";
 
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -101,7 +102,7 @@ namespace XenAPI
             List<Role> authRoles = Role.ValidRoleList(failure.ErrorDescription[1], Connection);
             failure.ErrorDescription[0] = Failure.RBAC_PERMISSION_DENIED_FRIENDLY;
             // Current Role(s)
-            failure.ErrorDescription[1] = Session.FriendlyRoleDescription;
+            failure.ErrorDescription[1] = Session.FriendlyRoleDescription();
             // Authorized roles
             failure.ErrorDescription[2] = Role.FriendlyCSVRoleList(authRoles);
             failure.Setup();
@@ -120,7 +121,7 @@ namespace XenAPI
             StringBuilder sb = new StringBuilder();
             foreach (Session s in Sessions)
             {
-                sb.Append(string.Format(Messages.ROLE_ON_CONNECTION, s.FriendlyRoleDescription, Helpers.GetName(s.Connection).Ellipsise(50)));
+                sb.Append(string.Format(Messages.ROLE_ON_CONNECTION, s.FriendlyRoleDescription(), Helpers.GetName(s.Connection).Ellipsise(50)));
                 sb.Append(", ");
             }
             string output = sb.ToString();

@@ -41,6 +41,7 @@ using XenAdmin.Mappings;
 using XenAdmin.Network;
 using XenAdmin.Wizards.GenericPages;
 using XenAPI;
+using System.Linq;
 
 using XenOvf;
 using XenOvf.Definitions;
@@ -109,6 +110,10 @@ namespace XenAdmin.Wizards.ImportWizard
 
 			m_pageImportSource.OvfModeOnly = ovfModeOnly;
             AddPages(m_pageImportSource, m_pageHost, m_pageStorage, m_pageNetwork, m_pageFinish);
+
+            m_pageHost.ConnectionSelectionChanged += pageHost_ConnectionSelectionChanged;
+            m_pageXvaHost.ConnectionSelectionChanged += pageHost_ConnectionSelectionChanged;
+            ShowXenAppXenDesktopWarning(con);
 		}
 
 		#region Override (XenWizardBase) Methods
@@ -119,7 +124,7 @@ namespace XenAdmin.Wizards.ImportWizard
 			{
 				case ImportType.Xva:
 					if (m_pageXvaStorage.ImportXvaAction != null)
-						m_pageXvaStorage.ImportXvaAction.EndWizard(m_pageFinish.StartVmsAutomatically, m_pageXvaNetwork.ProxyVIFs);
+						m_pageXvaStorage.ImportXvaAction.EndWizard(m_pageFinish.StartVmsAutomatically, m_pageXvaNetwork.VIFs);
 					break;
 				case ImportType.Ovf:
 					(new ImportApplianceAction(m_pageHost.Connection,
@@ -233,8 +238,7 @@ namespace XenAdmin.Wizards.ImportWizard
                             RemovePages(appliancePages);
                             AddAfterPage(m_pageImportSource, xvaPages);
 						}
-						m_pageXvaHost.SelectedHost = m_selectedObject as Host;
-						m_pageXvaHost.SelectedConnection = m_selectedObject != null ? m_selectedObject.Connection : null;
+				        m_pageXvaHost.SetDefaultTarget(m_selectedObject);
 						m_pageXvaStorage.FilePath = m_pageImportSource.FilePath;
 						break;
 				}
@@ -467,22 +471,22 @@ namespace XenAdmin.Wizards.ImportWizard
 		private IEnumerable<Tuple> GetSummaryXva()
 		{
 			var temp = new List<Tuple>();
-			temp.Add(new Tuple(Messages.FINISH_PAGE_VMNAME, m_pageXvaStorage.ImportedVm.Name));
-			temp.Add(new Tuple(Messages.FINISH_PAGE_TARGET, m_pageXvaHost.SelectedHost == null ? m_pageXvaHost.SelectedConnection.Name : m_pageXvaHost.SelectedHost.Name));
-			temp.Add(new Tuple(Messages.FINISH_PAGE_STORAGE, m_pageXvaStorage.SR.Name));
+			temp.Add(new Tuple(Messages.FINISH_PAGE_VMNAME, m_pageXvaStorage.ImportedVm.Name()));
+			temp.Add(new Tuple(Messages.FINISH_PAGE_TARGET, m_pageXvaHost.SelectedHost == null ? m_pageXvaHost.SelectedConnection.Name : m_pageXvaHost.SelectedHost.Name()));
+			temp.Add(new Tuple(Messages.FINISH_PAGE_STORAGE, m_pageXvaStorage.SR.Name()));
 
 			var con = m_pageXvaHost.SelectedHost == null ? m_pageXvaHost.SelectedConnection : m_pageXvaHost.SelectedHost.Connection;
 
 			bool first = true;
-			foreach (var vif in m_pageXvaNetwork.ProxyVIFs)
+			foreach (var vif in m_pageXvaNetwork.VIFs)
 			{
 				var netref = new XenRef<XenAPI.Network>(vif.network);
 				var network = con.Resolve(netref);
 				// CA-218956 - Expose HIMN when showing hidden objects
-				if (network == null || (network.IsGuestInstallerNetwork && !XenAdmin.Properties.Settings.Default.ShowHiddenVMs))
+				if (network == null || (network.IsGuestInstallerNetwork() && !XenAdmin.Properties.Settings.Default.ShowHiddenVMs))
 					continue;
 
-				temp.Add(new Tuple(first ? Messages.FINISH_PAGE_NETWORK : "", network.Name));
+				temp.Add(new Tuple(first ? Messages.FINISH_PAGE_NETWORK : "", network.Name()));
 				first = false;
 			}
 
@@ -503,7 +507,7 @@ namespace XenAdmin.Wizards.ImportWizard
 
 			temp.Add(new Tuple(Messages.FINISH_PAGE_RUN_FIXUPS, m_pageOptions.RunFixups.ToYesNoStringI18n()));
 			if (m_pageOptions.RunFixups)
-				temp.Add(new Tuple(Messages.FINISH_PAGE_ISOSR, m_pageOptions.SelectedIsoSR.Name));
+				temp.Add(new Tuple(Messages.FINISH_PAGE_ISOSR, m_pageOptions.SelectedIsoSR.Name()));
 
 			temp.AddRange(GetVmMappingsSummary());
 			temp.AddRange(GetTransferVmSummary());
@@ -523,7 +527,7 @@ namespace XenAdmin.Wizards.ImportWizard
 
 			temp.Add(new Tuple(Messages.FINISH_PAGE_RUN_FIXUPS, m_pageOptions.RunFixups.ToYesNoStringI18n()));
 			if (m_pageOptions.RunFixups)
-				temp.Add(new Tuple(Messages.FINISH_PAGE_ISOSR, m_pageOptions.SelectedIsoSR.Name));
+				temp.Add(new Tuple(Messages.FINISH_PAGE_ISOSR, m_pageOptions.SelectedIsoSR.Name()));
 
 			temp.AddRange(GetVmMappingsSummary());
 			temp.AddRange(GetTransferVmSummary());
@@ -544,14 +548,14 @@ namespace XenAdmin.Wizards.ImportWizard
 				bool first = true;
 				foreach (var sr in mapping.Storage)
 				{
-					temp.Add(new Tuple(first ? storageLbl : "", sr.Value.Name));
+					temp.Add(new Tuple(first ? storageLbl : "", sr.Value.Name()));
 					first = false;
 				}
 
 				first = true;
 				foreach (var net in mapping.Networks)
 				{
-					temp.Add(new Tuple(first ? networkLbl : "", net.Value.Name));
+					temp.Add(new Tuple(first ? networkLbl : "", net.Value.Name()));
 					first = false;
 				}
 			}
@@ -714,6 +718,19 @@ namespace XenAdmin.Wizards.ImportWizard
 			                     	});
 
 		}
+
+        private void ShowXenAppXenDesktopWarning(IXenConnection connection)
+        {
+            if (connection != null && connection.Cache.Hosts.Any(h => h.DesktopFeaturesEnabled() || h.DesktopPlusFeaturesEnabled() || h.DesktopCloudFeaturesEnabled()))
+                ShowInformationMessage(Helpers.GetPool(connection) != null ? Messages.NEWVMWIZARD_XENAPP_XENDESKTOP_INFO_MESSAGE_POOL : Messages.NEWVMWIZARD_XENAPP_XENDESKTOP_INFO_MESSAGE_SERVER);
+            else
+                HideInformationMessage();
+        }
+
+        private void pageHost_ConnectionSelectionChanged(IXenConnection connection)
+        {
+            ShowXenAppXenDesktopWarning(connection);
+        }
 
 		#region Nested items
 

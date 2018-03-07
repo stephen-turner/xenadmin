@@ -242,7 +242,7 @@ namespace XenAdmin.Wizards.HAWizard_Pages
                     // The first case is for the HA wizard when priorities are being configured for the first time,
                     // the second is for the edit dialog, when HA is already enabled.
                     
-                    VM.HA_Restart_Priority? priority = firstTime ? (VM.HA_Restart_Priority?)null : vm.HARestartPriority;
+                    VM.HA_Restart_Priority? priority = firstTime ? (VM.HA_Restart_Priority?)null : vm.HARestartPriority();
                     var row = new VmWithSettingsRow(vm, priority);
                     newRows.Add(row);
                 }
@@ -357,7 +357,7 @@ namespace XenAdmin.Wizards.HAWizard_Pages
             var vms = connection.Cache.VMs.Where(v => v.HaCanProtect(Properties.Settings.Default.ShowHiddenVMs));
             bool firstTime = IsHaActivatedFirstTime(vms);
 
-            VM.HA_Restart_Priority? priority = firstTime ? (VM.HA_Restart_Priority?)null : vm.HARestartPriority;
+            VM.HA_Restart_Priority? priority = firstTime ? (VM.HA_Restart_Priority?)null : vm.HARestartPriority();
             var row = new VmWithSettingsRow(vm, priority);
             dataGridViewVms.Rows.Add(row);
         }
@@ -420,6 +420,8 @@ namespace XenAdmin.Wizards.HAWizard_Pages
 
             if (!haNtolIndicator.UpdateInProgress)
             {
+                pictureBoxStatus.Visible = true;
+
                 if (haNtolIndicator.Ntol == -1)
                 {
                     labelHaStatus.Text = Messages.HA_UNABLE_TO_CALCULATE_MESSAGE;
@@ -641,19 +643,20 @@ namespace XenAdmin.Wizards.HAWizard_Pages
         }
 
         /// <summary>
-        /// Gets the current (uncommitted) VM startup options. Must be called on the GUI thread.
+        /// Gets the changed (uncommitted) VM startup options. Must be called on the GUI thread.
         /// </summary>
         /// <returns></returns>
-        public Dictionary<VM, VMStartupOptions> GetCurrentStartupOptions()
+        public Dictionary<VM, VMStartupOptions> GetChangedStartupOptions()
         {
             Program.AssertOnEventThread();
             Dictionary<VM, VMStartupOptions> result = new Dictionary<VM, VMStartupOptions>();
             
             foreach (var curRow in dataGridViewVms.Rows.Cast<VmWithSettingsRow>())
             {
-                result[curRow.Vm] = new VMStartupOptions(curRow.StartOrder,
-                                                         curRow.StartDelay,
-                                                         curRow.RestartPriority ?? VM.HA_Restart_Priority.BestEffort);
+                if (curRow.HasChanged())
+                    result[curRow.Vm] = new VMStartupOptions(curRow.StartOrder,
+                                                             curRow.StartDelay,
+                                                             curRow.RestartPriority ?? VM.HA_Restart_Priority.BestEffort);
             }
             return result;
         }
@@ -744,6 +747,8 @@ namespace XenAdmin.Wizards.HAWizard_Pages
                             return Messages.NOT_AGILE_NETWORK_NOT_SHARED;
                         case "VM_HAS_VGPU":
                             return Messages.NOT_AGILE_VM_HAS_VGPU;
+                        case "VM_HAS_VUSB":
+                            return Messages.NOT_AGILE_VM_HAS_VUSB;
                         default:
                             // We shouldn't really be here unless we have not iterated all the return errors from vm.assert_agile
                             return Messages.NOT_AGILE_UNKOWN;
@@ -776,7 +781,7 @@ namespace XenAdmin.Wizards.HAWizard_Pages
             {
                 Vm = vm;
                 cellImage.Value = Images.GetImage16For(vm);
-                cellVm.Value = vm.Name;
+                cellVm.Value = vm.Name();
             }
 
             public void UpdateStartDelay(long startDelay)
@@ -806,6 +811,11 @@ namespace XenAdmin.Wizards.HAWizard_Pages
             public void SetAgileCalculating()
             {
                 cellAgile.Value = Messages.HA_CALCULATING_AGILITY;
+            }
+
+            public bool HasChanged()
+            {
+                return Vm.order != StartOrder || Vm.start_delay != StartDelay || Vm.HARestartPriority() != RestartPriority;
             }
         }
 

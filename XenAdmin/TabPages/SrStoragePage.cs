@@ -43,6 +43,7 @@ using XenAdmin.Actions;
 using XenAPI;
 using XenAdmin.Dialogs;
 using XenAdmin.Commands;
+using XenCenterLib;
 
 namespace XenAdmin.TabPages
 {
@@ -145,11 +146,13 @@ namespace XenAdmin.TabPages
             try
             {
                 ColumnVolume.Visible = data.ShowStorageLink;
+                var showCbtColumn = !Helpers.FeatureForbidden(sr.Connection, Host.RestrictChangedBlockTracking);
+                ColumnCBT.Visible = showCbtColumn;
 
                 // Update existing rows
                 foreach (var vdiRow in data.VdiRowsToUpdate)
                 {
-                    vdiRow.RefreshRowDetails();
+                    vdiRow.RefreshRowDetails(showCbtColumn);
                 }
 
                 // Remove rows for deleted VDIs
@@ -161,7 +164,7 @@ namespace XenAdmin.TabPages
                 // Add rows for new VDIs
                 foreach (var vdi in data.VdisToAdd)
                 {
-                    dataGridViewVDIs.Rows.Add(new VDIRow(vdi));   
+                    dataGridViewVDIs.Rows.Add(new VDIRow(vdi, showCbtColumn));   
                 }
             }
             finally
@@ -230,19 +233,40 @@ namespace XenAdmin.TabPages
         void History_CollectionChanged(object sender, CollectionChangeEventArgs e)
         {
             Program.BeginInvoke(Program.MainWindow, () =>
-                                                        {
-                                                            SrRefreshAction a = e.Element as SrRefreshAction;
-                                                            if (a == null)
-                                                                return;
+            {
+                SrRefreshAction a = e.Element as SrRefreshAction;
 
-                                                            if (e.Action == CollectionChangeAction.Add)
-                                                                a.Completed += a_Completed;
+                if (e.Action == CollectionChangeAction.Add)
+                {
+                    if (a != null)
+                        a.Completed += a_Completed;
+                    else
+                        return;
+                }
 
-                                                            if (e.Action == CollectionChangeAction.Remove)
-                                                                a.Completed -= a_Completed;
+                if (e.Action == CollectionChangeAction.Remove)
+                {
+                    if (a != null)
+                    {
+                        a.Completed -= a_Completed;
+                    }
+                    else
+                    {
+                        var range = e.Element as List<SrRefreshAction>;
+                        if (range != null)
+                        {
+                            foreach (var sra in range)
+                                sra.Completed -= a_Completed;
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                }
 
-                                                            RefreshButtons();
-                                                        });
+                RefreshButtons();
+            });
         }
 
         void a_Completed(ActionBase sender)
@@ -295,7 +319,7 @@ namespace XenAdmin.TabPages
                 var vdi1 = ((VDIRow)dataGridViewVDIs.Rows[e.RowIndex1]).VDI;
                 var vdi2 = ((VDIRow)dataGridViewVDIs.Rows[e.RowIndex2]).VDI;
 
-                var descCompare = StringUtility.NaturalCompare(vdi1.Description, vdi2.Description);
+                var descCompare = StringUtility.NaturalCompare(vdi1.Description(), vdi2.Description());
                 if (descCompare != 0)
                 {
                     e.SortResult = descCompare;
@@ -570,13 +594,18 @@ namespace XenAdmin.TabPages
         {
             public VDI VDI { get; private set; }
 
-            public VDIRow(VDI vdi)
+            public VDIRow(VDI vdi, bool show_cbt)
             {
                 VDI = vdi;
                 for (int i = 0; i < 5; i++)
                 {
                     Cells.Add(new DataGridViewTextBoxCell());
                     Cells[i].Value = GetCellText(i);
+                }
+                if (show_cbt)
+                {
+                    Cells.Add(new DataGridViewTextBoxCell());
+                    Cells[5].Value = GetCellText(5);
                 }
             }
 
@@ -585,27 +614,31 @@ namespace XenAdmin.TabPages
                 switch (cellIndex)
                 {
                     case 0:
-                        return VDI.Name;
+                        return VDI.Name();
                     case 1:
                         string name;
                         return VDI.sm_config.TryGetValue("displayname", out name) ? name : "";
                     case 2:
-                        return VDI.Description;
+                        return VDI.Description();
                     case 3:
-                        return VDI.SizeText;
+                        return VDI.SizeText();
                     case 4:
-                        return VDI.VMsOfVDI;
+                        return VDI.VMsOfVDI();
+                    case 5:
+                        return VDI.cbt_enabled ? Messages.ENABLED : Messages.DISABLED;
                     default:
                         return "";
                 }
             }
 
-            public void RefreshRowDetails()
+            public void RefreshRowDetails(bool show_cbt)
             {
                 for (int i = 0; i < 5; i++)
                 {
                     Cells[i].Value = GetCellText(i);
                 }
+                if (show_cbt)
+                    Cells[5].Value = GetCellText(5);
             }
         }
 
@@ -671,7 +704,7 @@ namespace XenAdmin.TabPages
                         sr.Connection.ResolveAll(sr.VDIs).Where(
                             vdi =>
                             vdi.Show(Properties.Settings.Default.ShowHiddenVMs) &&
-                            !vdi.IsAnIntermediateStorageMotionSnapshot)
+                            !vdi.IsAnIntermediateStorageMotionSnapshot())
                             .ToList();
 
                 bool showStorageLink = vdis.Find(v => v.sm_config.ContainsKey("SVID")) != null;

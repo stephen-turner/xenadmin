@@ -87,7 +87,7 @@ namespace XenAdmin.Dialogs
                     Disabled = true;
 
                 Queue<object> cellDetails = new Queue<object>();
-                cellDetails.Enqueue(XenObject.Name);
+                cellDetails.Enqueue(XenObject.Name());
                 cellDetails.Enqueue(LicenseName);
                 cellDetails.Enqueue(new Bitmap(1,1));
                 cellDetails.Enqueue(LicenseStatus);
@@ -136,7 +136,7 @@ namespace XenAdmin.Dialogs
                 if (pool == null || XenObject is Host)
                     return Helpers.GetFriendlyLicenseName(XenObjectHost);
 
-                return pool.LicenseString;
+                return pool.LicenseString();
             } 
         }
 
@@ -300,7 +300,7 @@ namespace XenAdmin.Dialogs
                 if (XenObject != null && !XenObject.Connection.IsConnected)
                     return String.Empty;
 
-                return XenObjectHost.ProductVersionTextShort;
+                return XenObjectHost.ProductVersionTextShort();
             }
         }
 
@@ -319,10 +319,13 @@ namespace XenAdmin.Dialogs
         {
             get
             {
-                if (XenObject is Host)
-                    return (XenObject as Host).CpuSockets;
-                if (XenObject is Pool)
-                    return (XenObject as Pool).CpuSockets;
+                var h = XenObject as Host;
+                if (h != null)
+                    return h.CpuSockets();
+
+                var p = XenObject as Pool;
+                if (p != null)
+                    return p.CpuSockets();
                 return 0;
             }
         }
@@ -355,14 +358,14 @@ namespace XenAdmin.Dialogs
                     case Dialogs.LicenseStatus.HostState.Expired:
                         if (licenseStatus.PoolLicensingModel == Dialogs.LicenseStatus.LicensingModel.Clearwater)
                             return Messages.LICENSE_UNSUPPORTED;
-                        return Messages.LICENSE_EXPIRED;
+                        return Messages.LICENSE_UNLICENSED;
                     case Dialogs.LicenseStatus.HostState.Free:
                         switch (licenseStatus.PoolLicensingModel)
                         {
                             case Dialogs.LicenseStatus.LicensingModel.Clearwater:
                                 return Messages.LICENSE_UNSUPPORTED;
                             case Dialogs.LicenseStatus.LicensingModel.Creedence:
-                                return Messages.LICENSE_EXPIRED;
+                                return Messages.LICENSE_UNLICENSED;
                             default:
                                 return Messages.LICENSE_FREE;
                         }

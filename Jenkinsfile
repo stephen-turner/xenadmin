@@ -1,33 +1,33 @@
 #!groovy
 
-/* Copyright (c) Citrix Systems Inc. 
- * All rights reserved. 
- * 
- * Redistribution and use in source and binary forms, 
- * with or without modification, are permitted provided 
- * that the following conditions are met: 
- * 
- * *   Redistributions of source code must retain the above 
- *     copyright notice, this list of conditions and the 
- *     following disclaimer. 
- * *   Redistributions in binary form must reproduce the above 
- *     copyright notice, this list of conditions and the 
- *     following disclaimer in the documentation and/or other 
- *     materials provided with the distribution. 
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND 
- * CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
- * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
+/* Copyright (c) Citrix Systems Inc.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms,
+ * with or without modification, are permitted provided
+ * that the following conditions are met:
+ *
+ * *   Redistributions of source code must retain the above
+ *     copyright notice, this list of conditions and the
+ *     following disclaimer.
+ * *   Redistributions in binary form must reproduce the above
+ *     copyright notice, this list of conditions and the
+ *     following disclaimer in the documentation and/or other
+ *     materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+ * CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
 
@@ -122,7 +122,7 @@ node("${params.BUILD_ON_NODE}") {
       GIT_COMMIT_XENADMIN = bat(
         returnStdout: true,
         script: """
-                @echo off 
+                @echo off
                 cd ${env.WORKSPACE}\\xenadmin.git
                 git rev-parse HEAD
                 """
@@ -137,7 +137,7 @@ node("${params.BUILD_ON_NODE}") {
       String branchToCloneOnBranding = (branchExistsOnBranding == 0) ?  params.XC_BRANCH : 'master'
 
       bat """git clone -b ${branchToCloneOnBranding} ${BRANDING_REMOTE} ${env.WORKSPACE}\\branding.git"""
-	  
+
       if (params.XC_BRANDING != 'citrix') {
 
         println "Overwriting Branding folder"
@@ -201,8 +201,9 @@ node("${params.BUILD_ON_NODE}") {
     }
 
     stage('Create manifest') {
-      GString manifestFile = "${env.WORKSPACE}\\output\\manifest"
+      GString manifestFile = "${env.WORKSPACE}\\output\\xenadmin-manifest.txt"
       File file = new File(manifestFile)
+      file.getParentFile().mkdirs()
 
       String branchInfo = (params.XC_BRANCH == 'master') ? 'trunk' : params.XC_BRANCH
       file << "@branch=${branchInfo}\n"
@@ -211,7 +212,7 @@ node("${params.BUILD_ON_NODE}") {
       def SERVER_BRANDING_TIP = bat(
         returnStdout: true,
         script: """
-                @echo off 
+                @echo off
                 cd ${env.WORKSPACE}\\branding.git
                 git rev-parse HEAD
                 """
@@ -223,7 +224,7 @@ node("${params.BUILD_ON_NODE}") {
         def XENADMIN_BRANDING_TIP = bat(
           returnStdout: true,
           script: """
-                @echo off 
+                @echo off
                 cd ${env.WORKSPACE}\\xenadmin-branding.git
                 git rev-parse HEAD
                 """
@@ -236,7 +237,7 @@ node("${params.BUILD_ON_NODE}") {
       file << "xencenter-ovf xencenter-ovf.git 21d3d7a7041f15abfa73f916e5fd596fd7e610c4\n"
       file << "chroot-lenny chroots.hg 1a75fa5848e8\n"
 
-      file << readFile("${env.WORKSPACE}\\scratch\\dotnet-packages-manifest").trim()
+      file << readFile("${env.WORKSPACE}\\scratch\\dotnet-packages-manifest.txt").trim()
     }
 
     stage('Run checks') {
@@ -268,8 +269,8 @@ node("${params.BUILD_ON_NODE}") {
         bat """
             cd ${env.WORKSPACE}
             mkdir TestXenAdminUnsigned
-            unzip -q -o output\\XenAdminUnsigned.zip -d TestXenAdminUnsigned
-            sh "TestXenAdminUnsigned/XenAdminUnsigned/mk/package-and-sign.sh"
+            forfiles /p output /s /m *Unsigned.zip /c "cmd /c unzip -q -o @file -d ..\\TestXenAdminUnsigned"
+            forfiles /p TestXenAdminUnsigned /s /m package-and-sign.sh /c "cmd /c sh @file"
             """
       }
 
@@ -282,12 +283,12 @@ node("${params.BUILD_ON_NODE}") {
               mkdir ${env.WORKSPACE}\\tmp
               cp -r ${env.WORKSPACE}\\xenadmin.git\\XenAdminTests\\bin\\Release ${env.WORKSPACE}\\tmp
               cd ${env.WORKSPACE}\\tmp
-              taskkill /f /fi "imagename eq nunit*"              
+              taskkill /f /fi "imagename eq nunit*"
               echo Starting tests at %time% %date%
-              
-              nunit-console /nologo /labels /stoponerror /nodots /process=separate /noshadow /labels /err="${env.WORKSPACE}\\tmp\\error.nunit.log" /timeout=40000 /xml="${env.WORKSPACE}\\tmp\\XenAdminTests.xml" "${env.WORKSPACE}\\tmp\\Release\\XenAdminTests.dll" /framework=net-4.5
-              
-              echo Finished tests at %time% %date%              
+
+              nunit-console /nologo /labels /stoponerror /nodots /process=separate /noshadow /labels /err="${env.WORKSPACE}\\tmp\\error.nunit.log" /timeout=40000 /xml="${env.WORKSPACE}\\tmp\\XenAdminTests.xml" "${env.WORKSPACE}\\tmp\\Release\\XenAdminTests.dll" /framework=net-4.6
+
+              echo Finished tests at %time% %date%
               cp ${env.WORKSPACE}\\tmp\\XenAdminTests.xml ${env.WORKSPACE}\\output
               """
 
@@ -302,7 +303,7 @@ node("${params.BUILD_ON_NODE}") {
         dir("${env.WORKSPACE}\\output") {
 
           if (params.XC_BRANDING == 'citrix') {
-            bat """del /f /q "${env.WORKSPACE}\\output\\XenAdminUnsigned.zip" """
+            bat """del /f /q "${env.WORKSPACE}\\output\\*Unsigned.zip" """
           }
 
           def server = Artifactory.server('repo')

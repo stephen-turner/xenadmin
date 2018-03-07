@@ -45,6 +45,8 @@ namespace XenAdmin.Alerts
         protected readonly List<IXenConnection> connections = new List<IXenConnection>();
         private readonly List<Host> hosts = new List<Host>();
 
+        public XenCenterVersion RequiredXenCenterVersion;
+
         public bool CanIgnore
         {
             get { return (connections.Count == 0 && hosts.Count == 0) || IsDismissed(); }
@@ -93,7 +95,7 @@ namespace XenAdmin.Alerts
                 List<string> names = new List<string>();
 
                 foreach (Host host in hosts)
-                    names.Add(host.Name);
+                    names.Add(host.Name());
 
                 foreach (IXenConnection connection in connections)
                     names.Add(Helpers.GetName(connection));

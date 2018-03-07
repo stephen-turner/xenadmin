@@ -47,8 +47,8 @@ namespace XenAdmin.Actions
 
         public HostBackupRestoreAction(Host host, HostBackupRestoreType type, string filename)
             : base(host.Connection, type == HostBackupRestoreType.backup ?
-            string.Format(Messages.BACKINGUP_HOST, host.Name) :
-            string.Format(Messages.RESTORING_HOST, host.Name))
+            string.Format(Messages.BACKINGUP_HOST, host.Name()) :
+            string.Format(Messages.RESTORING_HOST, host.Name()))
         {
             #region RBAC Dependencies
             switch (type)
@@ -76,29 +76,29 @@ namespace XenAdmin.Actions
                 switch (type)
                 {
                     case HostBackupRestoreType.backup:
-                        this.Description = String.Format(Messages.BACKINGUP_HOST_WITH_DATA, Host.Name, Util.MemorySizeStringSuitableUnits(0, false));
+                        this.Description = String.Format(Messages.BACKINGUP_HOST_WITH_DATA, Host.Name(), Util.MemorySizeStringSuitableUnits(0, false));
 
                         LogDescriptionChanges = false;
                         try
                         {
                             HTTPHelper.Get(this, true, DataReceived, filename, Host.address,
-                                (HTTP_actions.get_ss)HTTP_actions.get_host_backup, Session.uuid);
+                                (HTTP_actions.get_ss)HTTP_actions.get_host_backup, Session.opaque_ref);
                         }
                         finally
                         {
                             LogDescriptionChanges = true;
                         }
 
-                        this.Description = String.Format(Messages.HOST_BACKEDUP, Host.Name);
+                        this.Description = String.Format(Messages.HOST_BACKEDUP, Host.Name());
                         break;
 
                     case HostBackupRestoreType.restore:
-                        this.Description = String.Format(Messages.RESTORING_HOST, Host.Name);
+                        this.Description = String.Format(Messages.RESTORING_HOST, Host.Name());
 
                         HTTPHelper.Put(this, true, filename, Host.address,
-                            (HTTP_actions.put_ss)HTTP_actions.put_host_restore, Session.uuid);
+                            (HTTP_actions.put_ss)HTTP_actions.put_host_restore, Session.opaque_ref);
 
-                        this.Description = String.Format(Messages.HOST_RESTORED, Host.Name);
+                        this.Description = String.Format(Messages.HOST_RESTORED, Host.Name());
                         break;
                 }
             }
@@ -111,7 +111,7 @@ namespace XenAdmin.Actions
 
         private void DataReceived(long bytes)
         {
-            this.Description = String.Format(Messages.BACKINGUP_HOST_WITH_DATA, Host.Name, Util.MemorySizeStringSuitableUnits(bytes, false));
+            this.Description = String.Format(Messages.BACKINGUP_HOST_WITH_DATA, Host.Name(), Util.MemorySizeStringSuitableUnits(bytes, false));
         }
 
         public override void RecomputeCanCancel()

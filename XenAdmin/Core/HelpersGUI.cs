@@ -206,10 +206,11 @@ namespace XenAdmin.Core
             {
                 foreach (Host host in connection.Cache.Hosts)
                 {
-                    if (!hosts.ContainsValue(host.iscsi_iqn) || host.iscsi_iqn == "")
-                        hosts.Add(host, host.iscsi_iqn);
+                    var iscsiIqn = host.GetIscsiIqn();
+                    if (!hosts.ContainsValue(iscsiIqn) || iscsiIqn == "")
+                        hosts.Add(host, iscsiIqn);
                     else
-                        hostduplicates[host] = host.iscsi_iqn;
+                        hostduplicates[host] = iscsiIqn;
                 }
             }
 
@@ -217,7 +218,7 @@ namespace XenAdmin.Core
             {
                 foreach (Host host2 in hosts.Keys)
                 {
-                    if (host.iscsi_iqn == host2.iscsi_iqn)
+                    if (host.GetIscsiIqn() == host2.GetIscsiIqn())
                         output.Add(host, host2);
                 }
             }
@@ -232,7 +233,7 @@ namespace XenAdmin.Core
                 foreach (Host host in connection.Cache.Hosts)
                 {
                     Host_metrics metrics = connection.Resolve<Host_metrics>(host.metrics);
-                    if (metrics != null && metrics.live && host.iscsi_iqn == "")
+                    if (metrics != null && metrics.live && host.GetIscsiIqn() == "")
                         badHosts.Add(host);
                 }
             }
@@ -520,34 +521,6 @@ namespace XenAdmin.Core
             }
             else
                 return dayOfWeek.ToString();
-        }
-
-
-        /// <summary>
-        /// The expiry date of a host's license
-        /// </summary>
-        /// <param name="referenceDate">Should be UTC!</param>
-        public static string HostLicenseExpiryString(Host h, bool longFormat, DateTime referenceDate)
-        {
-            if (h.license_params != null && h.license_params.ContainsKey("expiry"))
-            {
-                TimeSpan timeDiff = h.LicenseExpiryUTC.Subtract(referenceDate);
-
-                if (!LicenseStatus.IsInfinite(timeDiff))
-                {
-                    var expiryString = "";
-                    Program.Invoke(Program.MainWindow, delegate
-                    {
-                        expiryString = DateTimeToString(h.LicenseExpiryUTC.ToLocalTime(),
-                            longFormat ? Messages.DATEFORMAT_DMY_LONG : Messages.DATEFORMAT_DMY, true);
-                    });
-                    return expiryString;
-                }
-
-                return Messages.LICENSE_NEVER;
-            }
-
-            return Messages.GENERAL_UNKNOWN;
         }
 
         private const int WM_SETREDRAW = 11;

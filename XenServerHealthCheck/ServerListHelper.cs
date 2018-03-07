@@ -31,10 +31,8 @@
 
 using System;
 using System.Collections.Generic;
-using XenAdmin.Core;
-using XenAdmin.Network;
-using System.Threading.Tasks;
 using XenAPI;
+using XenCenterLib;
 
 namespace XenServerHealthCheck
 {
@@ -84,7 +82,7 @@ namespace XenServerHealthCheck
             }
         }
 
-        private const char SEPARATOR = '\x202f'; // narrow non-breaking space.
+        public const char SEPARATOR = '\x202f'; // narrow non-breaking space.
         private string ProtectCredential(ServerInfo connection)
         {
             string Host = connection.HostName ?? string.Empty;
@@ -234,6 +232,9 @@ namespace XenServerHealthCheck
             try
             {
                 string[] proxySettings = proxy.Split(SEPARATOR);
+                if (proxySettings.Length < 2)
+                    return;
+
                 HTTPHelper.ProxyStyle proxyStyle = (HTTPHelper.ProxyStyle)Int32.Parse(proxySettings[1]);
 
                 switch (proxyStyle)
@@ -266,6 +267,30 @@ namespace XenServerHealthCheck
             {
                 log.Error("Error parsing 'ProxySetting' from XenCenter", e);
             }
+        }
+
+        public void UpdateXenCenterMetadata(string message)
+        {
+            log.Info("Receive XenCenter metadata update message");
+
+            try
+            {
+                string[] metadata = message.Split(SEPARATOR);
+                if (metadata.Length != 2) 
+                    return;
+                Properties.Settings.Default.XenCenterMetadata = EncryptionUtils.UnprotectForLocalMachine(metadata[1]);
+                Properties.Settings.Default.Save();
+            }
+            catch (Exception e)
+            {
+                log.Error("Error parsing 'XenCenterMetadata' from XenCenter", e);
+            }
+        }
+
+
+        public string XenCenterMetadata
+        {
+            get { return Properties.Settings.Default.XenCenterMetadata; }
         }
     }
 }

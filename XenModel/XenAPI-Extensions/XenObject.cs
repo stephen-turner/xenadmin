@@ -32,9 +32,11 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Newtonsoft.Json;
 using XenAdmin.Core;
 using XenAdmin.Network;
 using XenAdmin;
+using XenCenterLib;
 
 namespace XenAPI
 {
@@ -46,6 +48,7 @@ namespace XenAPI
 
         private bool _locked;
 
+        [JsonIgnore]
         public IXenConnection Connection
         {
             get { return m_Connection; }
@@ -53,23 +56,24 @@ namespace XenAPI
         }
 
 
-        public virtual string Description
+        public virtual string Description()
         {
-            get { return string.Empty; }
+            return string.Empty;
         }
 
         /// <summary>
         /// True if the Xen server knows about this object; false otherwise, e.g., when the user has created an object
         /// but not yet saved it to the server.
         /// </summary>
-        public bool ExistsOnServer
+        public bool ExistsOnServer()
         {
-            get { return this.opaque_ref != null; }
+            return this.opaque_ref != null;
         }
 
         /// <summary>
         /// True if a server request is in progress.
         /// </summary>
+        [JsonIgnore]
         public bool Locked
         {
             get { return _locked; }
@@ -90,10 +94,19 @@ namespace XenAPI
 
         private String path = String.Empty;
 
+        [JsonIgnore]
         public String Path
         {
             get { return path; }
-            set { if (!Helper.AreEqual(value, path)) { path = value; Changed = true; NotifyPropertyChanged("Path"); } }
+            set
+            {
+                if (!Helper.AreEqual(value, path))
+                {
+                    path = value;
+                    Changed = true;
+                    NotifyPropertyChanged("Path");
+                }
+            }
         }
 
         public IXenObject Clone()
@@ -109,9 +122,9 @@ namespace XenAPI
              return true; 
         }
 
-        public virtual bool IsHidden
+        public virtual bool IsHidden()
         {
-            get { return false; }
+            return false;
         }
 
         public string SaveChanges(Session session)
@@ -142,7 +155,7 @@ namespace XenAPI
             if (other == null)
                 return -1;
 
-            int result = StringUtility.NaturalCompare(Name, other.Name);
+            int result = StringUtility.NaturalCompare(Name(), other.Name());
             if (result != 0)
                 return result;
 
@@ -159,7 +172,7 @@ namespace XenAPI
             if (o == null)
                 return -1;
 
-            return StringUtility.NaturalCompare(Name, o.Name);
+            return StringUtility.NaturalCompare(Name(), o.Name());
         }
 
         /// <summary>
@@ -230,14 +243,39 @@ namespace XenAPI
             }
         }
 
+        public static Dictionary<string, string> SetDictionaryKey(Dictionary<string, string> dict, string key, string value)
+        {
+            return SetDictionaryKeys(dict, new KeyValuePair<string, string>(key, value));
+        }
+
+        public static Dictionary<string, string> SetDictionaryKeys(Dictionary<string, string> dict, params KeyValuePair<string, string>[] kvps)
+        {
+            var newDict = dict == null
+                ? new Dictionary<string, string>()
+                : new Dictionary<string, string>(dict);
+
+            foreach (var kvp in kvps)
+            {
+                string key = kvp.Key;
+                string value = kvp.Value;
+
+                if (value == null)
+                    newDict.Remove(key);
+                else
+                    newDict[key] = value;
+            }
+
+            return newDict;
+        }
+
         /// <summary>
         /// If d[k] == "true", then return true.  Anything else is false.
         /// Handles all the cases with d being null or not containing k.
         /// </summary>
-        protected bool BoolKey(Dictionary<string, string> d, string k)
+        protected static bool BoolKey(Dictionary<string, string> d, string k)
         {
             string v = Get(d, k);
-            return v == null ? false : v == "true";
+            return v != null && v == "true";
         }
 
         /// <summary>
@@ -247,10 +285,10 @@ namespace XenAPI
         /// This is similar to BoolKey but BoolKey prefers to return false,
         /// whereas BoolKeyPreferTrue prefers true;
         /// </summary>
-        protected bool BoolKeyPreferTrue(Dictionary<string, string> d, string k)
+        protected static bool BoolKeyPreferTrue(Dictionary<string, string> d, string k)
         {
             string v = Get(d, k);
-            return String.IsNullOrEmpty(v) ? true : v != "false";
+            return String.IsNullOrEmpty(v) || v != "false";
         }
 
         /// <summary>
@@ -264,31 +302,25 @@ namespace XenAPI
             return s != null && int.TryParse(s, out result) ? result : def;
         }
 
-        public virtual string Name
+        public virtual string Name()
         {
-            get { return ""; }
+            return "";
         }
 
-        public virtual string NameWithLocation
+        public virtual string NameWithLocation()
         {
-            get 
-            { 
-                return string.Format(Messages.NAME_WITH_LOCATION, Name, LocationString);
-            }
+            return string.Format(Messages.NAME_WITH_LOCATION, Name(), LocationString());
         }
 
-        internal virtual string LocationString
+        internal virtual string LocationString()
         {
-            get
-            {
-                if (Connection == null || string.IsNullOrEmpty(Connection.Name))
-                    return string.Empty;
+            if (Connection == null || string.IsNullOrEmpty(Connection.Name))
+                return string.Empty;
 
-                if (Helpers.IsPool(Connection))
-                    return string.Format(Messages.IN_POOL, Connection.Name);
-                
-                return string.Format(Messages.ON_SERVER, Connection.Name);
-            }
+            if (Helpers.IsPool(Connection))
+                return string.Format(Messages.IN_POOL, Connection.Name);
+
+            return string.Format(Messages.ON_SERVER, Connection.Name);
         }
     }
 }

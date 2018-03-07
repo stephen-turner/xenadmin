@@ -285,8 +285,23 @@
   <data name="ACTION_DETACHING_MULTIPLE_VDIS_TITLE" xml:space="preserve">
     <value>Detaching Multiple Storage Items</value>
   </data>
+  <data name="ACTION_DISABLED_CHANGED_BLOCK_TRACKING" xml:space="preserve">
+    <value>Disabled Changed Block Tracking for selected VMs</value>
+  </data>
   <data name="ACTION_DISABLED_PVS_READ_CACHING" xml:space="preserve">
     <value>Disabled PVS-Accelerator for selected VMs</value>
+  </data>
+  <data name="ACTION_DISABLE_AUTOSTART_ON_VM" xml:space="preserve">
+    <value>Disable VM autostart</value>
+  </data>
+  <data name="ACTION_DISABLE_CHANGED_BLOCK_TRACKING" xml:space="preserve">
+    <value>Disable Changed Block Tracking</value>
+  </data>
+  <data name="ACTION_DISABLE_CHANGED_BLOCK_TRACKING_FOR" xml:space="preserve">
+    <value>Disabling Changed Block Tracking for VM '{0}'</value>
+  </data>
+  <data name="ACTION_DISABLE_IGMP_SNOOPING" xml:space="preserve">
+    <value>Disable IGMP snooping</value>
   </data>
   <data name="ACTION_DISABLE_LIVE_PATCHING" xml:space="preserve">
     <value>Disable live patching</value>
@@ -302,6 +317,12 @@
   </data>
   <data name="ACTION_DISABLE_VM_ENLIGHTENMENT_TITLE" xml:space="preserve">
     <value>Disable container management on VM '{0}'</value>
+  </data>
+  <data name="ACTION_DISABLING_AUTOSTART_ON_VM" xml:space="preserve">
+    <value>Disabling autostart for '{0}'</value>
+  </data>
+  <data name="ACTION_DISABLING_CHANGED_BLOCK_TRACKING" xml:space="preserve">
+    <value>Disabling Changed Block Tracking for selected VMs</value>
   </data>
   <data name="ACTION_DISABLING_LIVE_PATCHING" xml:space="preserve">
     <value>Disabling live patching for '{0}'</value>
@@ -408,6 +429,12 @@
   <data name="ACTION_ENABLED_PVS_READ_CACHING" xml:space="preserve">
     <value>Enabled PVS-Accelerator for selected VMs</value>
   </data>
+  <data name="ACTION_ENABLE_AUTOSTART_ON_VM" xml:space="preserve">
+    <value>Enable VM autostart</value>
+  </data>
+  <data name="ACTION_ENABLE_IGMP_SNOOPING" xml:space="preserve">
+    <value>Enable IGMP snooping</value>
+  </data>
   <data name="ACTION_ENABLE_LIVE_PATCHING" xml:space="preserve">
     <value>Enable live patching</value>
   </data>
@@ -422,6 +449,9 @@
   </data>
   <data name="ACTION_ENABLE_VM_ENLIGHTENMENT_TITLE" xml:space="preserve">
     <value>Enable container management on VM '{0}'</value>
+  </data>
+  <data name="ACTION_ENABLING_AUTOSTART_ON_VM" xml:space="preserve">
+    <value>Enabling autostart for '{0}'</value>
   </data>
   <data name="ACTION_ENABLING_LIVE_PATCHING" xml:space="preserve">
     <value>Enabling live patching for '{0}'</value>
@@ -783,24 +813,6 @@
   <data name="ACTION_SR_ATTACH_SUCCESSFUL" xml:space="preserve">
     <value>Attached SR</value>
   </data>
-  <data name="ACTION_SR_CONVERT" xml:space="preserve">
-    <value>Convert SR '{0}' on '{1}'</value>
-  </data>
-  <data name="ACTION_SR_CONVERTED" xml:space="preserve">
-    <value>Converted SR</value>
-  </data>
-  <data name="ACTION_SR_CONVERTED_TO_THIN" xml:space="preserve">
-    <value>Converted SR '{0}' to thin provisioning</value>
-  </data>
-  <data name="ACTION_SR_CONVERTING" xml:space="preserve">
-    <value>Converting SR</value>
-  </data>
-  <data name="ACTION_SR_CONVERTING_TO_THIN" xml:space="preserve">
-    <value>Converting SR '{0}' to thin provisioning</value>
-  </data>
-  <data name="ACTION_SR_CONVERT_TO_THIN" xml:space="preserve">
-    <value>Convert SR '{0}' to thin provisioning</value>
-  </data>
   <data name="ACTION_SR_CREATE_SUCCESSFUL" xml:space="preserve">
     <value>Created SR</value>
   </data>
@@ -989,6 +1001,18 @@
   </data>
   <data name="ACTION_UPLOAD_SERVER_STATUS_REPORT_PROGRESS" xml:space="preserve">
     <value>Uploading report to [Citrix] Insight Services</value>
+  </data>
+  <data name="ACTION_USB_PASSTHROUGH_DISABLED" xml:space="preserve">
+    <value>USB passthrough disabled</value>
+  </data>
+  <data name="ACTION_USB_PASSTHROUGH_DISABLING" xml:space="preserve">
+    <value>Disabling USB passthrough for {0}</value>
+  </data>
+  <data name="ACTION_USB_PASSTHROUGH_ENABLED" xml:space="preserve">
+    <value>USB passthrough enabled</value>
+  </data>
+  <data name="ACTION_USB_PASSTHROUGH_ENABLING" xml:space="preserve">
+    <value>Enabling USB passthrough for {0}</value>
   </data>
   <data name="ACTION_VDI_CREATED" xml:space="preserve">
     <value>Virtual disk created</value>
@@ -1226,6 +1250,24 @@
   </data>
   <data name="ACTION_VM_TEMPLATIZING_TITLE" xml:space="preserve">
     <value>Converting VM '{0}' to template</value>
+  </data>
+  <data name="ACTION_VUSB_CREATED" xml:space="preserve">
+    <value>USB device attached</value>
+  </data>
+  <data name="ACTION_VUSB_CREATING" xml:space="preserve">
+    <value>Attaching USB device '{0}' to VM '{1}'</value>
+  </data>
+  <data name="ACTION_VUSB_DELETED" xml:space="preserve">
+    <value>USB device detached</value>
+  </data>
+  <data name="ACTION_VUSB_DELETING" xml:space="preserve">
+    <value>Detaching USB device '{0}' from VM '{1}'</value>
+  </data>
+  <data name="ACTION_VUSB_DETACH" xml:space="preserve">
+    <value>Detach USB device</value>
+  </data>
+  <data name="ACTION_VUSB_DETACH_CONFIRM" xml:space="preserve">
+    <value>Are you sure you want to detach the selected USB device?</value>
   </data>
   <data name="ACTION_WAIT_FOR_SLAVES_TO_RECOVER" xml:space="preserve">
     <value>Waiting for slaves to recover...</value>
@@ -1518,14 +1560,14 @@ This will disconnect you from '{0}'.</value>
 
 You are currently logged in as '{0}' on '{1}', and doing this will disconnect you from '{1}'. To reconnect, you will need to supply the local root account credentials, or the credentials for another authorized AD user.
 
-Do you wish to continue?</value>
+Do you want to continue?</value>
   </data>
   <data name="AD_CONFIRM_SUICIDE_GROUP" xml:space="preserve">
     <value>You are about to revoke the permissions for group '{0}'.
 
 The user you are currently logged into '{1}' with is a member of '{0}'. Proceeding will disconnect you and any other members of this group from '{1}'. To reconnect, you will need to supply the local root account credentials, or the credentials for another authorized AD user.
 
-Do you wish to continue?</value>
+Do you want to continue?</value>
   </data>
   <data name="AD_COULD_NOT_RESOLVE_SUFFIX" xml:space="preserve">
     <value>Subject could not be resolved in your AD</value>
@@ -1587,12 +1629,12 @@ Do you want to continue?</value>
   <data name="AD_LOGOUT_SUICIDE_MANY" xml:space="preserve">
     <value>You are currently logged in as one of the selected users. If you continue you will be logged out of '{0}'.
 
-Do you wish to continue?</value>
+Do you want to continue?</value>
   </data>
   <data name="AD_LOGOUT_SUICIDE_ONE" xml:space="preserve">
     <value>You are currently logged in as the selected user. If you continue you will be logged out of '{0}'.
 
-Do you wish to continue?</value>
+Do you want to continue?</value>
   </data>
   <data name="AD_MASTER_UNAVAILABLE_BLURB" xml:space="preserve">
     <value>Please wait while [XenCenter] establishes your current external authentication configuration.</value>
@@ -1631,13 +1673,13 @@ Do you wish to continue?</value>
     <value>VM Power Admin</value>
   </data>
   <data name="AD_SELECT_ROLE_GROUP" xml:space="preserve">
-    <value>Select the role you wish to assign to group '{0}'. Each role inherits all the privileges of the subordinate role below it in the list.</value>
+    <value>Select the role you want to assign to group '{0}'. Each role inherits all the privileges of the subordinate role below it in the list.</value>
   </data>
   <data name="AD_SELECT_ROLE_MIXED" xml:space="preserve">
-    <value>Select the role you wish to assign to these users and groups. Each role inherits all the privileges of the subordinate role below it in the list.</value>
+    <value>Select the role you want to assign to these users and groups. Each role inherits all the privileges of the subordinate role below it in the list.</value>
   </data>
   <data name="AD_SELECT_ROLE_USER" xml:space="preserve">
-    <value>Select the role you wish to assign to user '{0}'. Each role inherits all the privileges of the subordinate role below it in the list.</value>
+    <value>Select the role you want to assign to user '{0}'. Each role inherits all the privileges of the subordinate role below it in the list.</value>
   </data>
   <data name="AD_SELECT_SINGLE_SUBJECT" xml:space="preserve">
     <value>Select a single subject to change their role</value>
@@ -1752,20 +1794,20 @@ This alarm is set to be triggered when the total throughput exceeds {4}.</value>
     <value>Dismiss</value>
   </data>
   <data name="ALERT_DISMISS_ALL_CONTINUE" xml:space="preserve">
-    <value>You have applied filters to the list of alerts. Do you wish to dismiss all alerts from every connected server, or only the alerts you have chosen to view? In both cases the dismissed alerts will be removed from the servers permanently.
+    <value>You have applied filters to the list of alerts. Do you want to dismiss all alerts from every connected server, or only the alerts you have chosen to view? In both cases the dismissed alerts will be removed from the servers permanently.
 
 Note that if RBAC is enabled, only alerts which you have privileges to dismiss will be affected.</value>
   </data>
   <data name="ALERT_DISMISS_ALL_NO_FILTER_CONTINUE" xml:space="preserve">
-    <value>This operation will remove permanently all alerts from every connected server. Do you wish to continue?
+    <value>This operation will remove permanently all alerts from every connected server. Do you want to continue?
 
 Note that if RBAC is enabled, only alerts which you have privileges to dismiss will be affected.</value>
   </data>
   <data name="ALERT_DISMISS_CONFIRM" xml:space="preserve">
-    <value>Once a system alert is dismissed it will be removed from the server permanently. Do you wish to continue?</value>
+    <value>Once a system alert is dismissed it will be removed from the server permanently. Do you want to continue?</value>
   </data>
   <data name="ALERT_DISMISS_SELECTED_CONFIRM" xml:space="preserve">
-    <value>This operation will remove the selected alerts from the servers permanently. Do you wish to continue?
+    <value>This operation will remove the selected alerts from the servers permanently. Do you want to continue?
 
 Note that if RBAC is enabled, only alerts which you have privileges to dismiss will be affected.</value>
   </data>
@@ -1776,7 +1818,7 @@ Note that if RBAC is enabled, only alerts which you have privileges to dismiss w
     <value>Export &amp;all</value>
   </data>
   <data name="ALERT_EXPORT_ALL_OR_FILTERED" xml:space="preserve">
-    <value>You have applied filters to the list of alerts. Do you wish to export all alerts from every connected server, or only the alerts you have chosen to view?</value>
+    <value>You have applied filters to the list of alerts. Do you want to export all alerts from every connected server, or only the alerts you have chosen to view?</value>
   </data>
   <data name="ALERT_EXPORT_FILTERED_BUTTON" xml:space="preserve">
     <value>Only export &amp;visible</value>
@@ -1794,7 +1836,7 @@ Note that if RBAC is enabled, only alerts which you have privileges to dismiss w
     <value>Go to Web Page</value>
   </data>
   <data name="ALERT_NEW_VERSION" xml:space="preserve">
-    <value>New [XenCenter] Available</value>
+    <value>{0} is now available</value>
   </data>
   <data name="ALERT_NEW_VERSION_DETAILS" xml:space="preserve">
     <value>{0} is now available. Download the new version from the [Citrix] website.</value>
@@ -2038,7 +2080,7 @@ This is a potentially dangerous operation and is not allowed.</value>
     <value>The server '{0}' gave a bad response to the query.</value>
   </data>
   <data name="BALLOONING_PAGE_CHOOSEVMS_PAGETITLE" xml:space="preserve">
-    <value>Choose the VMs whose memory settings you wish to adjust</value>
+    <value>Choose the VMs whose memory settings you want to adjust</value>
   </data>
   <data name="BALLOONING_PAGE_CHOOSEVMS_TEXT" xml:space="preserve">
     <value>Select VMs</value>
@@ -2158,7 +2200,7 @@ Deleting this bond will disrupt traffic through the secondary interface on the b
     <value>There are broken SRs after the upgrade. To solve this problem you should reattach the SRs.</value>
   </data>
   <data name="BROKEN_TOOLS_PROMPT" xml:space="preserve">
-    <value>Your Tools ISO is on a broken SR, [XenCenter] will attempt to fix it before proceeding. Do you wish to continue?</value>
+    <value>Your Tools ISO is on a broken SR, [XenCenter] will attempt to fix it before proceeding. Do you want to continue?</value>
   </data>
   <data name="BUGTOOL_FILE_PREFIX" xml:space="preserve">
     <value>status-report-</value>
@@ -2179,7 +2221,7 @@ Deleting this bond will disrupt traffic through the secondary interface on the b
     <value>Pending</value>
   </data>
   <data name="BUGTOOL_PAGE_CAPABILITIES_PAGETITLE" xml:space="preserve">
-    <value>Select the data you wish to include in your report</value>
+    <value>Select the data you want to include in your report</value>
   </data>
   <data name="BUGTOOL_PAGE_CAPABILITIES_TEXT" xml:space="preserve">
     <value>Select Report Contents</value>
@@ -2200,7 +2242,7 @@ Deleting this bond will disrupt traffic through the secondary interface on the b
     <value>Report Destination</value>
   </data>
   <data name="BUGTOOL_PAGE_RETRIEVEDATA_CONFIRM_CANCEL" xml:space="preserve">
-    <value>Are you sure you wish to cancel the current action?</value>
+    <value>Are you sure you want to cancel the current action?</value>
   </data>
   <data name="BUGTOOL_PAGE_RETRIEVEDATA_PAGE_TITLE" xml:space="preserve">
     <value>Compiling Status Report</value>
@@ -2212,7 +2254,7 @@ Deleting this bond will disrupt traffic through the secondary interface on the b
     <value>Select Servers</value>
   </data>
   <data name="BUGTOOL_PAGE_SERVERS_TITLE" xml:space="preserve">
-    <value>Select the servers you wish to include in the report</value>
+    <value>Select the servers you want to include in the report</value>
   </data>
   <data name="BUGTOOL_RBAC_FAILURE" xml:space="preserve">
     <value>A {0} user cannot retrieve all the specified items.</value>
@@ -2272,10 +2314,10 @@ Deleting this bond will disrupt traffic through the secondary interface on the b
     <value>You must install [XenServer product] Tools on VM '{0}' before you can activate this virtual disk for the VM.</value>
   </data>
   <data name="CANNOT_CONFIGURE_JUMBO_DISTURB_MANAGEMENT" xml:space="preserve">
-    <value>(The network's MTU cannot be changed as it is in use as the management interface '{0}')</value>
+    <value>(The network's MTU cannot be changed because it is in use as the management interface '{0}')</value>
   </data>
   <data name="CANNOT_CONFIGURE_JUMBO_VM_NO_TOOLS" xml:space="preserve">
-    <value>(The network's MTU cannot be changed as there are active VMs attached without tools installed)</value>
+    <value>(The network's MTU cannot be changed because there are active VMs attached without tools installed)</value>
   </data>
   <data name="CANNOT_CONFIGURE_MORE_FREQ_ARCHIVE" xml:space="preserve">
     <value>You cannot configure an archive that is more frequent than the snapshot schedule</value>
@@ -2305,7 +2347,7 @@ Deleting this bond will disrupt traffic through the secondary interface on the b
     <value>You must install [XenServer product] Tools on VM '{0}' before you can deactivate this virtual disk for the VM.</value>
   </data>
   <data name="CANNOT_DEACTIVATE_VDI_VM_NOT_RUNNING" xml:space="preserve">
-    <value>It is not possible to deactivate this virtual disk on VM '{0}' as the VM is not running.</value>
+    <value>It is not possible to deactivate this virtual disk on VM '{0}' because the VM is not running.</value>
   </data>
   <data name="CANNOT_DELETE_ACTIVE_VDI" xml:space="preserve">
     <value>Virtual disks must be deactivated before being deleted. This virtual disk is in use by the VM '{0}'.</value>
@@ -2367,7 +2409,10 @@ Deleting this bond will disrupt traffic through the secondary interface on the b
     <value>You cannot configure an SR of type '{0}' using [XenCenter].</value>
   </data>
   <data name="CANNOT_MIGRATE_VDI_NON_RUNNING_VM" xml:space="preserve">
-    <value>Cannot move this virtual disk as it is attached to a non running VM.</value>
+    <value>Cannot move this virtual disk because it is attached to a VM that is not running.</value>
+  </data>
+  <data name="CANNOT_MOVE_CBT_ENABLED_VDI" xml:space="preserve">
+    <value>This virtual disk has CBT enabled. It cannot be moved to another storage repository.</value>
   </data>
   <data name="CANNOT_MOVE_DR_VD" xml:space="preserve">
     <value>This virtual disk is used for DR. It cannot be moved to another storage repository.</value>
@@ -2455,12 +2500,15 @@ Do you want to assign it to the vApp '{2}' instead?</value>
 Do you want to assign these VMs to the schedule '{0}' instead?</value>
   </data>
   <data name="CHANGE_VM_SNAPSHOT_SCHEDULE_WARNING" xml:space="preserve">
-    <value>The VM '{0}' is already assigned to the snashot schedule '{1}'.
+    <value>The VM '{0}' is already assigned to the snapshot schedule '{1}'.
     
 Do you want to assign it to the schedule '{2}' instead?</value>
   </data>
   <data name="CHECKING_CANEVACUATE_STATUS" xml:space="preserve">
     <value>Checking VM migration status</value>
+  </data>
+  <data name="CHECKING_FOR_PENDING_RESTART" xml:space="preserve">
+    <value>Checking for pending restart</value>
   </data>
   <data name="CHECKING_HA_STATUS" xml:space="preserve">
     <value>Checking HA and WLB status</value>
@@ -2477,6 +2525,9 @@ Do you want to assign it to the schedule '{2}' instead?</value>
   <data name="CHECKING_SERVER_NEEDS_REBOOT" xml:space="preserve">
     <value>Checking reboots required</value>
   </data>
+  <data name="CHECKING_SERVER_SELECTION" xml:space="preserve">
+    <value>Checking server selection</value>
+  </data>
   <data name="CHECKING_SERVER_SIDE_STATUS" xml:space="preserve">
     <value>Checking server side status</value>
   </data>
@@ -2491,6 +2542,9 @@ Do you want to assign it to the schedule '{2}' instead?</value>
   </data>
   <data name="CHECKING_UPGRADE_HOTFIX_STATUS" xml:space="preserve">
     <value>Checking upgrade hotfix status</value>
+  </data>
+  <data name="CHECKING_XENCENTER_VERSION" xml:space="preserve">
+    <value>Checking [XenCenter] version</value>
   </data>
   <data name="CHECK_WLB_ENABLED" xml:space="preserve">
     <value>Pool '{0}' cannot have WLB enabled</value>
@@ -2574,12 +2628,12 @@ Do you want to continue?</value>
 Do you want to continue?</value>
   </data>
   <data name="CONFIRM_CHANGE_MEMORY_PLURAL" xml:space="preserve">
-    <value>Changing the memory of these VMs while they are running will cause them to be forcibly rebooted. This operation can lose data.
+    <value>Changing the memory of these VMs while they are running will cause them to be forcibly rebooted. This operation can cause data loss.
 
 Do you want to continue?</value>
   </data>
   <data name="CONFIRM_CHANGE_MEMORY_SINGULAR" xml:space="preserve">
-    <value>Changing the memory of this VM while it is running will cause it to be forcibly rebooted. This operation can lose data.
+    <value>Changing the memory of this VM while it is running will cause it to be forcibly rebooted. This operation can cause data loss.
 
 Do you want to continue?</value>
   </data>
@@ -2691,6 +2745,18 @@ This action is final and unrecoverable.</value>
   </data>
   <data name="CONFIRM_DESTROY_HOST_YES_BUTTON_LABEL" xml:space="preserve">
     <value>&amp;Yes, Destroy</value>
+  </data>
+  <data name="CONFIRM_DISABLE_CBT_VM" xml:space="preserve">
+    <value>This will disable Changed Block Tracking on the disks of the selected VM. If you are using any third-party solutions to back up the VM, they might be affected. Note that Changed Block Tracking cannot be enabled again from [XenCenter]. Do you want to continue?</value>
+  </data>
+  <data name="CONFIRM_DISABLE_CBT_VMS" xml:space="preserve">
+    <value>This will disable Changed Block Tracking on the disks of the selected VMs. If you are using any third-party solutions to back up the VMs, they might be affected. Note that Changed Block Tracking cannot be enabled again from [XenCenter]. Do you want to continue?</value>
+  </data>
+  <data name="CONFIRM_DISABLE_CBT_VMS_TITLE" xml:space="preserve">
+    <value>Disable Changed Block Tracking on selected VMs</value>
+  </data>
+  <data name="CONFIRM_DISABLE_CBT_VM_TITLE" xml:space="preserve">
+    <value>Disable Changed Block Tracking on VM "{0}"</value>
   </data>
   <data name="CONFIRM_DISABLE_HEALTH_CHECK_POOL" xml:space="preserve">
     <value>Are you sure you want to disable Health Check on the selected pool?</value>
@@ -3913,9 +3979,6 @@ This will also delete its subfolders.</value>
   <data name="DEVICE_POSITION_CONFLICT" xml:space="preserve">
     <value>Position {0} is already in use. Your VM will not boot with two disks in the same position. Do you want to swap the disk at '{0}' with this disk?</value>
   </data>
-  <data name="DEVICE_POSITION_IN_USE" xml:space="preserve">
-    <value>The selected device position is currently in use.</value>
-  </data>
   <data name="DEVICE_POSITION_RESTART_REQUIRED" xml:space="preserve">
     <value>You will have to restart the VM for changes in device position to take effect.</value>
   </data>
@@ -3924,6 +3987,27 @@ This will also delete its subfolders.</value>
   </data>
   <data name="DEVICE_POSITION_SCANNING" xml:space="preserve">
     <value>Scanning for free device positions</value>
+  </data>
+  <data name="DIALOG_ATTACH_USB_NO_DEVICES_AVAILABLE" xml:space="preserve">
+    <value>No devices available</value>
+  </data>
+  <data name="DIALOG_USB_USAGE_DISABLE_PASSTHROUGH" xml:space="preserve">
+    <value>Disable passthrough</value>
+  </data>
+  <data name="DIALOG_USB_USAGE_ENABLE_PASSTHROUGH" xml:space="preserve">
+    <value>Enable passthrough</value>
+  </data>
+  <data name="DIALOG_USB_USAGE_NOTE_ALLOW" xml:space="preserve">
+    <value>Are you sure that you want to enable passthrough on this device? This will allow this device to be passed through to virtual machines.</value>
+  </data>
+  <data name="DIALOG_USB_USAGE_NOTE_DENY" xml:space="preserve">
+    <value>Are you sure that you want to disable passthrough on this device? This device will no longer be allowed to be passed through to virtual machines.</value>
+  </data>
+  <data name="DIALOG_USB_USAGE_OKBUTTON_DISABLE" xml:space="preserve">
+    <value>&amp;Yes, Disable passthrough</value>
+  </data>
+  <data name="DIALOG_USB_USAGE_OKBUTTON_ENABLE" xml:space="preserve">
+    <value>&amp;Yes, Enable passthrough</value>
   </data>
   <data name="DISABLE" xml:space="preserve">
     <value>Disa&amp;ble</value>
@@ -4175,16 +4259,16 @@ This will also delete its subfolders.</value>
     <value>Downloading update from '{0}'...</value>
   </data>
   <data name="DOWNLOAD_AND_EXTRACT_ACTION_DOWNLOADING_DESC" xml:space="preserve">
-    <value>Downloading {0}</value>
+    <value>Downloading update {0}</value>
   </data>
   <data name="DOWNLOAD_AND_EXTRACT_ACTION_DOWNLOADING_DETAILS_DESC" xml:space="preserve">
-    <value>Downloading {0} ({1} of {2})</value>
+    <value>Downloading update {0} ({1} of {2})</value>
   </data>
   <data name="DOWNLOAD_AND_EXTRACT_ACTION_DOWNLOAD_CANCELLED_DESC" xml:space="preserve">
     <value>Download canceled</value>
   </data>
   <data name="DOWNLOAD_AND_EXTRACT_ACTION_EXTRACTING_DESC" xml:space="preserve">
-    <value>Extracting {0}</value>
+    <value>Extracting update {0}</value>
   </data>
   <data name="DOWNLOAD_AND_EXTRACT_ACTION_EXTRACTING_ERROR" xml:space="preserve">
     <value>Cannot extract the update file from downloaded archive. Please see application logs for more details.</value>
@@ -4193,7 +4277,7 @@ This will also delete its subfolders.</value>
     <value>Update file could not be located. Please see application logs for more details.</value>
   </data>
   <data name="DOWNLOAD_AND_EXTRACT_ACTION_TITLE" xml:space="preserve">
-    <value>Download and extract {0}</value>
+    <value>Download and extract update {0}</value>
   </data>
   <data name="DOWNLOAD_ELLIPSES" xml:space="preserve">
     <value>Download...</value>
@@ -4222,6 +4306,9 @@ Eject the CD and try again.</value>
   </data>
   <data name="DR_CONFIGURE_TITLE" xml:space="preserve">
     <value>Configure DR on '{0}'</value>
+  </data>
+  <data name="DR_CONFIGURE_TOO_MANY_SRS" xml:space="preserve">
+    <value>You can only select up to {0} SRs to store the VM configuration data.</value>
   </data>
   <data name="DR_DRYRUN_AMP" xml:space="preserve">
     <value>Dr&amp;y-run...</value>
@@ -4506,7 +4593,7 @@ Eject the CD and try again.</value>
     <value>[XenServer] Disaster Recovery is in progress. This may take some time.</value>
   </data>
   <data name="DR_WIZARD_RECOVERPAGE_OVERALL_PROGRESS" xml:space="preserve">
-    <value>Overall progress: {0} of {1} tasks done</value>
+    <value>Overall progress: {0} of {1} tasks completed</value>
   </data>
   <data name="DR_WIZARD_RECOVERPAGE_RECOVERING_FROM" xml:space="preserve">
     <value>Recovering from {0}</value>
@@ -4666,7 +4753,7 @@ Eject the CD and try again.</value>
     <value>If you want this network to be automatically added to new VMs, check the box below. You can also set whether you want the network to be internal only, or assign it a VLAN and NIC.</value>
   </data>
   <data name="EDIT_SYS_DISK_WARNING" xml:space="preserve">
-    <value>This will change the device position of one of this VM's system disks and may leave the VM unbootable. Are you sure you wish to continue?</value>
+    <value>This will change the device position of one of this VM's system disks and may leave the VM unbootable. Are you sure you want to continue?</value>
   </data>
   <data name="EDIT_SYS_DISK_WARNING_TITLE" xml:space="preserve">
     <value>Edit Storage Settings</value>
@@ -5049,7 +5136,7 @@ Would you like to eject these ISOs before continuing?</value>
     <value>&amp;Exit Maintenance Mode</value>
   </data>
   <data name="EXIT_MAINTENANCE_MODE_PROMPT" xml:space="preserve">
-    <value>Do you wish to have the following VMs automatically migrated back to, resumed on or started on this server?
+    <value>Do you want to have the following VMs automatically migrated back to, resumed on or started on this server?
 {0}</value>
   </data>
   <data name="EXIT_SERVER_FROM_MAINTENANCE_MODE" xml:space="preserve">
@@ -5203,13 +5290,13 @@ Would you like to eject these ISOs before continuing?</value>
     <value>External command exited with Exit Code: {0}</value>
   </data>
   <data name="EXTERNAL_PLUGIN_FINISHED" xml:space="preserve">
-    <value>Plugin finished executing</value>
+    <value>Plugin finished running</value>
   </data>
   <data name="EXTERNAL_PLUGIN_RUNNING" xml:space="preserve">
     <value>Running '{0}'</value>
   </data>
   <data name="EXTERNAL_PLUGIN_TITLE" xml:space="preserve">
-    <value>Execute '{0}' from plugin '{1}'</value>
+    <value>Run '{0}' from plugin '{1}'</value>
   </data>
   <data name="EXTERNAL_PLUGIN_WIN32" xml:space="preserve">
     <value>Failed to run plugin executable. Please see the client log for details.</value>
@@ -5235,8 +5322,17 @@ Would you like to eject these ISOs before continuing?</value>
   <data name="FEATURE_DISABLED_IN_REGISTER" xml:space="preserve">
     <value>Feature disabled in the registry</value>
   </data>
+  <data name="FETCHED_POSSIBLE_HOSTS" xml:space="preserve">
+    <value>Fetched possible hosts of VM {0}</value>
+  </data>
+  <data name="FETCHING_POSSIBLE_HOSTS" xml:space="preserve">
+    <value>Fetching possible hosts of VM {0}</value>
+  </data>
   <data name="FETCH_EARLIER_DATA" xml:space="preserve">
     <value>&amp;Next Section</value>
+  </data>
+  <data name="FETCH_POSSIBLE_HOSTS" xml:space="preserve">
+    <value>Fetch possible hosts of VM {0}</value>
   </data>
   <data name="FIBRECHANNEL_NO_RESULTS" xml:space="preserve">
     <value>No LUNs were found.  Please verify your hardware configuration.</value>
@@ -5590,10 +5686,10 @@ Would you like to eject these ISOs before continuing?</value>
     <value>Not available</value>
   </data>
   <data name="GRAPHS_CANNOT_ADD_VM_HALTED" xml:space="preserve">
-    <value>It is not possible to add new performance graphs on VM '{0}' as the VM is not running.</value>
+    <value>It is not possible to add new performance graphs on VM '{0}' because the VM is not running.</value>
   </data>
   <data name="GRAPHS_CANNOT_EDIT_VM_HALTED" xml:space="preserve">
-    <value>It is not possible to edit performance graphs on VM '{0}' as the VM is not running.</value>
+    <value>It is not possible to edit performance graphs on VM '{0}' because the VM is not running.</value>
   </data>
   <data name="GRAPHS_DEFAULT_NAME_CPU" xml:space="preserve">
     <value>CPU Performance</value>
@@ -5760,6 +5856,9 @@ not currently live:
   <data name="HA_HEARTBEAT_SERVERS" xml:space="preserve">
     <value>{0} out of {1} servers</value>
   </data>
+  <data name="HA_HEARTBEAT_SERVERS_INITIALISING" xml:space="preserve">
+    <value>Initializing...</value>
+  </data>
   <data name="HA_HEARTBEAT_SR" xml:space="preserve">
     <value>HA Heartbeat SR</value>
   </data>
@@ -5911,6 +6010,9 @@ Reduce protection levels, or bring more servers online to increase the maximum s
 
 Click Configure HA to alter the settings displayed below.</value>
   </data>
+  <data name="HA_TAB_CONFIGURED_UNLICENSED" xml:space="preserve">
+    <value>HA is currently enabled for pool '{0}'.</value>
+  </data>
   <data name="HA_UNABLE_TO_CALCULATE_MESSAGE" xml:space="preserve">
     <value>Unable to calculate maximum pool failure capacity.</value>
   </data>
@@ -5970,6 +6072,9 @@ Click Configure HA to alter the settings displayed below.</value>
   </data>
   <data name="HEALTHCHECK_STATUS_ONE_ISSUE_FOUND" xml:space="preserve">
     <value>1 issue detected</value>
+  </data>
+  <data name="HEALTH_CHECK" xml:space="preserve">
+    <value>HealthCheck</value>
   </data>
   <data name="HEALTH_CHECK_AUTHENTICATION_FAILED" xml:space="preserve">
     <value>Authentication with [Citrix] Insight Services failed. See the application log files for more information.</value>
@@ -6309,7 +6414,7 @@ Click Configure HA to alter the settings displayed below.</value>
     <value>Could not locate the Fixup ISO</value>
   </data>
   <data name="IMPORT_OPTIONS_PAGE_ERROR_NO_ISO_SR_AVAILABLE" xml:space="preserve">
-    <value>Could not locate an appropriate  ISO SR. Please review configuration requirements for fix-up execution and try again.</value>
+    <value>Could not locate an appropriate ISO SR. Please review the configuration requirements for performing fix-up and try again.</value>
   </data>
   <data name="IMPORT_OPTIONS_PAGE_FOUND_EXISTING_ISO" xml:space="preserve">
     <value>The Fixup ISO in the SR above will be used to perform fixups</value>
@@ -6424,6 +6529,9 @@ Click Configure HA to alter the settings displayed below.</value>
   </data>
   <data name="IMPORT_SOURCE_PAGE_TITLE" xml:space="preserve">
     <value>Locate the file you want to import</value>
+  </data>
+  <data name="IMPORT_TEMPLATE_ALREADY_EXISTS" xml:space="preserve">
+    <value>The [Xenserver] Template that you are attempting to import already exists in the selected pool.</value>
   </data>
   <data name="IMPORT_TEMPLATE_CONFIGURE_STORAGE" xml:space="preserve">
     <value>Configure storage for the new template</value>
@@ -6595,6 +6703,9 @@ Click Configure HA to alter the settings displayed below.</value>
   </data>
   <data name="INITIALIZING_WLB_ON" xml:space="preserve">
     <value>Connecting pool {0} to Workload Balancing server.</value>
+  </data>
+  <data name="INSTALLED_UPDATES" xml:space="preserve">
+    <value>Installed Updates</value>
   </data>
   <data name="INSTALLTOOLS_COULDNOTFIND_CD" xml:space="preserve">
     <value>Could not find a CD drive on the selected VM.</value>
@@ -6820,7 +6931,7 @@ Size: {3}</value>
     <value>Licensing Error</value>
   </data>
   <data name="LICENSE_EXPIRED" xml:space="preserve">
-    <value>Unlicensed</value>
+    <value>License expired</value>
   </data>
   <data name="LICENSE_EXPIRED_NO_LICENSES_AVAILABLE" xml:space="preserve">
     <value>No licenses available</value>
@@ -6843,9 +6954,6 @@ Size: {3}</value>
   <data name="LICENSE_EXPIRY_PURCHACE" xml:space="preserve">
     <value>[XenServer] Online</value>
     <comment>this text could be improved</comment>
-  </data>
-  <data name="LICENSE_EXPIRY_TITLE" xml:space="preserve">
-    <value>License Expired</value>
   </data>
   <data name="LICENSE_FIELD_DISABLED" xml:space="preserve">
     <value>This field is disabled due to license restrictions on the server.</value>
@@ -6922,6 +7030,10 @@ Size: {3}</value>
   <data name="LICENSE_STATUS" xml:space="preserve">
     <value>Status</value>
   </data>
+  <data name="LICENSE_SUPPORT_AND_DESKTOP_CLOUD_FEATURES_ENABLED" xml:space="preserve">
+    <value>Eligible for support 
+XenAdd/XenDesktop [Citrix] Cloud features enabled</value>
+  </data>
   <data name="LICENSE_SUPPORT_AND_DESKTOP_FEATURES_ENABLED" xml:space="preserve">
     <value>Eligible for support 
 XenApp/XenDesktop features enabled</value>
@@ -6944,6 +7056,9 @@ Standard features only</value>
   </data>
   <data name="LICENSE_TOO_MANY_SERVERS_SELECTED_CAPTION" xml:space="preserve">
     <value>Activation keys can only be applied to one Free [XenServer] product at a time.</value>
+  </data>
+  <data name="LICENSE_UNLICENSED" xml:space="preserve">
+    <value>Unlicensed</value>
   </data>
   <data name="LICENSE_UNSUPPORTED" xml:space="preserve">
     <value>Unsupported</value>
@@ -7177,6 +7292,9 @@ This will permanently delete and reinitialize all local storage on the servers. 
   <data name="MAINWINDOW_DETACH_SR" xml:space="preserve">
     <value>&amp;Detach...</value>
   </data>
+  <data name="MAINWINDOW_DISABLE_CHANGED_BLOCK_TRACKING" xml:space="preserve">
+    <value>D&amp;isable Changed Block Tracking</value>
+  </data>
   <data name="MAINWINDOW_DISCONNECT" xml:space="preserve">
     <value>Dis&amp;connect</value>
   </data>
@@ -7224,6 +7342,12 @@ This will permanently delete and reinitialize all local storage on the servers. 
   </data>
   <data name="MAINWINDOW_FORGET_SR" xml:space="preserve">
     <value>&amp;Forget</value>
+  </data>
+  <data name="MAINWINDOW_HEADER_LICENSED_WITH" xml:space="preserve">
+    <value>(Licensed with {0})</value>
+  </data>
+  <data name="MAINWINDOW_HEADER_UNLICENSED" xml:space="preserve">
+    <value>(Unlicensed)</value>
   </data>
   <data name="MAINWINDOW_HIGH_AVAILABILITY" xml:space="preserve">
     <value>&amp;High Availability...</value>
@@ -7339,9 +7463,6 @@ This will permanently delete and reinitialize all local storage on the servers. 
   <data name="MAINWINDOW_SHUTDOWN" xml:space="preserve">
     <value>S&amp;hut Down</value>
   </data>
-  <data name="MAINWINDOW_SR_CONVERT_TO_THIN_CONTEXT_MENU" xml:space="preserve">
-    <value>&amp;Convert SR...</value>
-  </data>
   <data name="MAINWINDOW_START" xml:space="preserve">
     <value>&amp;Start</value>
   </data>
@@ -7426,6 +7547,9 @@ This will permanently delete and reinitialize all local storage on the servers. 
   <data name="MANAGEMENT_NETWORK_WITH_POOL" xml:space="preserve">
     <value>{0} (management) on {1}</value>
   </data>
+  <data name="MANAGE_UPDATES_PAGE_UPDATES_NOT_AVAILABLE" xml:space="preserve">
+    <value>No update is needed.</value>
+  </data>
   <data name="MANUAL_CHECK_FOR_UPDATES_PARTIAL_UNLICENSED_INFO" xml:space="preserve">
     <value>Subscription Advantage required for some hosts</value>
   </data>
@@ -7481,7 +7605,7 @@ This will permanently delete and reinitialize all local storage on the servers. 
     <value>This will delete {0} permanently, destroying the data on it. Continue?</value>
   </data>
   <data name="MESSAGEBOX_DELETE_ISO_MULTIPLE" xml:space="preserve">
-    <value>This will delete these ISOs permanently, destroying any data on them. Do you wish to continue?</value>
+    <value>This will delete these ISOs permanently, destroying any data on them. Do you want to continue?</value>
   </data>
   <data name="MESSAGEBOX_DELETE_ISO_TITLE" xml:space="preserve">
     <value>Delete Storage</value>
@@ -7490,22 +7614,22 @@ This will permanently delete and reinitialize all local storage on the servers. 
     <value>Delete Multiple Storage Items</value>
   </data>
   <data name="MESSAGEBOX_DELETE_SNAPSHOT" xml:space="preserve">
-    <value>Deleting a single snapshot disk is not allowed.  This action will delete the entire snapshot, and any other disks attached.  Do you wish to continue?</value>
+    <value>Deleting a single snapshot disk is not allowed.  This action will delete the entire snapshot, and any other disks attached.  Do you want to continue?</value>
   </data>
   <data name="MESSAGEBOX_DELETE_SNAPSHOTS_TITLE_MULTIPLE" xml:space="preserve">
     <value>Delete Multiple Entire Snapshots</value>
   </data>
   <data name="MESSAGEBOX_DELETE_SNAPSHOT_MULTIPLE" xml:space="preserve">
-    <value>Deleting a single snapshot disk is not allowed.  Deleting these snapshot disks will result in the deletion of the entire snapshot each belongs to, and any other disks attached.  Do you wish to continue?</value>
+    <value>Deleting a single snapshot disk is not allowed.  Deleting these snapshot disks will result in the deletion of the entire snapshot each belongs to, and any other disks attached.  Do you want to continue?</value>
   </data>
   <data name="MESSAGEBOX_DELETE_SNAPSHOT_TITLE" xml:space="preserve">
     <value>Delete entire snapshot</value>
   </data>
   <data name="MESSAGEBOX_DELETE_SYS_DISK" xml:space="preserve">
-    <value>This will delete this system disk permanently, possibly leaving the VM unable to boot. Do you wish to continue?</value>
+    <value>This will delete this system disk permanently, possibly leaving the VM unable to boot. Do you want to continue?</value>
   </data>
   <data name="MESSAGEBOX_DELETE_SYS_DISK_MULTIPLE" xml:space="preserve">
-    <value>This will delete these system disks permanently, possibly leaving their VMs unable to boot. Do you wish to continue?</value>
+    <value>This will delete these system disks permanently, possibly leaving their VMs unable to boot. Do you want to continue?</value>
   </data>
   <data name="MESSAGEBOX_DELETE_SYS_DISK_TITLE" xml:space="preserve">
     <value>Delete System Disk</value>
@@ -7517,7 +7641,7 @@ This will permanently delete and reinitialize all local storage on the servers. 
     <value>This will delete this virtual disk permanently, destroying the data on it. Continue?</value>
   </data>
   <data name="MESSAGEBOX_DELETE_VD_MULTIPLE" xml:space="preserve">
-    <value>This will delete these virtual disks permanently, destroying any data on them. Do you wish to continue?</value>
+    <value>This will delete these virtual disks permanently, destroying any data on them. Do you want to continue?</value>
   </data>
   <data name="MESSAGEBOX_DELETE_VD_TITLE" xml:space="preserve">
     <value>Delete Virtual Disk</value>
@@ -7628,13 +7752,13 @@ This action is final and unrecoverable.</value>
     <value>Log file is missing.</value>
   </data>
   <data name="MESSAGEBOX_LOGS_DELETE" xml:space="preserve">
-    <value>You have applied filters to the list of events. Do you wish to dismiss all events or only the events you have chosen to view? In both cases only completed events will be removed.</value>
+    <value>You have applied filters to the list of events. Do you want to dismiss all events or only the events you have chosen to view? In both cases only completed events will be removed.</value>
   </data>
   <data name="MESSAGEBOX_LOGS_DELETE_NO_FILTER" xml:space="preserve">
-    <value>This operation will remove all completed events. Do you wish to continue?</value>
+    <value>This operation will remove all completed events. Do you want to continue?</value>
   </data>
   <data name="MESSAGEBOX_LOGS_DELETE_SELECTED" xml:space="preserve">
-    <value>This operation will remove all selected completed events. Do you wish to continue?</value>
+    <value>This operation will remove all selected completed events. Do you want to continue?</value>
   </data>
   <data name="MESSAGEBOX_LOG_DELETE" xml:space="preserve">
     <value>Are you sure you want to dismiss this event?</value>
@@ -7709,11 +7833,6 @@ To fix a corrupt configuration file revert changes to {0} or delete the file to 
   <data name="MIGRATE_VDI_UPSELL_BLURB" xml:space="preserve">
     <value>Upgrade your [XenServer] license to enable VDI live migration. This feature enables you to migrate multiple running VDIs between SRs in the same pool with no VM downtime. </value>
   </data>
-  <data name="MIGRATE_VDI_UPSELL_BLURB_MORE" xml:space="preserve">
-    <value>
-
-To learn more about the [XenServer] Live VDI Migration feature or to start a [XenServer] trial, click the button below.</value>
-  </data>
   <data name="MIGRATE_VMS_OFF_SERVER" xml:space="preserve">
     <value>Migrate VMs off server '{0}'</value>
   </data>
@@ -7722,9 +7841,6 @@ To learn more about the [XenServer] Live VDI Migration feature or to start a [Xe
   </data>
   <data name="MIGRATION_NOT_ALLOWED_CPU_FEATURES" xml:space="preserve">
     <value>This VM may not migrate because the destination host does not have some of the CPU features that the VM is currently using</value>
-  </data>
-  <data name="MIGRATION_NOT_ALLOWED_GPU" xml:space="preserve">
-    <value>This VM may not migrate because it has a dedicated GPU</value>
   </data>
   <data name="MIGRATION_NOT_ALLOWED_NO_SHARED_STORAGE" xml:space="preserve">
     <value>This VM may not migrate; it is not on shared storage</value>
@@ -7799,13 +7915,13 @@ To learn more about the [XenServer] Live VDI Migration feature or to start a [Xe
     <value> ({0} iSCSI sessions)</value>
   </data>
   <data name="MULTI_VDI_DELETE_INSTRUCTION" xml:space="preserve">
-    <value>Are you sure you wish to delete the selected items?</value>
+    <value>Are you sure you want to delete the selected items?</value>
   </data>
   <data name="MULTI_VDI_DELETE_WARNING" xml:space="preserve">
-    <value>You are about to delete multiple virtual disks. Are you sure you wish to proceed?</value>
+    <value>You are about to delete multiple virtual disks. Are you sure you want to proceed?</value>
   </data>
   <data name="MULTI_VDI_DETACH_WARNING" xml:space="preserve">
-    <value>You are about to detach multiple virtual disks, are you sure you wish to proceed?</value>
+    <value>You are about to detach multiple virtual disks, are you sure you want to proceed?</value>
   </data>
   <data name="MUST_SELECT_NETWORK" xml:space="preserve">
     <value>You must select a network</value>
@@ -7879,6 +7995,12 @@ You should only proceed if you have verified that these settings are correct.</v
 
 You should only proceed if you have verified that these settings are correct.</value>
   </data>
+  <data name="NETWORKOPTIONSEDITPAGE_SUBTEXT_IGMP_SNOOPING_DISABLED" xml:space="preserve">
+    <value>IGMP snooping disabled</value>
+  </data>
+  <data name="NETWORKOPTIONSEDITPAGE_SUBTEXT_IGMP_SNOOPING_ENABLED" xml:space="preserve">
+    <value>IGMP snooping enabled</value>
+  </data>
   <data name="NETWORKPANEL_AUTO" xml:space="preserve">
     <value>Auto</value>
   </data>
@@ -7935,6 +8057,9 @@ You should only proceed if you have verified that these settings are correct.</v
   </data>
   <data name="NETWORK_NAME" xml:space="preserve">
     <value>Network {0}</value>
+  </data>
+  <data name="NETWORK_OPTIONS" xml:space="preserve">
+    <value>Network Options</value>
   </data>
   <data name="NETWORK_RECONFIG_CONNECTION_LOST" xml:space="preserve">
     <value>The connection to the server was lost. No changes have been made.</value>
@@ -7999,6 +8124,12 @@ You should only proceed if you have verified that these settings are correct.</v
   <data name="NEWNETWORK_VNAME" xml:space="preserve">
     <value>New Private Network</value>
   </data>
+  <data name="NEWPOOL_DIFFERENT_HOMOGENEOUS_UPDATES_FROM_MASTER" xml:space="preserve">
+    <value>This server has different updates from the master</value>
+  </data>
+  <data name="NEWPOOL_DIFFERENT_HOMOGENEOUS_UPDATES_FROM_POOL" xml:space="preserve">
+    <value>This server has different updates from servers already in the pool</value>
+  </data>
   <data name="NEWPOOL_DIFFERENT_NETWORK_BACKENDS" xml:space="preserve">
     <value>This server's network backend is different from the master's</value>
   </data>
@@ -8038,6 +8169,9 @@ You should only proceed if you have verified that these settings are correct.</v
   <data name="NEWPOOL_MASTER_ROLE" xml:space="preserve">
     <value>Your current role on the master is not authorized to add hosts to the master's pool</value>
   </data>
+  <data name="NEWPOOL_MAX_NUMBER_HOST_REACHED" xml:space="preserve">
+    <value>The pool has already reached the maximum number of servers allowed by your license</value>
+  </data>
   <data name="NEWPOOL_POOLINGRESTRICTED" xml:space="preserve">
     <value>Pooling is restricted with this server's license</value>
   </data>
@@ -8046,6 +8180,9 @@ You should only proceed if you have verified that these settings are correct.</v
   </data>
   <data name="NEWPOOL_UNLICENSED_HOST_LICENSED_MASTER" xml:space="preserve">
     <value>You cannot add an unlicensed server to a licensed pool</value>
+  </data>
+  <data name="NEWPOOL_WILL_EXCEED_POOL_MAX_SIZE" xml:space="preserve">
+    <value>The pool will exceed the maximum number of servers allowed by your license</value>
   </data>
   <data name="NEWSR_ACTION" xml:space="preserve">
     <value>NFS SR [{0}]</value>
@@ -8061,7 +8198,7 @@ As SMB storage repositories are shared, the virtual disks stored in them allow V
 When you configure a SMB storage repository, you simply provide the hostname or IP address of the SMB server, the user name, the password and the path to a directory that will be used to contain the storage repository. The SMB server must be configured to export the specified path to all servers in the pool.</value>
   </data>
   <data name="NEWSR_CIFS_ISO_BLURB" xml:space="preserve">
-    <value>Select this option if you have a library of VM installation ISO images available as a Windows (SMB/CIFS) share that you wish to attach to your host or pool.</value>
+    <value>Select this option if you have a library of VM installation ISO images available as a Windows (SMB/CIFS) share that you want to attach to your host or pool.</value>
   </data>
   <data name="NEWSR_CIFS_ISO_TYPE_NAME" xml:space="preserve">
     <value>Windows File Sharing (SMB/CIFS)</value>
@@ -8138,7 +8275,7 @@ When you configure a SMB storage repository, you simply provide the hostname or 
   <data name="NEWSR_ISCSI_FORMAT_WARNING" xml:space="preserve">
     <value>Creating a new virtual disk on this LUN will destroy any data present. You must ensure that no other system is using the LUN, including any servers, or the virtual disk may become corrupted while in use.
 
-Do you wish to format the disk?</value>
+Do you want to format the disk?</value>
   </data>
   <data name="NEWSR_ISO_DESCRIPTION" xml:space="preserve">
     <value>NFS ISO Library [{0}]</value>
@@ -8255,7 +8392,7 @@ VM cloning uses the snapshot and clone capabilities of the filer to provide high
     <value>Enter the NetApp filer details</value>
   </data>
   <data name="NEWSR_NFS_ISO_BLURB" xml:space="preserve">
-    <value>Select this option if you have a library of VM installation ISO images available as a NFS share that you wish to attach to your host or pool.</value>
+    <value>Select this option if you have a library of VM installation ISO images available as a NFS share that you want to attach to your host or pool.</value>
   </data>
   <data name="NEWSR_NFS_ISO_TYPE_NAME" xml:space="preserve">
     <value>NFS ISO</value>
@@ -8512,9 +8649,6 @@ Review these settings, then click Previous if you need to change anything. Other
   <data name="NEWVMWIZARD_STORAGEPAGE_SROVERCOMMIT" xml:space="preserve">
     <value>The SR '{0}' is over committed. There is only {1} of free space and the new VM requires {2}.</value>
   </data>
-  <data name="NEWVMWIZARD_STORAGEPAGE_SROVERCOMMIT_THIN" xml:space="preserve">
-    <value>The SR '{0}' is over committed. There is only {1} of free space and the new VM requires {2} ({3} initially).</value>
-  </data>
   <data name="NEWVMWIZARD_STORAGEPAGE_TITLE" xml:space="preserve">
     <value>Configure storage for the new VM</value>
   </data>
@@ -8578,6 +8712,12 @@ Review these settings, then click Previous if you need to change anything. Other
   <data name="NEWVMWIZARD_VGPUPAGE_TITLE" xml:space="preserve">
     <value>Assign a virtual GPU</value>
   </data>
+  <data name="NEWVMWIZARD_XENAPP_XENDESKTOP_INFO_MESSAGE_POOL" xml:space="preserve">
+    <value>This pool is only licensed for XenApp/XenDesktop workloads</value>
+  </data>
+  <data name="NEWVMWIZARD_XENAPP_XENDESKTOP_INFO_MESSAGE_SERVER" xml:space="preserve">
+    <value>This server is only licensed for XenApp/XenDesktop workloads</value>
+  </data>
   <data name="NEWVM_DEFAULTNAME" xml:space="preserve">
     <value>{0} ({1})</value>
   </data>
@@ -8600,7 +8740,7 @@ Review these settings, then click Previous if you need to change anything. Other
     <value>Select a storage repository to create the disk on</value>
   </data>
   <data name="NEW_DVD_DRIVES_REQUIRED" xml:space="preserve">
-    <value>At least one of the VMs you wish to install [XenServer product] Tools onto has no DVD drive. Would you like to create a new DVD drive for each of the VMs that requires one?</value>
+    <value>At least one of the VMs you want to install [XenServer product] Tools onto has no DVD drive. Would you like to create a new DVD drive for each of the VMs that requires one?</value>
   </data>
   <data name="NEW_DVD_DRIVE_CREATED" xml:space="preserve">
     <value>DVD Drive Created</value>
@@ -8622,7 +8762,7 @@ Review these settings, then click Previous if you need to change anything. Other
 Once the VM has restarted click the Install [XenServer product] Tools menu item once again.</value>
   </data>
   <data name="NEW_DVD_DRIVE_REQUIRED" xml:space="preserve">
-    <value>The VM you wish to install [XenServer product] Tools onto has no DVD drive, would you like to create one?</value>
+    <value>The VM you want to install [XenServer product] Tools onto has no DVD drive, would you like to create one?</value>
   </data>
   <data name="NEW_FOLDER" xml:space="preserve">
     <value>&amp;New Folder...</value>
@@ -8721,12 +8861,6 @@ It is strongly recommended that you Cancel and apply the latest version of the p
   <data name="NEW_UPDATE_AVAILABLE" xml:space="preserve">
     <value>New Update Available - {0}</value>
   </data>
-  <data name="NEW_VMSS_PAGE_TEXT" xml:space="preserve">
-    <value>Use this wizard to define a snapshot schedule that will create automatic scheduled snapshot jobs for your VMs.</value>
-  </data>
-  <data name="NEW_VMSS_PAGE_TEXT_MORE" xml:space="preserve">
-    <value>To begin, enter a name for the schedule and a description (optional), then click Next.</value>
-  </data>
   <data name="NEW_VM_APPLIANCE" xml:space="preserve">
     <value>&amp;New vApp...</value>
   </data>
@@ -8765,6 +8899,9 @@ It is strongly recommended that you Cancel and apply the latest version of the p
   </data>
   <data name="NEW_VM_WIZARD_TEMPLATEPAGE_YINHEKYLIN" xml:space="preserve">
     <value>YinheKylin</value>
+  </data>
+  <data name="NEW_XENCENTER_REQUIRED_INFO" xml:space="preserve">
+    <value>New [XenCenter] version required</value>
   </data>
   <data name="NFS_ISO_ALREADY_ATTACHED" xml:space="preserve">
     <value>This NFS ISO storage is already attached to '{0}'</value>
@@ -8853,6 +8990,9 @@ It is strongly recommended that you Cancel and apply the latest version of the p
   <data name="NOT_AGILE_VM_HAS_VGPU" xml:space="preserve">
     <value>The VM has one or more virtual GPUs. Restart cannot be guaranteed.</value>
   </data>
+  <data name="NOT_AGILE_VM_HAS_VUSB" xml:space="preserve">
+    <value>The VM has one or more USB devices attached. Restart cannot be guaranteed.</value>
+  </data>
   <data name="NOT_APPLIED" xml:space="preserve">
     <value>Not applied</value>
   </data>
@@ -8875,7 +9015,7 @@ It is strongly recommended that you Cancel and apply the latest version of the p
     <value>Space available: {0}</value>
   </data>
   <data name="NOT_ENOUGH_SPACE_MESSAGE_CLEANUP" xml:space="preserve">
-    <value>[XenCenter] can free up {0} by removing residual update files. Do you wish to proceed with the cleanup?</value>
+    <value>[XenCenter] can free up {0} by removing residual update files. Do you want to proceed with the cleanup?</value>
   </data>
   <data name="NOT_ENOUGH_SPACE_MESSAGE_INSTALL" xml:space="preserve">
     <value>There is not enough space on '{0}' to install update '{1}'.</value>
@@ -8914,6 +9054,9 @@ However, there is not enough space to perform the repartitioning, so the current
   </data>
   <data name="NOT_TRUSTED" xml:space="preserve">
     <value>not trusted</value>
+  </data>
+  <data name="NOT_UPDATED" xml:space="preserve">
+    <value>Out of date</value>
   </data>
   <data name="NOT_UPGRADED" xml:space="preserve">
     <value>Not Upgraded</value>
@@ -9119,6 +9262,9 @@ However, there is not enough space to perform the repartitioning, so the current
   <data name="PATCHINGWIZARD_AUTOUPDATINGPAGE_FAILED" xml:space="preserve">
     <value>The update was not completed successfully</value>
   </data>
+  <data name="PATCHINGWIZARD_AUTOUPDATINGPAGE_IN_PROGRESS_DOTDOTDOT" xml:space="preserve">
+    <value>{0}...</value>
+  </data>
   <data name="PATCHINGWIZARD_AUTOUPDATINGPAGE_TEXT" xml:space="preserve">
     <value>Upload and Install</value>
   </data>
@@ -9258,7 +9404,13 @@ However, there is not enough space to perform the repartitioning, so the current
     <value>Choose an existing update to install or upload a new one</value>
   </data>
   <data name="PATCHINGWIZARD_SELECTPATCHPAGE_UPDATESEXT" xml:space="preserve">
-    <value>[XenServer] Updates and Supplemental Packs (*.{0}, *.iso)|*.{0};*.iso</value>
+    <value>[XenServer] Updates and Supplemental Packs (*.{0}, *.iso,*.zip)|*.{0};*.iso;*.zip</value>
+  </data>
+  <data name="PATCHINGWIZARD_SELECTSERVERPAGE_APPLY_UPDATES" xml:space="preserve">
+    <value>Also apply all released updates on the new version</value>
+  </data>
+  <data name="PATCHINGWIZARD_SELECTSERVERPAGE_APPLY_UPDATES_MIXED" xml:space="preserve">
+    <value>Also apply all released updates on the new version (only on pools licensed for automated updates)</value>
   </data>
   <data name="PATCHINGWIZARD_SELECTSERVERPAGE_AUTOMATED_UPDATES_NOT_SUPPORTED_HOST_VERSION" xml:space="preserve">
     <value>Automated updates are not supported on this [XenServer] version</value>
@@ -9295,6 +9447,10 @@ Servers that cannot be updated with automated updates appear disabled in this li
     <value>Select one or more servers where you want to apply the selected update.
 Servers where this update cannot be applied appear disabled in this list.</value>
   </data>
+  <data name="PATCHINGWIZARD_SELECTSERVERPAGE_RUBRIC_NEW_VERSION_MODE" xml:space="preserve">
+    <value>Select one or more pools or standalone servers that you want to update to the new version.
+Servers where this update cannot be applied appear disabled in this list.</value>
+  </data>
   <data name="PATCHINGWIZARD_SELECTSERVERPAGE_RUBRIC_POOL_SELECTION" xml:space="preserve">
     <value>Select one or more pools or standalone servers where you want to apply the selected update.
 Servers where this update cannot be applied appear disabled in this list.</value>
@@ -9309,7 +9465,10 @@ Servers where this update cannot be applied appear disabled in this list.</value
     <value>Select Servers</value>
   </data>
   <data name="PATCHINGWIZARD_SELECTSERVERPAGE_TITLE" xml:space="preserve">
-    <value>Select the servers you wish to update</value>
+    <value>Select the servers you want to update</value>
+  </data>
+  <data name="PATCHINGWIZARD_UPDATES_DONE_AUTOMATED_NEW_VERSION_MODE" xml:space="preserve">
+    <value>The new version has been installed.</value>
   </data>
   <data name="PATCHINGWIZARD_UPDATES_DONE_AUTOMATED_UPDATES_MODE" xml:space="preserve">
     <value>Automated updates have finished.</value>
@@ -9331,11 +9490,20 @@ Please wait for this operation to complete, then click Next to continue with the
   <data name="PATCHINGWIZARD_UPLOADPAGE_TITLE_ONLY_UPLOAD" xml:space="preserve">
     <value>Uploading the selected file to your servers</value>
   </data>
+  <data name="PATCHINGWIZARD_UPLOAD_AND_INSTALL_TITLE_AUTOMATED_MODE" xml:space="preserve">
+    <value>Installing updates:</value>
+  </data>
+  <data name="PATCHINGWIZARD_UPLOAD_AND_INSTALL_TITLE_NEW_VERSION_AUTOMATED_MODE" xml:space="preserve">
+    <value>Installing new version:</value>
+  </data>
   <data name="PATCHING_EJECT_CDS" xml:space="preserve">
     <value>Eject any virtual CDs from your VMs</value>
   </data>
   <data name="PATCHING_WARNING_HA" xml:space="preserve">
     <value>Disable HA until after all the hosts have been rebooted</value>
+  </data>
+  <data name="PATCHING_WIZARD_CHECK_OK" xml:space="preserve">
+    <value>{0} ok.</value>
   </data>
   <data name="PATCHING_WIZARD_CONFIRMATION_DELETE" xml:space="preserve">
     <value>The patch {0} is going to be deleted. Do you want to continue?</value>
@@ -9398,6 +9566,12 @@ Size: {3}</value>
   <data name="PATCH_FOR_XENSERVER_VERSION" xml:space="preserve">
     <value>{0}: This patch is for servers with version matching the regular expression '{1}'.</value>
   </data>
+  <data name="PATCH_INSTALLATION_SIZE" xml:space="preserve">
+    <value>Installation size: {0}</value>
+  </data>
+  <data name="PATCH_NEEDS_NEW_XENCENTER" xml:space="preserve">
+    <value>This version requires [XenCenter] {0} or newer</value>
+  </data>
   <data name="PATCH_NOT_FOUND" xml:space="preserve">
     <value>Not found</value>
   </data>
@@ -9416,6 +9590,9 @@ File not found</value>
   </data>
   <data name="PDSECTION_TITLE" xml:space="preserve">
     <value>Title</value>
+  </data>
+  <data name="PENDING_RESTART_CHECK" xml:space="preserve">
+    <value>Pending restart check</value>
   </data>
   <data name="PERFORMANCE_TAB_TITLE" xml:space="preserve">
     <value>Performance Graphs</value>
@@ -9711,10 +9888,22 @@ Please reconnect the host and try again</value>
     <value>Server '{0}'</value>
   </data>
   <data name="PROBLEM_MAC_ADDRESS_IS_DUPLICATE" xml:space="preserve">
-    <value>The MAC address entered has already been assigned to the VM: \n {1} \n\n Are you sure you wish to continue?</value>
+    <value>The MAC address entered has already been assigned to the VM: \n {1} \n\n Are you sure you want to continue?</value>
   </data>
   <data name="PROBLEM_MAC_ADDRESS_IS_DUPLICATE_TITLE" xml:space="preserve">
     <value>Duplicate MAC address</value>
+  </data>
+  <data name="PROBLEM_MASTER_PENDING_RESTART_HOST" xml:space="preserve">
+    <value>{0}: The master needs to be rebooted first</value>
+  </data>
+  <data name="PROBLEM_MASTER_PENDING_RESTART_HOST_THIS_UPDATE" xml:space="preserve">
+    <value>{0}: This update requires the master to be rebooted first</value>
+  </data>
+  <data name="PROBLEM_MASTER_PENDING_RESTART_TOOLSTACK" xml:space="preserve">
+    <value>{0}: Toolstack on master needs to be restarted first</value>
+  </data>
+  <data name="PROBLEM_MASTER_PENDING_RESTART_TOOLSTACK_THIS_UPDATE" xml:space="preserve">
+    <value>{0}: This update requires the toolstack on master to be restarted first</value>
   </data>
   <data name="PROBLEM_POOLPROBLEM_TITLE" xml:space="preserve">
     <value>Pool '{0}'</value>
@@ -9733,6 +9922,9 @@ Please reconnect the host and try again</value>
   </data>
   <data name="PROBLEM_VMPROBLEM_TITLE" xml:space="preserve">
     <value>VM '{0}'</value>
+  </data>
+  <data name="PROBLEM_XENCENTER_VERSION_TITLE" xml:space="preserve">
+    <value>[XenCenter] version</value>
   </data>
   <data name="PROCEED" xml:space="preserve">
     <value>&amp;Proceed</value>
@@ -9834,12 +10026,12 @@ Press OK to continue the wizard and return to the server and follow the instruct
   <data name="QUESTION_LOGOUT_AD_USER_MANY" xml:space="preserve">
     <value>You are about to log out {0} users.
 
-Do you wish to continue?</value>
+Do you want to continue?</value>
   </data>
   <data name="QUESTION_LOGOUT_AD_USER_ONE" xml:space="preserve">
     <value>You are about to log out the user '{0}'.
 
-Do you wish to continue?</value>
+Do you want to continue?</value>
   </data>
   <data name="QUESTION_MARK" xml:space="preserve">
     <value>?</value>
@@ -9847,12 +10039,12 @@ Do you wish to continue?</value>
   <data name="QUESTION_REMOVE_AD_USER_MANY" xml:space="preserve">
     <value>You are about to remove {0} users.
 
-Do you wish to continue?</value>
+Do you want to continue?</value>
   </data>
   <data name="QUESTION_REMOVE_AD_USER_ONE" xml:space="preserve">
     <value>You are about to remove the user '{0}'.
 
-Do you wish to continue?</value>
+Do you want to continue?</value>
   </data>
   <data name="QUIESCED_SNAPSHOTS" xml:space="preserve">
     <value>Quiesced snapshots</value>
@@ -10160,6 +10352,9 @@ Click Server Status Report to open the Compile Server Status Report Wizard or cl
   <data name="REQUIRED_HOTFIX_ISNOT_INSTALLED" xml:space="preserve">
     <value>{0}: The required hotfix is not installed</value>
   </data>
+  <data name="REQUIRED_UPDATES" xml:space="preserve">
+    <value>Required Updates</value>
+  </data>
   <data name="RESOLVED_AS" xml:space="preserve">
     <value>Resolved as {0}</value>
   </data>
@@ -10253,6 +10448,12 @@ Click Server Status Report to open the Compile Server Status Report Wizard or cl
   <data name="ROLLING_POOL_UPGRADE_ELLIPSIS" xml:space="preserve">
     <value>Rolling Pool &amp;Upgrade...</value>
   </data>
+  <data name="ROLLING_UPGRADE_BUTTON_LABEL_STOP" xml:space="preserve">
+    <value>S&amp;top</value>
+  </data>
+  <data name="ROLLING_UPGRADE_BUTTON_LABEL_TEST" xml:space="preserve">
+    <value>&amp;Test</value>
+  </data>
   <data name="ROLLING_UPGRADE_CAN_RESUME_UPGRADE" xml:space="preserve">
     <value>This upgrade can be resumed by launching the Rolling Pool Upgrade wizard again.</value>
   </data>
@@ -10288,6 +10489,12 @@ The master must be upgraded first, so if you skip the master, the rolling pool u
   <data name="ROLLING_UPGRADE_TITLE_MODE" xml:space="preserve">
     <value>Upgrade Mode</value>
   </data>
+  <data name="ROLLING_UPGRADE_UNLICENSED_HOST" xml:space="preserve">
+    <value>This server is not licensed for rolling pool upgrade</value>
+  </data>
+  <data name="ROLLING_UPGRADE_UNLICENSED_POOL" xml:space="preserve">
+    <value>This pool is not licensed for rolling pool upgrade</value>
+  </data>
   <data name="ROLLING_UPGRADE_UPGRADE_COMPLETED" xml:space="preserve">
     <value>Rolling pool upgrade is complete.</value>
   </data>
@@ -10299,9 +10506,6 @@ The master must be upgraded first, so if you skip the master, the rolling pool u
   </data>
   <data name="RUNNING_ON" xml:space="preserve">
     <value>Running on</value>
-  </data>
-  <data name="RUNNING_SNAPSHOTS" xml:space="preserve">
-    <value>Taking snapshots</value>
   </data>
   <data name="RUN_POLICY" xml:space="preserve">
     <value>Running policy '{0}'</value>
@@ -10480,6 +10684,9 @@ The master must be upgraded first, so if you skip the master, the rolling pool u
   <data name="SERVER_REQUEST_IN_PROGRESS" xml:space="preserve">
     <value>A server request is in progress</value>
   </data>
+  <data name="SERVER_SELECTION_CHECK_DESCRIPTION" xml:space="preserve">
+    <value>Server selection check</value>
+  </data>
   <data name="SERVER_SIDE_CHECK_AUTO_MODE_DESCRIPTION" xml:space="preserve">
     <value>Disk space check</value>
   </data>
@@ -10636,6 +10843,12 @@ The master must be upgraded first, so if you skip the master, the rolling pool u
   <data name="SHUTTING_DOWN_VM_OUT_OF" xml:space="preserve">
     <value>Shutting down VM {0} out of {1}</value>
   </data>
+  <data name="SHUT_DOWN_POOL_MASTER_MULTIPLE" xml:space="preserve">
+    <value>{0} are pool masters. It is strongly recommended to nominate a new master for each affected pool before proceeding.</value>
+  </data>
+  <data name="SHUT_DOWN_POOL_MASTER_SINGLE" xml:space="preserve">
+    <value>{0} is the pool master. It is strongly recommended to nominate a new master for the pool before proceeding.</value>
+  </data>
   <data name="SIGNING_APPLIANCE" xml:space="preserve">
     <value>Applying digital signature to appliance...</value>
   </data>
@@ -10713,7 +10926,7 @@ Do you want to connect to the pool master '{1}'?</value>
     <value>Deleting snapshots ...</value>
   </data>
   <data name="SNAPSHOT_FREQUENCY" xml:space="preserve">
-    <value>Snapshot schedule</value>
+    <value>Snapshot Schedule</value>
   </data>
   <data name="SNAPSHOT_FREQUENCY_TITLE" xml:space="preserve">
     <value>When do you want snapshots to be taken?</value>
@@ -10900,15 +11113,6 @@ The upper limit: SR size / {2}</value>
   </data>
   <data name="SR_SIZE_USED" xml:space="preserve">
     <value>{0} used of {1} total ({2} allocated)</value>
-  </data>
-  <data name="SR_THICK_PROVISIONING" xml:space="preserve">
-    <value>Fully provisioned</value>
-  </data>
-  <data name="SR_THIN_PROVISIONING" xml:space="preserve">
-    <value>Thinly provisioned</value>
-  </data>
-  <data name="SR_THIN_PROVISIONING_COMMITTED" xml:space="preserve">
-    <value>Thinly provisioned ({0}% committed)</value>
   </data>
   <data name="SR_TRIM_NO_STORAGE_HOST_ERROR" xml:space="preserve">
     <value>Cannot reclaim freed space, because the SR is detached.</value>
@@ -11448,6 +11652,9 @@ Verify that the file is a valid {1} export.</value>
   <data name="UNTIL_RESTART_X_AFTER_RESTART_Y" xml:space="preserve">
     <value>Until next restart {0}; after restart {1}</value>
   </data>
+  <data name="UPDATED" xml:space="preserve">
+    <value>Up to date</value>
+  </data>
   <data name="UPDATED_PERFMON" xml:space="preserve">
     <value>Updated performance monitoring configuration</value>
   </data>
@@ -11508,6 +11715,9 @@ Verify that the file is a valid {1} export.</value>
   </data>
   <data name="UPDATES_DOWNLOAD_AND_INSTALL" xml:space="preserve">
     <value>Download and Install</value>
+  </data>
+  <data name="UPDATES_DOWNLOAD_REQUIRED_XENCENTER" xml:space="preserve">
+    <value>Download [XenCenter]</value>
   </data>
   <data name="UPDATES_WIZARD" xml:space="preserve">
     <value>Install Update</value>
@@ -11592,6 +11802,9 @@ Check your settings and try again.</value>
   <data name="UPDATES_WIZARD_EXIT_MAINTENANCE_MODE" xml:space="preserve">
     <value>Exit maintenance mode</value>
   </data>
+  <data name="UPDATES_WIZARD_EXTRACT_ACTION_TITLE" xml:space="preserve">
+    <value>Extract {0}</value>
+  </data>
   <data name="UPDATES_WIZARD_FILE_NOT_FOUND" xml:space="preserve">
     <value>Unable to find the update file '{0}'.
 
@@ -11633,8 +11846,17 @@ Check your settings and try again.</value>
   <data name="UPDATES_WIZARD_LOCAL_STORAGE" xml:space="preserve">
     <value>{0}: The VM '{1}' uses local storage and cannot be migrated.</value>
   </data>
+  <data name="UPDATES_WIZARD_NEWER_XENCENTER_REQUIRED" xml:space="preserve">
+    <value>[XenCenter] version {0} or newer is required.</value>
+  </data>
+  <data name="UPDATES_WIZARD_NEWER_XENCENTER_WARNING" xml:space="preserve">
+    <value>Ensure you have upgraded [XenCenter] before upgrading [XenServer].</value>
+  </data>
   <data name="UPDATES_WIZARD_NOTVALID_EXTENSION" xml:space="preserve">
     <value>The selected file does not have a valid extension. Valid extensions are: *.{0} and *.iso</value>
+  </data>
+  <data name="UPDATES_WIZARD_NOTVALID_ZIPFILE" xml:space="preserve">
+    <value>No valid update file found in {0}</value>
   </data>
   <data name="UPDATES_WIZARD_NOT_ENOUGH_SPACE" xml:space="preserve">
     <value>This storage repository does not have enough space to suspend the required VMs.</value>
@@ -11661,7 +11883,7 @@ Check your settings and try again.</value>
     <value>{0}: This server does not need to be rebooted.</value>
   </data>
   <data name="UPDATES_WIZARD_NO_REBOOT_NEEDED_LIVE_PATCH" xml:space="preserve">
-    <value>{0}: This server does not need to be rebooted as live patching is used.</value>
+    <value>{0}: This server does not need to be rebooted because live patching is used.</value>
   </data>
   <data name="UPDATES_WIZARD_NO_TOOLS" xml:space="preserve">
     <value>The VM {0} does not have [XenServer product] Tools installed.</value>
@@ -11670,7 +11892,7 @@ Check your settings and try again.</value>
     <value>The VM {0} cannot be suspended until it has up to date [XenServer product] Tools.</value>
   </data>
   <data name="UPDATES_WIZARD_PAGE1_TOPTEXT" xml:space="preserve">
-    <value>Select the checkboxes for each server you wish to update. Select a pool checkbox to select all the available servers in the pool.</value>
+    <value>Select the checkboxes for each server you want to update. Select a pool checkbox to select all the available servers in the pool.</value>
   </data>
   <data name="UPDATES_WIZARD_PATCH_ALREADY_APPLIED" xml:space="preserve">
     <value>{0}: The update has already been applied to this server.  This server will be skipped.</value>
@@ -11679,7 +11901,7 @@ Check your settings and try again.</value>
     <value>Update Already Applied to Server '{0}'</value>
   </data>
   <data name="UPDATES_WIZARD_PLAN_ERROR" xml:space="preserve">
-    <value>An error occurred trying to execute plan stage '{0}'.  The error was '{1}'</value>
+    <value>An error occurred trying to carry out plan stage '{0}'.  The error was '{1}'</value>
   </data>
   <data name="UPDATES_WIZARD_PRECHECK_ERROR" xml:space="preserve">
     <value>An error occurred during pre-update checks.  The results may not be reliable.</value>
@@ -11743,6 +11965,9 @@ Check your settings and try again.</value>
   <data name="UPDATES_WIZARD_RUNNING_PRECHECK" xml:space="preserve">
     <value>Precheck for {0} in {1}...</value>
   </data>
+  <data name="UPDATES_WIZARD_SERVER_SELECTION_PROBLEM" xml:space="preserve">
+    <value>{0}: The update needs to be applied on all servers in the pool.</value>
+  </data>
   <data name="UPDATES_WIZARD_SR_TITLE" xml:space="preserve">
     <value>Storage repository '{0}'</value>
   </data>
@@ -11762,12 +11987,12 @@ Check your settings and try again.</value>
     <value>{0}: Check skipped because WLB is enabled on pool {1}.</value>
   </data>
   <data name="UPDATE_DISMISS_ALL_CONTINUE" xml:space="preserve">
-    <value>You have applied filters to the list of updates. Do you wish to dismiss all updates from every connected server, or only the updates you have chosen to view? In both cases the dismissed updates will be removed from the servers permanently.
+    <value>You have applied filters to the list of updates. Do you want to dismiss all updates from every connected server, or only the updates you have chosen to view? In both cases the dismissed updates will be removed from the servers permanently.
 
 Note that if RBAC is enabled, only updates which you have privileges to dismiss will be affected.</value>
   </data>
   <data name="UPDATE_DISMISS_ALL_NO_FILTER_CONTINUE" xml:space="preserve">
-    <value>This operation will remove permanently all updates from every connected server. Do you wish to continue?
+    <value>This operation will remove permanently all updates from every connected server. Do you want to continue?
 
 Note that if RBAC is enabled, only updates which you have privileges to dismiss will be affected.</value>
   </data>
@@ -11775,7 +12000,7 @@ Note that if RBAC is enabled, only updates which you have privileges to dismiss 
     <value>Are you sure you want to dismiss this update?</value>
   </data>
   <data name="UPDATE_DISMISS_SELECTED_CONFIRM" xml:space="preserve">
-    <value>This operation will remove the selected updates from the servers permanently. Do you wish to continue?
+    <value>This operation will remove the selected updates from the servers permanently. Do you want to continue?
 
 Note that if RBAC is enabled, only updates which you have privileges to dismiss will be affected.</value>
   </data>
@@ -11783,7 +12008,7 @@ Note that if RBAC is enabled, only updates which you have privileges to dismiss 
     <value>Failed to introduce the update.</value>
   </data>
   <data name="UPDATE_EXPORT_ALL_OR_FILTERED" xml:space="preserve">
-    <value>You have applied filters to the list of updates. Do you wish to export all updates from every connected server, or only the updates you have chosen to view?</value>
+    <value>You have applied filters to the list of updates. Do you want to export all updates from every connected server, or only the updates you have chosen to view?</value>
   </data>
   <data name="UPDATE_FOR_DIFFERENT_XENSERVER_VERSION" xml:space="preserve">
     <value>{0}: This update is not compatible with this server version.</value>
@@ -11837,7 +12062,7 @@ Note that if RBAC is enabled, only updates which you have privileges to dismiss 
     <value>Fix vCPU configuration</value>
   </data>
   <data name="UPGRADEWIZARD_SELECTSERVERS_TITLE" xml:space="preserve">
-    <value>Select the servers you wish to upgrade.</value>
+    <value>Select the servers you want to upgrade.</value>
   </data>
   <data name="UPGRADEWIZARD_WARNING_INCOMPATIBLE_CPUS" xml:space="preserve">
     <value>{0}: Check skipped because hosts in pool '{1}' have incompatible CPUs</value>
@@ -11908,50 +12133,20 @@ Note that if RBAC is enabled, only updates which you have privileges to dismiss 
   <data name="UPSELL_BLURB_AD" xml:space="preserve">
     <value>Upgrade your [XenServer] license to enable Active Directory.  Active Directory allows you to configure [XenServer] access control by adding named user accounts.</value>
   </data>
-  <data name="UPSELL_BLURB_AD_MORE" xml:space="preserve">
-    <value>
-
-To learn more about the [XenServer] Active Directory feature or to start a [XenServer] trial, click the button below.</value>
-  </data>
   <data name="UPSELL_BLURB_ALERTS" xml:space="preserve">
     <value>Upgrade your [XenServer] license to enable Alerting and Reporting capabilities. Email based performance and error alerting will proactively notify administrators of error conditions or performance problems before they affect critical services.</value>
-  </data>
-  <data name="UPSELL_BLURB_ALERTS_MORE" xml:space="preserve">
-    <value>
-
-To learn more about the [XenServer] Alerting and Reporting feature or to start a [XenServer] trial, click the button below.</value>
   </data>
   <data name="UPSELL_BLURB_CPM" xml:space="preserve">
     <value>Upgrade your [XenServer] license to enable VM live migration. This feature enables you to migrate running VMs on shared or local storage between servers in the same pool or across pools with no VM downtime. </value>
   </data>
-  <data name="UPSELL_BLURB_CPM_MORE" xml:space="preserve">
-    <value>
-
-To learn more about the [XenServer] Cross-Pool Migration feature or to start a [XenServer] trial, click the button below.</value>
-  </data>
   <data name="UPSELL_BLURB_CPUMASKING" xml:space="preserve">
     <value>Upgrade your [XenServer] license to enable Heterogeneous Pools. Heterogeneous Pools allows hosts with different CPUs to form a resource pool, and allows virtual machines to migrate between them.</value>
-  </data>
-  <data name="UPSELL_BLURB_CPUMASKING_MORE" xml:space="preserve">
-    <value>
-
-To learn more about the [XenServer] Heterogeneous Pools feature or to start a [XenServer] trial, click the button below.</value>
   </data>
   <data name="UPSELL_BLURB_DMC" xml:space="preserve">
     <value>Upgrade your [XenServer] license to enable Dynamic Memory Control.  Dynamic Memory Control allows [XenServer] to adjust the memory of live virtual machines, and respond dynamically to changing demands on the host server.</value>
   </data>
-  <data name="UPSELL_BLURB_DMC_MORE" xml:space="preserve">
-    <value>
-
-To learn more about the [XenServer] Dynamic Memory Control feature or to start a [XenServer] trial, click the button below.</value>
-  </data>
   <data name="UPSELL_BLURB_DR" xml:space="preserve">
     <value>Upgrade your [XenServer] license to enable Disaster Recovery. The Disaster Recovery feature allows you to recover your critical VMs and vApps at your DR site in the event of a disaster at your primary production site.</value>
-  </data>
-  <data name="UPSELL_BLURB_DR_MORE" xml:space="preserve">
-    <value>
-
-To learn more about the [XenServer] Disaster Recovery feature or to start a [XenServer] trial, click the button below.</value>
   </data>
   <data name="UPSELL_BLURB_ENHANCEDSR" xml:space="preserve">
     <value>Upgrade your [XenServer] license to enable StorageLink™ Technology. StorageLink allows [XenServer] to leverage all the power of your existing storage hardware and offload storage operations automatically. This allows for high performance and space efficient storage provisioning, cloning, and snapshot capabilities to be handled in hardware using your storage hardware's native features.</value>
@@ -11959,64 +12154,67 @@ To learn more about the [XenServer] Disaster Recovery feature or to start a [Xen
   <data name="UPSELL_BLURB_GPU" xml:space="preserve">
     <value>Upgrade your [XenServer] license to enable GPU pass-through. The GPU pass-through feature allows you to assign a dedicated graphics processing unit to a VM for higher graphics performance.</value>
   </data>
-  <data name="UPSELL_BLURB_GPU_MORE" xml:space="preserve">
-    <value>
-
-To learn more about the [XenServer] GPU pass-through feature or to start a [XenServer] trial, click the button below.</value>
-  </data>
   <data name="UPSELL_BLURB_HA" xml:space="preserve">
     <value>Upgrade your [XenServer] license to enable High Availability. High Availability allows virtual machines to be automatically restarted in the event of an underlying hardware failure or individual VM failure. If the server fails the VMs will be intelligently restarted on other virtualized servers in the resource pool.</value>
-  </data>
-  <data name="UPSELL_BLURB_HA_MORE" xml:space="preserve">
-    <value>
-
-To learn more about the [XenServer] High Availability feature or to start a [XenServer] trial, click the button below.</value>
   </data>
   <data name="UPSELL_BLURB_PERFORMANCE" xml:space="preserve">
     <value>Upgrade your [XenServer] license to enable Performance Reporting capabilities. Performance Reporting provides guidance on overall environment performance trends and enables you to accurately plan capacity as business needs change.</value>
   </data>
-  <data name="UPSELL_BLURB_PERFORMANCE_MORE" xml:space="preserve">
-    <value>
-
-To learn more about the [XenServer] Performance Reporting capabilities feature or to start a [XenServer] trial, click the button below.</value>
-  </data>
   <data name="UPSELL_BLURB_RBAC" xml:space="preserve">
     <value>Upgrade your [XenServer] license to enable Role Based Access Control. Using the RBAC feature, you will be able to control access to vital components in your [XenServer] resource pools, with full audit logging capabilities and seamless integration with your current Active Directory setup.</value>
   </data>
-  <data name="UPSELL_BLURB_RBAC_MORE" xml:space="preserve">
+  <data name="UPSELL_BLURB_TRIAL" xml:space="preserve">
     <value>
 
-To learn more about the [XenServer] Role Based Access Control feature or to start a [XenServer] trial, click the button below.</value>
+To start a [XenServer] trial, click the button below.</value>
   </data>
   <data name="UPSELL_BLURB_VMSS" xml:space="preserve">
     <value>Upgrade your [XenServer] license to enable VM Scheduled Snapshots. VM Scheduled Snapshots allows you to create automatic snapshots for your critical VMs.</value>
   </data>
-  <data name="UPSELL_BLURB_VMSS_MORE" xml:space="preserve">
-    <value>
-
-To learn more about the [XenServer] VM Scheduled Snapshots feature or to start a XenServer trial, click the button below.</value>
-  </data>
   <data name="UPSELL_BLURB_VM_APPLIANCES" xml:space="preserve">
     <value>Upgrade your [XenServer] license to enable vApps. The vApps feature allows you to place your VMs into groups, allowing them to be started or stopped as a unit, and also allowing them to be easily recovered at your DR site in the event of a disaster at your primary production site.</value>
   </data>
-  <data name="UPSELL_BLURB_VM_APPLIANCES_MORE" xml:space="preserve">
-    <value>
-
-To learn more about the vApps feature of [XenServer] or to start a [XenServer] trial, click the button below.</value>
-  </data>
   <data name="UPSELL_BLURB_WLB" xml:space="preserve">
     <value>Upgrade your [XenServer] license to enable Dynamic Workload Balancing. Dynamic Workload Balancing continually profiles your virtual machines’ and [XenServer] hosts’ performance and will intelligently rebalance and optimally place new workloads to ensure the best use of physical server resources in your resource pool.</value>
-  </data>
-  <data name="UPSELL_BLURB_WLB_MORE" xml:space="preserve">
-    <value>
-
-To learn more about the [XenServer] Dynamic Workload Balancing feature or to start a [XenServer] trial, click the button below.</value>
   </data>
   <data name="UPTIME" xml:space="preserve">
     <value>Uptime</value>
   </data>
   <data name="URI_REGEX" xml:space="preserve">
     <value>^(http|https|file|ftp)://*</value>
+  </data>
+  <data name="USB" xml:space="preserve">
+    <value>USB</value>
+  </data>
+  <data name="USBLIST_DISABLE_PASSTHROUGH_HOTKEY" xml:space="preserve">
+    <value>&amp;Disable passthrough</value>
+  </data>
+  <data name="USBLIST_ENABLE_PASSTHROUGH_HOTKEY" xml:space="preserve">
+    <value>&amp;Enable passthrough</value>
+  </data>
+  <data name="USB_ATTACH_NOT_ALLOWED_HA" xml:space="preserve">
+    <value>Cannot attach USB devices because the VM is currently protected by HA.</value>
+  </data>
+  <data name="USB_ATTACH_NOT_ALLOWED_NOT_HALTED" xml:space="preserve">
+    <value>USB devices can only be attached when the VM is shut down.</value>
+  </data>
+  <data name="USB_DEVICES" xml:space="preserve">
+    <value>USB devices</value>
+  </data>
+  <data name="USB_DEVICE_VENDOR_PRODUCT" xml:space="preserve">
+    <value>Vendor: {0}; Product: {1}</value>
+  </data>
+  <data name="USB_EDIT_SUBTEXT_1_DEVICE" xml:space="preserve">
+    <value>1 device attached</value>
+  </data>
+  <data name="USB_EDIT_SUBTEXT_MULTIPLE_DEVICES" xml:space="preserve">
+    <value>{0} devices attached</value>
+  </data>
+  <data name="USB_EDIT_SUBTEXT_NODEVICES" xml:space="preserve">
+    <value>No devices attached</value>
+  </data>
+  <data name="USB_EDIT_TEXT" xml:space="preserve">
+    <value>USB</value>
   </data>
   <data name="USER_AUTHORIZATION_FAILED" xml:space="preserve">
     <value>[XenCenter] was unable to authorize the action as {0}. See the application log files for more information.</value>
@@ -12126,6 +12324,12 @@ To learn more about the [XenServer] Dynamic Workload Balancing feature or to sta
   <data name="VBD_EDIT_CURRENTLY_ATTACHED" xml:space="preserve">
     <value>The disk is attached to a VM that is not in halted state.</value>
   </data>
+  <data name="VBD_EDIT_CURRENTLY_IN_USE" xml:space="preserve">
+    <value>{0} - currently in use</value>
+  </data>
+  <data name="VBD_EDIT_CURRENTLY_IN_USE_BY" xml:space="preserve">
+    <value>{0} - currently in use by '{1}'</value>
+  </data>
   <data name="VCPU_ONLY_WHEN_HALTED" xml:space="preserve">
     <value>The VCPUs can only be changed when the VM is shut down.</value>
   </data>
@@ -12155,6 +12359,9 @@ To learn more about the [XenServer] Dynamic Workload Balancing feature or to sta
   </data>
   <data name="VERIFYING_SIGNATURE_ERROR" xml:space="preserve">
     <value>Signature verification failed. {0}</value>
+  </data>
+  <data name="VERSION" xml:space="preserve">
+    <value>Version</value>
   </data>
   <data name="VERSION_NUMBER" xml:space="preserve">
     <value>[XenCenter] version {0} (build {1}.{2}) {3}-bit</value>
@@ -12282,23 +12489,17 @@ To learn more about the [XenServer] Dynamic Workload Balancing feature or to sta
   <data name="VMSS_CONTEXT_MENU" xml:space="preserve">
     <value>Snapshot sched&amp;ules ...</value>
   </data>
-  <data name="VMSS_DIALOG_TEXT" xml:space="preserve">
-    <value>Create a snapshot schedule for your VMs.</value>
-  </data>
-  <data name="VMSS_DIALOG_TITLE" xml:space="preserve">
-    <value>Snapshot schedules</value>
-  </data>
   <data name="VMSS_EMAIL_CHECKBOX_TEXT" xml:space="preserve">
     <value>Send &amp;email notifications about snapshot schedule job alerts</value>
   </data>
   <data name="VMSS_EMAIL_PAGE_TEXT" xml:space="preserve">
-    <value>XenServer can send you email notifications when alerts associated with snapshot schedule jobs are raised, such as when a VM snapshot is created or when a snapshot operation fails.</value>
+    <value>[XenServer] can send you email notifications when alerts associated with snapshot schedule jobs are raised, such as when a VM snapshot is created or when a snapshot operation fails.</value>
   </data>
   <data name="VMSS_FINISH_PAGE_CHECKBOX_TEXT" xml:space="preserve">
     <value>&amp;Run the new snapshot schedule job when I click Finish</value>
   </data>
   <data name="VMSS_FINISH_PAGE_TEXT" xml:space="preserve">
-    <value>Review the new snapshot schedule below and click Previous if you want to change any settings or Finish to create the new schedule.</value>
+    <value>Review the new snapshot schedule and click Previous if you want to change any settings or Finish to create the new schedule.</value>
   </data>
   <data name="VMSS_FINISH_TITLE" xml:space="preserve">
     <value>Create the new schedule</value>
@@ -12311,9 +12512,6 @@ To learn more about the [XenServer] Dynamic Workload Balancing feature or to sta
   </data>
   <data name="VMSS_NAME" xml:space="preserve">
     <value>Schedule Name</value>
-  </data>
-  <data name="VMSS_NAME_FIELD_TEXT" xml:space="preserve">
-    <value>Schedule na&amp;me:</value>
   </data>
   <data name="VMSS_NAME_TITLE" xml:space="preserve">
     <value>What do you want to call this schedule?</value>
@@ -12334,7 +12532,7 @@ To learn more about the [XenServer] Dynamic Workload Balancing feature or to sta
     <value>schedule</value>
   </data>
   <data name="VMSS_VMS" xml:space="preserve">
-    <value>VMs in the snapshot schedule</value>
+    <value>Virtual Machines</value>
   </data>
   <data name="VMSS_VMS_TITLE" xml:space="preserve">
     <value>Select the VMs that you want to schedule snapshots for</value>
@@ -13197,7 +13395,7 @@ Would you like to adjust the current Optimization Mode to match the schedule?</v
     <value>Refresh</value>
   </data>
   <data name="WLB_REPORT_REMOTE_QUERY" xml:space="preserve">
-    <value>An error occurred when attempting to execute the remote query: {0}</value>
+    <value>An error occurred when attempting to run the remote query: {0}</value>
   </data>
   <data name="WLB_REPORT_SEARCH" xml:space="preserve">
     <value>Search</value>
@@ -13369,27 +13567,6 @@ Are you sure you want to enable automated power management for this Host?</value
   <data name="WRONG_ROLE_DESC" xml:space="preserve">
     <value>You are attempting an action which requires additional privileges to those granted by your current role.</value>
   </data>
-  <data name="XENAPPLIANCE_BAD_EXIT" xml:space="preserve">
-    <value>'{0}' exited with Exit Code: {1}</value>
-  </data>
-  <data name="XENAPPLIANCE_FINISHED" xml:space="preserve">
-    <value>'{0}' finished executing</value>
-  </data>
-  <data name="XENAPPLIANCE_FORCE_CLOSE_PROMPT" xml:space="preserve">
-    <value>'{0}' has not yet responded to your cancel request. Would you like to force close the process or allow it to continue to run in the background?</value>
-  </data>
-  <data name="XENAPPLIANCE_RUNNING" xml:space="preserve">
-    <value>Running '{0}'</value>
-  </data>
-  <data name="XENAPPLIANCE_TITLE" xml:space="preserve">
-    <value>Execute '{0}'</value>
-  </data>
-  <data name="XENAPPLIANCE_TOOLS" xml:space="preserve">
-    <value>Appliance Tools</value>
-  </data>
-  <data name="XENAPPLIANCE_WIN32" xml:space="preserve">
-    <value>Failed to run XenApplianceWizards executable. Please see the client log for details.</value>
-  </data>
   <data name="XENCENTER" xml:space="preserve">
     <value>[XenCenter]</value>
   </data>
@@ -13398,6 +13575,9 @@ Are you sure you want to enable automated power management for this Host?</value
   </data>
   <data name="XENCENTER_NEWER_AVAILABLE" xml:space="preserve">
     <value>Newer [XenCenter] Available</value>
+  </data>
+  <data name="XENCENTER_VERSION_CHECK_DESCRIPTION" xml:space="preserve">
+    <value>[XenCenter] version check</value>
   </data>
   <data name="XENSEARCH_SAVED_SEARCH" xml:space="preserve">
     <value>Saved Searches (*.{0})|*.{0}</value>

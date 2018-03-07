@@ -37,7 +37,7 @@ using XenAPI;
 using System.Xml;
 using XenAdmin.Core;
 using System.Diagnostics;
-
+using XenCenterLib;
 
 namespace XenAdmin.XenSearch
 {
@@ -360,7 +360,7 @@ namespace XenAdmin.XenSearch
             // it's not a group. This is because snapshots are XMO<VM>s internally,
             // but we want to group them by the real VM they came from.
             VM vm = o as VM;
-            if (vm != null && vm.not_a_real_vm)
+            if (vm != null && vm.not_a_real_vm())
                 return false;
 
             // Otherwise this is a group

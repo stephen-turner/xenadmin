@@ -153,7 +153,7 @@ namespace XenAdminTests.TabsAndMenus
         public void Tabs_UserTemplate()
         {
             EnsureDefaultTemplatesShown();
-            foreach (VM vm in GetAllXenObjects<VM>(v => v.is_a_template && !v.DefaultTemplate && !v.is_a_snapshot))
+            foreach (VM vm in GetAllXenObjects<VM>(v => v.is_a_template && !v.DefaultTemplate() && !v.is_a_snapshot))
             {
                 VerifyTabs(vm, UserTemplateTabs);
             }
@@ -163,7 +163,7 @@ namespace XenAdminTests.TabsAndMenus
         public void Tabs_SR()
         {
             EnsureChecked(MainWindowWrapper.ViewMenuItems.LocalStorageToolStripMenuItem);
-            foreach (SR sr in GetAllXenObjects<SR>(s => !s.IsToolsSR))
+            foreach (SR sr in GetAllXenObjects<SR>(s => !s.IsToolsSR()))
             {
                 VerifyTabs(sr, SRTabs);
             }
@@ -187,7 +187,7 @@ namespace XenAdminTests.TabsAndMenus
                 Assert.AreEqual("server_ShellTest1", GetVisibleToolStripItems(MainWindowWrapper.HostMenu.DropDownItems)[21].Text);
 
                 MainWindowWrapper.VMMenu.ShowDropDown();
-                Assert.AreEqual("vm_ShellTest1", GetVisibleToolStripItems(MainWindowWrapper.VMMenu.DropDownItems)[18].Text);
+                Assert.AreEqual("vm_ShellTest1", GetVisibleToolStripItems(MainWindowWrapper.VMMenu.DropDownItems)[19].Text);
 
                 MainWindowWrapper.TemplatesMenu.ShowDropDown();
                 Assert.AreEqual("templates_ShellTest1", GetVisibleToolStripItems(MainWindowWrapper.TemplatesMenu.DropDownItems)[7].Text);

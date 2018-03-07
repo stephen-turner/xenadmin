@@ -59,7 +59,7 @@ using XenAdmin.TabPages;
 using XenAdmin.XenSearch;
 using XenAdmin.Wizards.PatchingWizard;
 using XenAdmin.Plugins;
-
+using XenCenterLib;
 using System.Linq;
 
 namespace XenAdmin
@@ -103,6 +103,7 @@ namespace XenAdmin
         internal readonly PvsPage PvsPage = new PvsPage();
         internal readonly DockerProcessPage DockerProcessPage = new DockerProcessPage();
         internal readonly DockerDetailsPage DockerDetailsPage = new DockerDetailsPage();
+        internal readonly UsbPage UsbPage = new UsbPage();
 
         private ActionBase statusBarAction = null;
         public ActionBase StatusBarAction { get { return statusBarAction; } }
@@ -141,6 +142,9 @@ namespace XenAdmin
         private bool expandTreeNodesOnStartup;
         private int connectionsInProgressOnStartup;
 
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+        static extern uint RegisterApplicationRestart(string pszCommandline, uint dwFlags);
+
         public MainWindow(ArgType argType, string[] args)
         {
             Program.MainWindow = this;
@@ -151,6 +155,9 @@ namespace XenAdmin
             InitializeComponent();
             SetMenuItemStartIndexes();
             Icon = Properties.Resources.AppIcon;
+
+            //CA-270999: Add registration to RestartManager
+            RegisterApplicationRestart(null, 0);
 
             #region Add Tab pages
 
@@ -172,6 +179,7 @@ namespace XenAdmin
             components.Add(SearchPage);
             components.Add(DockerProcessPage);
             components.Add(DockerDetailsPage);
+            components.Add(UsbPage);
 
             AddTabContents(VMStoragePage, TabPageStorage);
             AddTabContents(SrStoragePage, TabPageSR);
@@ -196,6 +204,7 @@ namespace XenAdmin
             AddTabContents(SearchPage, TabPageSearch);
             AddTabContents(DockerProcessPage, TabPageDockerProcess);
             AddTabContents(DockerDetailsPage, TabPageDockerDetails);
+            AddTabContents(UsbPage, TabPageUSB);
 
             #endregion
 
@@ -219,6 +228,7 @@ namespace XenAdmin
             pluginManager.PluginsChanged += pluginManager_PluginsChanged;
             pluginManager.LoadPlugins();
             contextMenuBuilder = new ContextMenuBuilder(pluginManager, this);
+            ((WinformsXenAdminConfigProvider) XenAdminConfigManager.Provider).PluginManager = pluginManager;
 
             eventsPage.GoToXenObjectRequested += eventsPage_GoToXenObjectRequested;
             SearchPage.SearchChanged += SearchPanel_SearchChanged;
@@ -393,14 +403,15 @@ namespace XenAdmin
 
             Program.BeginInvoke(Program.MainWindow, () =>
             {
-                ActionBase action = (ActionBase)e.Element;
-                if (action == null)
-                    return;
-
+                ActionBase action = e.Element as ActionBase;
+                
                 switch (e.Action)
                 {
                     case CollectionChangeAction.Add:
                         {
+                            if (action == null)
+                                return;
+
                             var meddlingAction = action as MeddlingAction;
                             if (meddlingAction == null)
                             {
@@ -419,9 +430,28 @@ namespace XenAdmin
                         }
                     case CollectionChangeAction.Remove:
                         {
-                            action.Changed -= actionChanged;
-                            action.Completed -= actionCompleted;
-                            
+                            if (action != null)
+                            {
+                                action.Changed -= actionChanged;
+                                action.Completed -= actionCompleted;
+                            }
+                            else
+                            {
+                                var range = e.Element as List<ActionBase>;
+                                if (range != null)
+                                {
+                                    foreach (var a in range)
+                                    {
+                                        a.Changed -= actionChanged;
+                                        a.Completed -= actionCompleted;
+                                    }
+                                }
+                                else
+                                {
+                                    return;
+                                }
+                            }
+
                             int errors = ConnectionsManager.History.Count(a => a.IsCompleted && !a.Succeeded);
                             navigationPane.UpdateNotificationsButton(NotificationsSubMode.Events, errors);
 
@@ -525,20 +555,7 @@ namespace XenAdmin
             try
             {
                 Settings.RestoreSession();
-
-                string protectedUsername = Properties.Settings.Default.ProxyUsername;
-                string protectedPassword = Properties.Settings.Default.ProxyPassword;
-                new TransferProxySettingsAction(
-                    (HTTPHelper.ProxyStyle)Properties.Settings.Default.ProxySetting,
-                    Properties.Settings.Default.ProxyAddress,
-                    Properties.Settings.Default.ProxyPort,
-                    Properties.Settings.Default.ConnectionTimeout,
-                    true,
-                    Properties.Settings.Default.BypassProxyForServers,
-                    Properties.Settings.Default.ProvideProxyAuthentication,
-                    string.IsNullOrEmpty(protectedUsername) ? "" : EncryptionUtils.Unprotect(protectedUsername),
-                    string.IsNullOrEmpty(protectedPassword) ? "" : EncryptionUtils.Unprotect(protectedPassword),
-                    (HTTP.ProxyAuthenticationMethod)Properties.Settings.Default.ProxyAuthenticationMethod).RunAsync();
+                HealthCheck.SendProxySettingsToHealthCheck();
             }
             catch (ConfigurationErrorsException ex)
             {
@@ -752,14 +769,15 @@ namespace XenAdmin
         {
             try
             {
-                IXenConnection connection = (IXenConnection)e.Element;
-                if (connection == null)
-                    return;
+                IXenConnection connection = e.Element as IXenConnection;
 
                 navigationPane.XenConnectionCollectionChanged(e);
 
                 if (e.Action == CollectionChangeAction.Add)
                 {
+                    if (connection == null)
+                        return;
+
                     connection.ClearingCache += connection_ClearingCache;
                     connection.ConnectionResult += Connection_ConnectionResult;
                     connection.ConnectionLost += Connection_ConnectionLost;
@@ -779,38 +797,54 @@ namespace XenAdmin
                 }
                 else if (e.Action == CollectionChangeAction.Remove)
                 {
-                    connection.ClearingCache -= connection_ClearingCache;
-                    connection.ConnectionResult -= Connection_ConnectionResult;
-                    connection.ConnectionLost -= Connection_ConnectionLost;
-                    connection.ConnectionClosed -= Connection_ConnectionClosed;
-                    connection.ConnectionReconnecting -= connection_ConnectionReconnecting;
-                    connection.XenObjectsUpdated -= Connection_XenObjectsUpdated;
-                    connection.Cache.DeregisterCollectionChanged<XenAPI.Message>(MessageCollectionChangedWithInvoke);
-                    connection.Cache.DeregisterCollectionChanged<Pool>(PoolCollectionChangedWithInvoke);
-                    connection.Cache.DeregisterCollectionChanged<Host>(HostCollectionChangedWithInvoke);
-                    connection.Cache.DeregisterCollectionChanged<VM>(VMCollectionChangedWithInvoke);
-                    connection.Cache.DeregisterCollectionChanged<SR>(SRCollectionChangedWithInvoke);
-                    connection.Cache.DeregisterCollectionChanged<Folder>(FolderCollectionChangedWithInvoke);
-
-                    connection.Cache.DeregisterCollectionChanged<Task>(TaskCollectionChangedWithInvoke);
-
-                    connection.CachePopulated -= connection_CachePopulated;
-
-                    foreach (VM vm in connection.Cache.VMs)
+                    var range = new List<IXenConnection>();
+                    if (connection != null)
                     {
-                        ConsolePanel.closeVNCForSource(vm);
+                        range.Add(connection);
+                    }
+                    else
+                    {
+                        var r = e.Element as List<IXenConnection>;
+                        if (r != null)
+                            range = r;
+                        else
+                            return;
                     }
 
-                    foreach (Host host in connection.Cache.Hosts)
+                    foreach (var con in range)
                     {
-                        ConsolePanel.closeVNCForSource(host.ControlDomainZero);
+                        con.ClearingCache -= connection_ClearingCache;
+                        con.ConnectionResult -= Connection_ConnectionResult;
+                        con.ConnectionLost -= Connection_ConnectionLost;
+                        con.ConnectionClosed -= Connection_ConnectionClosed;
+                        con.ConnectionReconnecting -= connection_ConnectionReconnecting;
+                        con.XenObjectsUpdated -= Connection_XenObjectsUpdated;
+                        con.Cache.DeregisterCollectionChanged<XenAPI.Message>(MessageCollectionChangedWithInvoke);
+                        con.Cache.DeregisterCollectionChanged<Pool>(PoolCollectionChangedWithInvoke);
+                        con.Cache.DeregisterCollectionChanged<Host>(HostCollectionChangedWithInvoke);
+                        con.Cache.DeregisterCollectionChanged<VM>(VMCollectionChangedWithInvoke);
+                        con.Cache.DeregisterCollectionChanged<SR>(SRCollectionChangedWithInvoke);
+                        con.Cache.DeregisterCollectionChanged<Folder>(FolderCollectionChangedWithInvoke);
 
-                        foreach (VM vm in host.OtherControlDomains)
-                            CvmConsolePanel.closeVNCForSource(vm);
+                        con.Cache.DeregisterCollectionChanged<Task>(TaskCollectionChangedWithInvoke);
+
+                        con.CachePopulated -= connection_CachePopulated;
+
+                        foreach (VM vm in con.Cache.VMs)
+                        {
+                            ConsolePanel.closeVNCForSource(vm);
+                        }
+
+                        foreach (Host host in con.Cache.Hosts)
+                        {
+                            ConsolePanel.closeVNCForSource(host.ControlDomainZero());
+
+                            foreach (VM vm in host.OtherControlDomains())
+                                CvmConsolePanel.closeVNCForSource(vm);
+                        }
+
+                        con.EndConnect();
                     }
-
-                    connection.EndConnect();
-
                     RequestRefreshTreeView();
                     //CA-41228 refresh submenu items when there are no connections
                     SelectionManager.RefreshSelection();
@@ -853,7 +887,7 @@ namespace XenAdmin
 
             log.InfoFormat("Connected to {0} (version {1}, build {2}.{3}) with {4} {5} (build {6}.{7})",
                 Helpers.GetName(master), Helpers.HostProductVersionText(master), Helpers.HostProductVersion(master),
-                master.BuildNumberRaw, Messages.XENCENTER, Branding.PRODUCT_VERSION_TEXT,
+                master.BuildNumberRaw(), Messages.XENCENTER, Branding.PRODUCT_VERSION_TEXT,
                 Branding.XENCENTER_VERSION, Program.Version.Revision);
 
             // Check the PRODUCT_BRAND
@@ -890,8 +924,8 @@ namespace XenAdmin
             // xencenter_max should always equal the current version of XenCenter. This ensures that even if they are
             // not required to upgrade, we at least warn them.  // else if (server_max > current_version)
 
-            int server_min = master.XenCenterMin;
-            int server_max = master.XenCenterMax;
+            int server_min = master.XenCenterMin();
+            int server_max = master.XenCenterMax();
 
             if (server_min > 0 && server_max > 0)
             {
@@ -947,6 +981,8 @@ namespace XenAdmin
             
             Updates.CheckServerPatches();
             Updates.CheckServerVersion();
+
+            HealthCheck.SendMetadataToHealthCheck();
             RequestRefreshTreeView();
         }
 
@@ -961,7 +997,7 @@ namespace XenAdmin
             Pool pool = Helpers.GetPoolOfOne((IXenConnection)connection);
             if (pool == null)
                 return;
-            var newHealthCheckSSettings = pool.HealthCheckSettings;
+            var newHealthCheckSSettings = pool.HealthCheckSettings();
             new TransferHealthCheckSettingsAction(pool, newHealthCheckSSettings,
                 newHealthCheckSSettings.GetSecretyInfo(pool.Connection, HealthCheckSettings.UPLOAD_CREDENTIAL_USER_SECRET),
                 newHealthCheckSSettings.GetSecretyInfo(pool.Connection, HealthCheckSettings.UPLOAD_CREDENTIAL_PASSWORD_SECRET), true).RunAsync();
@@ -969,7 +1005,8 @@ namespace XenAdmin
 
         public static bool SameProductBrand(Host host)
         {
-            return host.ProductBrand == Branding.PRODUCT_BRAND || Branding.PRODUCT_BRAND == "[XenServer product]";
+            var brand = host.ProductBrand();
+            return brand == Branding.PRODUCT_BRAND || Branding.PRODUCT_BRAND == "[XenServer product]";
         }
 
         /// <summary>
@@ -990,7 +1027,7 @@ namespace XenAdmin
         /// <param name="host"></param>
         private void CheckMaintenanceMode(Host host)
         {
-            if (host.IsLive && host.MaintenanceMode && host.enabled)
+            if (host.IsLive() && host.MaintenanceMode() && host.enabled)
             {
                 Program.MainWindow.CloseActiveWizards(host);
 
@@ -1008,12 +1045,12 @@ namespace XenAdmin
             XenAPI.Message m = (XenAPI.Message)e.Element;
             if (e.Action == CollectionChangeAction.Add)
             {
-                if (!m.ShowOnGraphs && !m.IsSquelched)
+                if (!m.ShowOnGraphs() && !m.IsSquelched())
                     Alert.AddAlert(MessageAlert.ParseMessage(m));
             }
             else if (e.Action == CollectionChangeAction.Remove)
             {
-                if (!m.ShowOnGraphs)
+                if (!m.ShowOnGraphs())
                     MessageAlert.RemoveAlert(m);
             }
         }
@@ -1084,7 +1121,7 @@ namespace XenAdmin
                 case "allowed_operations":
                 case "enabled":
                     // We want to ensure that a host is disabled if it is in maintenance mode, by starting a new DisableHostAction if necessary (CheckMaintenanceMode)
-                    if (host.enabled && host.MaintenanceMode)
+                    if (host.enabled && host.MaintenanceMode())
                     {
                         // This is an invalid state: the host is enabled but still "in maintenance mode";
                         // But maybe MaintenanceMode hasn't been updated yet, because host.enabled being processed before host.other_config (CA-75625);
@@ -1096,6 +1133,9 @@ namespace XenAdmin
                 case "edition":
                 case "license_server":
                 case "license_params":
+                    UpdateHeader();
+                    UpdateToolbars();
+                    break;
                 case "other_config":
                     // other_config may contain HideFromXenCenter
                     UpdateToolbars();
@@ -1121,15 +1161,8 @@ namespace XenAdmin
                     break;
 
                 case "power_state":
+                case "other_config": // other_config may contain HideFromXenCenter
                     UpdateToolbars();
-                    // Make all vms have the correct start times
-                    UpdateBodgedTime(vm, e.PropertyName);
-                    break;
-
-                case "other_config":
-                    // other_config may contain HideFromXenCenter
-                    UpdateToolbars();
-
                     // Make all vms have the correct start times
                     UpdateBodgedTime(vm, e.PropertyName);
                     break;
@@ -1144,11 +1177,7 @@ namespace XenAdmin
                 case "power_state":
                 case "is_a_template":
                 case "enabled":
-                    UpdateToolbars();
-                    break;
-
-                case "other_config":
-                    // other_config may contain HideFromXenCenter
+                case "other_config": // other_config may contain HideFromXenCenter
                     UpdateToolbars();
                     break;
             }
@@ -1161,13 +1190,13 @@ namespace XenAdmin
                 return;
             if (p == "power_state")
             {
-                vm.BodgeStartupTime = DateTime.UtcNow; // always newer than current bodge startup time
+                vm.SetBodgeStartupTime(DateTime.UtcNow); // always newer than current bodge startup time
             }
             else if (p == "other_config" && vm.other_config.ContainsKey("last_shutdown_time"))
             {
-                DateTime newTime = vm.LastShutdownTime;
-                if (newTime != DateTime.MinValue && newTime.Ticks > vm.BodgeStartupTime.Ticks)
-                    vm.BodgeStartupTime = newTime; // only update if is newer than current bodge startup time
+                DateTime newTime = vm.LastShutdownTime();
+                if (newTime != DateTime.MinValue && newTime.Ticks > vm.GetBodgeStartupTime().Ticks)
+                    vm.SetBodgeStartupTime(newTime); // only update if is newer than current bodge startup time
             }
         }
 
@@ -1395,7 +1424,7 @@ namespace XenAdmin
             bool show_home = SelectionManager.Selection.Count == 1 && SelectionManager.Selection[0].Value == null;
             // The upsell pages use the first selected XenObject: but they're only shown if there is only one selected object (see calls to ShowTab() below).
             bool dmc_upsell = Helpers.FeatureForbidden(SelectionManager.Selection.FirstAsXenObject, Host.RestrictDMC);
-            bool ha_upsell = Helpers.FeatureForbidden(SelectionManager.Selection.FirstAsXenObject, Host.RestrictHA);
+            bool ha_upsell = Helpers.FeatureForbidden(SelectionManager.Selection.FirstAsXenObject, Host.RestrictHA) && (selectionPool != null && !selectionPool.ha_enabled);
             bool wlb_upsell = Helpers.FeatureForbidden(SelectionManager.Selection.FirstAsXenObject, Host.RestrictWLB);
             bool ad_upsell = Helpers.FeatureForbidden(SelectionManager.Selection.FirstAsXenObject, Host.RestrictAD);
             bool is_connected = selectionConnection != null && selectionConnection.IsConnected;
@@ -1411,9 +1440,9 @@ namespace XenAdmin
             bool isTemplateSelected = SelectionManager.Selection.FirstIsTemplate;
             bool isHostLive = SelectionManager.Selection.FirstIsLiveHost;
             bool isDockerContainerSelected = SelectionManager.Selection.First is DockerContainer;
-            bool hasManyControlDomains = isHostSelected && ((Host)SelectionManager.Selection.First).HasManyControlDomains;
+            bool hasManyControlDomains = isHostSelected && ((Host)SelectionManager.Selection.First).HasManyControlDomains();
 
-            bool selectedTemplateHasProvisionXML = SelectionManager.Selection.FirstIsTemplate && ((VM)SelectionManager.Selection[0].XenObject).HasProvisionXML;
+            bool selectedTemplateHasProvisionXML = SelectionManager.Selection.FirstIsTemplate && ((VM)SelectionManager.Selection[0].XenObject).HasProvisionXML();
 
             NewTabCount = 0;
             ShowTab(TabPageHome, !SearchMode && show_home);
@@ -1424,12 +1453,12 @@ namespace XenAdmin
             ShowTab(TabPagePhysicalStorage, !multi && !SearchMode && ((isHostSelected && isHostLive) || isPoolSelected));
             ShowTab(TabPageNetwork, !multi && !SearchMode && (isVMSelected || (isHostSelected && isHostLive) || isPoolSelected));
             ShowTab(TabPageNICs, !multi && !SearchMode && ((isHostSelected && isHostLive)));
-            ShowTab(TabPageDockerProcess, !multi && !SearchMode && isDockerContainerSelected && !(SelectionManager.Selection.First as DockerContainer).Parent.IsWindows);
+            ShowTab(TabPageDockerProcess, !multi && !SearchMode && isDockerContainerSelected && !(SelectionManager.Selection.First as DockerContainer).Parent.IsWindows());
             ShowTab(TabPageDockerDetails, !multi && !SearchMode && isDockerContainerSelected);
 
             bool isPoolOrLiveStandaloneHost = isPoolSelected || (isHostSelected && isHostLive && selectionPool == null);
-
             ShowTab(TabPageGPU, !multi && !SearchMode && ((isHostSelected && isHostLive) || isPoolOrLiveStandaloneHost) && Helpers.ClearwaterSp1OrGreater(selectionConnection) && !Helpers.FeatureForbidden(selectionConnection, Host.RestrictGpu));
+            ShowTab(TabPageUSB, !multi && !SearchMode && (isHostSelected && isHostLive && (((Host)SelectionManager.Selection.First).PUSBs.Count > 0)) && !Helpers.FeatureForbidden(selectionConnection, Host.RestrictUsbPassthrough));
 
             pluginManager.SetSelectedXenObject(SelectionManager.Selection.FirstAsXenObject);
 
@@ -1867,6 +1896,10 @@ namespace XenAdmin
                 {
                     NetworkPage.XenObject = SelectionManager.Selection.FirstAsXenObject;
                 }
+                else if (t == TabPageUSB)
+                {
+                    UsbPage.XenObject = SelectionManager.Selection.FirstAsXenObject as Host;
+                }
                 else if (t == TabPageNICs)
                 {
                     NICPage.Host = SelectionManager.Selection.First as Host;
@@ -2057,7 +2090,7 @@ namespace XenAdmin
         /// </summary>
         public enum Tab
         {
-            Overview, Home, Settings, Storage, Network, Console, CvmConsole, Performance, NICs, SR, DockerProcess, DockerDetails
+            Overview, Home, Settings, Storage, Network, Console, CvmConsole, Performance, NICs, SR, DockerProcess, DockerDetails, USB
         }
 
         public void SwitchToTab(Tab tab)
@@ -2099,6 +2132,9 @@ namespace XenAdmin
                     break;
                 case Tab.DockerDetails:
                     TheTabControl.SelectedTab = TabPageDockerDetails;
+                    break;
+                case Tab.USB:
+                    TheTabControl.SelectedTab = TabPageUSB;
                     break;
                 default:
                     throw new NotImplementedException();
@@ -2490,6 +2526,8 @@ namespace XenAdmin
                 return "TabPageDockerDetails" + modelObj;
             if (TheTabControl.SelectedTab == TabPagePvs)
                 return "TabPagePvs" + modelObj;
+            if (TheTabControl.SelectedTab == TabPageUSB)
+                return "TabPageUSB" + modelObj;
             return "TabPageUnknown";
         }
 
@@ -2829,6 +2867,8 @@ namespace XenAdmin
         /// </summary>
         private void UpdateHeader()
         {
+            bool licenseStatusTitleLabelHandled = false;
+
             if (navigationPane.currentMode == NavigationPane.NavigationMode.Notifications)
                 return;
 
@@ -2840,7 +2880,11 @@ namespace XenAdmin
             else if (!SearchMode && SelectionManager.Selection.ContainsOneItemOfType<IXenObject>())
             {
                 IXenObject xenObject = SelectionManager.Selection[0].XenObject;
-                TitleLabel.Text = xenObject.NameWithLocation;
+                TitleLabel.Text = xenObject.NameWithLocation();
+
+                UpdateLicenseStatusTitleLabel(xenObject);
+                licenseStatusTitleLabelHandled = true;
+
                 TitleIcon.Image = Images.GetImage16For(xenObject);
                 // When in folder view only show the logged in label if it is clear to which connection the object belongs (most likely pools and hosts)
 
@@ -2855,6 +2899,68 @@ namespace XenAdmin
                 TitleIcon.Image = Properties.Resources.Logo;
                 loggedInLabel1.Connection = null;
             }
+
+            if (!licenseStatusTitleLabelHandled)
+                ResetLicenseStatusTitleLabel();
+
+            SetTitleLabelMaxWidth();
+        }
+
+        private void UpdateLicenseStatusTitleLabel(IXenObject xenObject)
+        {
+            if (xenObject is Pool)
+            {
+                var pool = xenObject as Pool;
+
+                if (pool.Connection != null && pool.Connection.CacheIsPopulated)
+                {
+                    if (pool.IsFreeLicenseOrExpired)
+                    {
+                        LicenseStatusTitleLabel.Text = Messages.MAINWINDOW_HEADER_UNLICENSED;
+                        LicenseStatusTitleLabel.ForeColor = Color.Red;
+                    }
+                    else
+                    {
+                        LicenseStatusTitleLabel.Text = string.Format(Messages.MAINWINDOW_HEADER_LICENSED_WITH, pool.LicenseString());
+                        LicenseStatusTitleLabel.ForeColor = Program.TitleBarForeColor;
+                    }
+                }
+            }
+            else if (xenObject is Host)
+            {
+                var host = xenObject as Host;
+
+                if (host.Connection != null && host.Connection.CacheIsPopulated)
+                {
+                    if (host.IsFreeLicenseOrExpired())
+                    {
+                        LicenseStatusTitleLabel.Text = Messages.MAINWINDOW_HEADER_UNLICENSED;
+                        LicenseStatusTitleLabel.ForeColor = Color.Red;
+                    }
+                    else
+                    {
+                        LicenseStatusTitleLabel.Text = string.Format(Messages.MAINWINDOW_HEADER_LICENSED_WITH, Helpers.GetFriendlyLicenseName(host));
+                        LicenseStatusTitleLabel.ForeColor = Program.TitleBarForeColor;
+                    }
+                }
+            }
+            else
+            {
+                ResetLicenseStatusTitleLabel();
+            }
+        }
+
+        private void ResetLicenseStatusTitleLabel()
+        {
+            if (string.IsNullOrEmpty(LicenseStatusTitleLabel.Text))
+                return;
+
+            LicenseStatusTitleLabel.Text = string.Empty;
+        }
+
+        private void SetTitleLabelMaxWidth()
+        {
+            TitleLabel.MaximumSize = new Size(tableLayoutPanel1.Width - loggedInLabel1.Width - LicenseStatusTitleLabel.Width - 6, TitleLabel.Height);
         }
 
         private void UpdateViewMenu(NavigationPane.NavigationMode mode)
@@ -2945,6 +3051,7 @@ namespace XenAdmin
         {
             if (mode == NavigationPane.NavigationMode.Notifications)
             {
+                ResetLicenseStatusTitleLabel();
                 TheTabControl.Visible = false;
             }
             else
@@ -3335,6 +3442,7 @@ namespace XenAdmin
                 mainWindowResized = true;
             }
             SetSplitterDistance();
+            SetTitleLabelMaxWidth();
         }
 
         private void SetSplitterDistance()
@@ -3371,6 +3479,8 @@ namespace XenAdmin
             TabPage t = TheTabControl.SelectedTab;
             if (t == TabPageConsole)
                 ConsolePanel.UpdateRDPResolution();
+
+            SetTitleLabelMaxWidth();
         }
     }
 }

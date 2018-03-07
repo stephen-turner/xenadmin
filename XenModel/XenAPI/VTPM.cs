@@ -1,19 +1,19 @@
 /*
  * Copyright (c) Citrix Systems, Inc.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  *   1) Redistributions of source code must retain the above copyright
  *      notice, this list of conditions and the following disclaimer.
- * 
+ *
  *   2) Redistributions in binary form must reproduce the above
  *      copyright notice, this list of conditions and the following
  *      disclaimer in the documentation and/or other materials
  *      provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -32,8 +32,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
-using CookComputing.XmlRpc;
+using System.ComponentModel;
+using System.Globalization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 
 namespace XenAPI
@@ -66,6 +68,10 @@ namespace XenAPI
             this.UpdateFromProxy(proxy);
         }
 
+        /// <summary>
+        /// Updates each field of this instance with the value of
+        /// the corresponding field of a given VTPM.
+        /// </summary>
         public override void UpdateFrom(VTPM update)
         {
             uuid = update.uuid;
@@ -83,21 +89,37 @@ namespace XenAPI
         public Proxy_VTPM ToProxy()
         {
             Proxy_VTPM result_ = new Proxy_VTPM();
-            result_.uuid = (uuid != null) ? uuid : "";
-            result_.VM = (VM != null) ? VM : "";
-            result_.backend = (backend != null) ? backend : "";
+            result_.uuid = uuid ?? "";
+            result_.VM = VM ?? "";
+            result_.backend = backend ?? "";
             return result_;
         }
 
         /// <summary>
         /// Creates a new VTPM from a Hashtable.
+        /// Note that the fields not contained in the Hashtable
+        /// will be created with their default values.
         /// </summary>
         /// <param name="table"></param>
-        public VTPM(Hashtable table)
+        public VTPM(Hashtable table) : this()
         {
-            uuid = Marshalling.ParseString(table, "uuid");
-            VM = Marshalling.ParseRef<VM>(table, "VM");
-            backend = Marshalling.ParseRef<VM>(table, "backend");
+            UpdateFrom(table);
+        }
+
+        /// <summary>
+        /// Given a Hashtable with field-value pairs, it updates the fields of this VTPM
+        /// with the values listed in the Hashtable. Note that only the fields contained
+        /// in the Hashtable will be updated and the rest will remain the same.
+        /// </summary>
+        /// <param name="table"></param>
+        public void UpdateFrom(Hashtable table)
+        {
+            if (table.ContainsKey("uuid"))
+                uuid = Marshalling.ParseString(table, "uuid");
+            if (table.ContainsKey("VM"))
+                VM = Marshalling.ParseRef<VM>(table, "VM");
+            if (table.ContainsKey("backend"))
+                backend = Marshalling.ParseRef<VM>(table, "backend");
         }
 
         public bool DeepEquals(VTPM other)
@@ -112,12 +134,21 @@ namespace XenAPI
                 Helper.AreEqual2(this._backend, other._backend);
         }
 
+        internal static List<VTPM> ProxyArrayToObjectList(Proxy_VTPM[] input)
+        {
+            var result = new List<VTPM>();
+            foreach (var item in input)
+                result.Add(new VTPM(item));
+
+            return result;
+        }
+
         public override string SaveChanges(Session session, string opaqueRef, VTPM server)
         {
             if (opaqueRef == null)
             {
-                Proxy_VTPM p = this.ToProxy();
-                return session.proxy.vtpm_create(session.uuid, p).parse();
+                var reference = create(session, this);
+                return reference == null ? null : reference.opaque_ref;
             }
             else
             {
@@ -132,7 +163,10 @@ namespace XenAPI
         /// <param name="_vtpm">The opaque_ref of the given vtpm</param>
         public static VTPM get_record(Session session, string _vtpm)
         {
-            return new VTPM((Proxy_VTPM)session.proxy.vtpm_get_record(session.uuid, (_vtpm != null) ? _vtpm : "").parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.vtpm_get_record(session.opaque_ref, _vtpm);
+            else
+                return new VTPM((Proxy_VTPM)session.proxy.vtpm_get_record(session.opaque_ref, _vtpm ?? "").parse());
         }
 
         /// <summary>
@@ -143,7 +177,10 @@ namespace XenAPI
         /// <param name="_uuid">UUID of object to return</param>
         public static XenRef<VTPM> get_by_uuid(Session session, string _uuid)
         {
-            return XenRef<VTPM>.Create(session.proxy.vtpm_get_by_uuid(session.uuid, (_uuid != null) ? _uuid : "").parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.vtpm_get_by_uuid(session.opaque_ref, _uuid);
+            else
+                return XenRef<VTPM>.Create(session.proxy.vtpm_get_by_uuid(session.opaque_ref, _uuid ?? "").parse());
         }
 
         /// <summary>
@@ -154,7 +191,10 @@ namespace XenAPI
         /// <param name="_record">All constructor arguments</param>
         public static XenRef<VTPM> create(Session session, VTPM _record)
         {
-            return XenRef<VTPM>.Create(session.proxy.vtpm_create(session.uuid, _record.ToProxy()).parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.vtpm_create(session.opaque_ref, _record);
+            else
+                return XenRef<VTPM>.Create(session.proxy.vtpm_create(session.opaque_ref, _record.ToProxy()).parse());
         }
 
         /// <summary>
@@ -165,7 +205,10 @@ namespace XenAPI
         /// <param name="_record">All constructor arguments</param>
         public static XenRef<Task> async_create(Session session, VTPM _record)
         {
-            return XenRef<Task>.Create(session.proxy.async_vtpm_create(session.uuid, _record.ToProxy()).parse());
+          if (session.JsonRpcClient != null)
+              return session.JsonRpcClient.async_vtpm_create(session.opaque_ref, _record);
+          else
+              return XenRef<Task>.Create(session.proxy.async_vtpm_create(session.opaque_ref, _record.ToProxy()).parse());
         }
 
         /// <summary>
@@ -176,7 +219,10 @@ namespace XenAPI
         /// <param name="_vtpm">The opaque_ref of the given vtpm</param>
         public static void destroy(Session session, string _vtpm)
         {
-            session.proxy.vtpm_destroy(session.uuid, (_vtpm != null) ? _vtpm : "").parse();
+            if (session.JsonRpcClient != null)
+                session.JsonRpcClient.vtpm_destroy(session.opaque_ref, _vtpm);
+            else
+                session.proxy.vtpm_destroy(session.opaque_ref, _vtpm ?? "").parse();
         }
 
         /// <summary>
@@ -187,7 +233,10 @@ namespace XenAPI
         /// <param name="_vtpm">The opaque_ref of the given vtpm</param>
         public static XenRef<Task> async_destroy(Session session, string _vtpm)
         {
-            return XenRef<Task>.Create(session.proxy.async_vtpm_destroy(session.uuid, (_vtpm != null) ? _vtpm : "").parse());
+          if (session.JsonRpcClient != null)
+              return session.JsonRpcClient.async_vtpm_destroy(session.opaque_ref, _vtpm);
+          else
+              return XenRef<Task>.Create(session.proxy.async_vtpm_destroy(session.opaque_ref, _vtpm ?? "").parse());
         }
 
         /// <summary>
@@ -198,7 +247,10 @@ namespace XenAPI
         /// <param name="_vtpm">The opaque_ref of the given vtpm</param>
         public static string get_uuid(Session session, string _vtpm)
         {
-            return (string)session.proxy.vtpm_get_uuid(session.uuid, (_vtpm != null) ? _vtpm : "").parse();
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.vtpm_get_uuid(session.opaque_ref, _vtpm);
+            else
+                return (string)session.proxy.vtpm_get_uuid(session.opaque_ref, _vtpm ?? "").parse();
         }
 
         /// <summary>
@@ -209,7 +261,10 @@ namespace XenAPI
         /// <param name="_vtpm">The opaque_ref of the given vtpm</param>
         public static XenRef<VM> get_VM(Session session, string _vtpm)
         {
-            return XenRef<VM>.Create(session.proxy.vtpm_get_vm(session.uuid, (_vtpm != null) ? _vtpm : "").parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.vtpm_get_vm(session.opaque_ref, _vtpm);
+            else
+                return XenRef<VM>.Create(session.proxy.vtpm_get_vm(session.opaque_ref, _vtpm ?? "").parse());
         }
 
         /// <summary>
@@ -220,7 +275,10 @@ namespace XenAPI
         /// <param name="_vtpm">The opaque_ref of the given vtpm</param>
         public static XenRef<VM> get_backend(Session session, string _vtpm)
         {
-            return XenRef<VM>.Create(session.proxy.vtpm_get_backend(session.uuid, (_vtpm != null) ? _vtpm : "").parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.vtpm_get_backend(session.opaque_ref, _vtpm);
+            else
+                return XenRef<VM>.Create(session.proxy.vtpm_get_backend(session.opaque_ref, _vtpm ?? "").parse());
         }
 
         /// <summary>
@@ -239,11 +297,12 @@ namespace XenAPI
                 }
             }
         }
-        private string _uuid;
+        private string _uuid = "";
 
         /// <summary>
         /// the virtual machine
         /// </summary>
+        [JsonConverter(typeof(XenRefConverter<VM>))]
         public virtual XenRef<VM> VM
         {
             get { return _VM; }
@@ -257,11 +316,12 @@ namespace XenAPI
                 }
             }
         }
-        private XenRef<VM> _VM;
+        private XenRef<VM> _VM = new XenRef<VM>(Helper.NullOpaqueRef);
 
         /// <summary>
         /// the domain where the backend is located
         /// </summary>
+        [JsonConverter(typeof(XenRefConverter<VM>))]
         public virtual XenRef<VM> backend
         {
             get { return _backend; }
@@ -275,6 +335,6 @@ namespace XenAPI
                 }
             }
         }
-        private XenRef<VM> _backend;
+        private XenRef<VM> _backend = new XenRef<VM>(Helper.NullOpaqueRef);
     }
 }

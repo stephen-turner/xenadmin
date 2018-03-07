@@ -33,10 +33,8 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using XenAdmin.Properties;
-using XenAdmin.Actions;
 using XenAPI;
-using XenAdmin.Core;
-
+using XenCenterLib;
 
 namespace XenAdmin.Dialogs.OptionsPages
 {
@@ -260,19 +258,7 @@ namespace XenAdmin.Dialogs.OptionsPages
 
             Program.ReconfigureConnectionSettings();
 
-            string protectedUsername = Properties.Settings.Default.ProxyUsername;
-            string protectedPassword = Properties.Settings.Default.ProxyPassword;
-            new TransferProxySettingsAction(
-                (HTTPHelper.ProxyStyle)Properties.Settings.Default.ProxySetting,
-                Properties.Settings.Default.ProxyAddress,
-                Properties.Settings.Default.ProxyPort,
-                Properties.Settings.Default.ConnectionTimeout,
-                false,
-                Properties.Settings.Default.BypassProxyForServers,
-                Properties.Settings.Default.ProvideProxyAuthentication,
-                string.IsNullOrEmpty(protectedUsername) ? "" : EncryptionUtils.Unprotect(protectedUsername),
-                string.IsNullOrEmpty(protectedPassword) ? "" : EncryptionUtils.Unprotect(protectedPassword),
-                (HTTP.ProxyAuthenticationMethod)Properties.Settings.Default.ProxyAuthenticationMethod).RunAsync();
+            Core.HealthCheck.SendProxySettingsToHealthCheck();
         }
 
         #endregion

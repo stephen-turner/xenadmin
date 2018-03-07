@@ -39,6 +39,7 @@ using XenAdmin.Core;
 using XenAdmin.Model;
 using System.Linq;
 using System.Diagnostics;
+using XenCenterLib;
 
 namespace XenAdmin.Network
 {
@@ -61,6 +62,9 @@ namespace XenAdmin.Network
         private readonly ChangeableDictionary<XenRef<Message>, Message> _message = new ChangeableDictionary<XenRef<Message>, Message>();
         private readonly ChangeableDictionary<XenRef<XenAPI.Network>, XenAPI.Network> _network = new ChangeableDictionary<XenRef<XenAPI.Network>, XenAPI.Network>();
         private readonly ChangeableDictionary<XenRef<PBD>, PBD> _pbd = new ChangeableDictionary<XenRef<PBD>, PBD>();
+        private readonly ChangeableDictionary<XenRef<PUSB>, PUSB> _pusb = new ChangeableDictionary<XenRef<PUSB>, PUSB>();
+        private readonly ChangeableDictionary<XenRef<VUSB>, VUSB> _vusb = new ChangeableDictionary<XenRef<VUSB>, VUSB>();
+        private readonly ChangeableDictionary<XenRef<USB_group>, USB_group> _usb_group = new ChangeableDictionary<XenRef<USB_group>, USB_group>();
         private readonly ChangeableDictionary<XenRef<PCI>, PCI> _pcis = new ChangeableDictionary<XenRef<PCI>, PCI>();
         private readonly ChangeableDictionary<XenRef<PGPU>, PGPU> _pgpu = new ChangeableDictionary<XenRef<PGPU>, PGPU>();
         private readonly ChangeableDictionary<XenRef<PIF>, PIF> _pif = new ChangeableDictionary<XenRef<PIF>, PIF>();
@@ -168,6 +172,21 @@ namespace XenAdmin.Network
         public PBD[] PBDs
         {
             get { return contents(_pbd); }
+        }
+
+        public PUSB[] PUSBs
+        {
+            get { return contents(_pusb); }
+        }
+
+        public VUSB[] VUSBs
+        {
+            get { return contents(_vusb); }
+        }
+
+        public USB_group[] USB_groups
+        {
+            get { return contents(_usb_group); }
         }
 
         public PCI[] PCIs
@@ -657,7 +676,7 @@ namespace XenAdmin.Network
 
                 foreach (Pool pool in Pools)
                 {
-                    if (pool!=null&&pool.IsVisible)
+                    if (pool != null && pool.IsVisible())
                     {
                         yield return pool;
                         break;

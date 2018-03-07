@@ -59,7 +59,11 @@ namespace XenAdmin.Core
             LicensedHostUnlicensedMaster,
             UnlicensedHostLicensedMaster,
             LicenseMismatch,
+            MasterPoolMaxNumberHostReached,
+            WillExceedPoolMaxSize,
             DifferentServerVersion,
+            DifferentHomogeneousUpdatesFromMaster,
+            DifferentHomogeneousUpdatesFromPool,
             DifferentCPUs,
             DifferentNetworkBackends,
             MasterHasHA,
@@ -83,7 +87,7 @@ namespace XenAdmin.Core
         /// <param name="allowLicenseUpgrade">Whether we can upgrade a free host to a v6 license of the pool it's joining</param>
         /// <param name="allowCpuLevelling">Whether we can apply CPU levelling to the slave before it joins the pool</param>
         /// <returns>The reason why the server can't join the pool, or Reason.Allowed if it's OK</returns>
-        public static Reason CanJoinPool(IXenConnection slaveConnection, IXenConnection masterConnection, bool allowLicenseUpgrade, bool allowCpuLevelling, bool allowSlaveAdConfig)
+        public static Reason CanJoinPool(IXenConnection slaveConnection, IXenConnection masterConnection, bool allowLicenseUpgrade, bool allowCpuLevelling, bool allowSlaveAdConfig, int poolSizeIncrement = 1)
         {
             if (!Helpers.IsConnected(slaveConnection))  // also implies slaveConnection != null
                 return Reason.NotConnected;
@@ -117,6 +121,9 @@ namespace XenAdmin.Core
             if (DifferentServerVersion(slaveHost, masterHost))
                 return Reason.DifferentServerVersion;
 
+            if (DifferentHomogeneousUpdates(slaveHost, masterHost))
+                return masterHost.Connection.Cache.Hosts.Length > 1 ? Reason.DifferentHomogeneousUpdatesFromPool : Reason.DifferentHomogeneousUpdatesFromMaster;
+
             if (FreeHostPaidMaster(slaveHost, masterHost, allowLicenseUpgrade))
                 return Reason.UnlicensedHostLicensedMaster;
 
@@ -125,6 +132,12 @@ namespace XenAdmin.Core
 
             if (LicenseMismatch(slaveHost, masterHost))
                 return Reason.LicenseMismatch;
+
+            if (MasterPoolMaxNumberHostReached(masterConnection))
+                return Reason.MasterPoolMaxNumberHostReached;
+
+            if (WillExceedPoolMaxSize(masterConnection, poolSizeIncrement))
+                return Reason.WillExceedPoolMaxSize;
             
             if (!SameLinuxPack(slaveHost, masterHost))
                 return Reason.NotSameLinuxPack;
@@ -188,8 +201,16 @@ namespace XenAdmin.Core
                     return Messages.NEWPOOL_UNLICENSED_HOST_LICENSED_MASTER;
                 case Reason.LicenseMismatch:
                     return Messages.NEWPOOL_LICENSEMISMATCH;
+                case Reason.MasterPoolMaxNumberHostReached:
+                    return Messages.NEWPOOL_MAX_NUMBER_HOST_REACHED;
+                case Reason.WillExceedPoolMaxSize:
+                    return Messages.NEWPOOL_WILL_EXCEED_POOL_MAX_SIZE;
                 case Reason.DifferentServerVersion:
                     return Messages.NEWPOOL_DIFF_SERVER;
+                case Reason.DifferentHomogeneousUpdatesFromMaster:
+                    return Messages.NEWPOOL_DIFFERENT_HOMOGENEOUS_UPDATES_FROM_MASTER;
+                case Reason.DifferentHomogeneousUpdatesFromPool:
+                    return Messages.NEWPOOL_DIFFERENT_HOMOGENEOUS_UPDATES_FROM_POOL;
                 case Reason.DifferentCPUs:
                     return Messages.NEWPOOL_DIFF_HARDWARE;
                 case Reason.DifferentNetworkBackends:
@@ -223,7 +244,7 @@ namespace XenAdmin.Core
         {
             foreach (SR sr in connection.Cache.SRs)
             {
-                if (sr.shared && !sr.IsToolsSR)
+                if (sr.shared && !sr.IsToolsSR())
                     return true;
             }
             return false;
@@ -233,7 +254,7 @@ namespace XenAdmin.Core
         {
             foreach (VM vm in connection.Cache.VMs)
             {
-                if (vm.is_a_real_vm && vm.power_state == XenAPI.vm_power_state.Running)
+                if (vm.is_a_real_vm() && vm.power_state == XenAPI.vm_power_state.Running)
                     return true;
             }
             return false;
@@ -251,7 +272,7 @@ namespace XenAdmin.Core
 
         private static bool LicenseRestriction(Host host)
         {
-            return host.RestrictPooling;
+            return Host.RestrictPooling(host);
         }
 
         // If CompatibleCPUs(slave, master, false) is true, the CPUs can be pooled without masking first.
@@ -378,19 +399,36 @@ namespace XenAdmin.Core
             if (Helpers.FalconOrGreater(master) && string.IsNullOrEmpty(master.GetDatabaseSchema()))
                 return true;
 
-            if (Helpers.FalconOrGreater(slave) && Helpers.FalconOrGreater(master) &&
-                slave.GetDatabaseSchema() != master.GetDatabaseSchema())
+            if (slave.GetDatabaseSchema() != master.GetDatabaseSchema())
                 return true;
-            
+
             return
-                !Helpers.FalconOrGreater(master) && !Helpers.FalconOrGreater(slave) && slave.BuildNumber != master.BuildNumber ||
-                slave.ProductVersion != master.ProductVersion ||
-                slave.ProductBrand != master.ProductBrand;
+                !Helpers.ElyOrGreater(master) && !Helpers.ElyOrGreater(slave) && slave.BuildNumber() != master.BuildNumber() ||
+                slave.PlatformVersion() != master.PlatformVersion() ||
+                slave.ProductBrand() != master.ProductBrand();
+        }
+
+        /// <summary>
+        /// Check whether all updates that request homogeneity are in fact homogeneous
+        /// between master and slave. This is used in CanJoinPool and prevents the pool from being created
+        /// </summary>
+        private static bool DifferentHomogeneousUpdates(Host slave, Host master)
+        {
+            if (slave == null || master == null)
+                return false;
+
+            if (!Helpers.ElyOrGreater(slave) || !Helpers.ElyOrGreater(master))
+                return false;
+
+            var masterUpdates = master.AppliedUpdates().Where(update => update.EnforceHomogeneity()).Select(update => update.uuid).ToList();
+            var slaveUpdates = slave.AppliedUpdates().Where(update => update.EnforceHomogeneity()).Select(update => update.uuid).ToList();
+
+            return masterUpdates.Count != slaveUpdates.Count || !masterUpdates.All(slaveUpdates.Contains);
         }
 
         private static bool SameLinuxPack(Host slave, Host master)
         {
-            return slave.LinuxPackPresent == master.LinuxPackPresent;
+            return slave.LinuxPackPresent() == master.LinuxPackPresent();
         }
 
         public static bool CompatibleAdConfig(Host slave, Host master, bool allowSlaveConfig)
@@ -435,6 +473,16 @@ namespace XenAdmin.Core
             return slaveEdition != Host.Edition.Free && masterEdition != Host.Edition.Free && slaveEdition != masterEdition;
         }
 
+        private static bool MasterPoolMaxNumberHostReached(IXenConnection connection)
+        {
+            return Helpers.FeatureForbidden(connection, Host.RestrictPoolSize) && connection.Cache.HostCount > 2;
+        }
+
+        public static bool WillExceedPoolMaxSize(IXenConnection connection, int poolSizeIncrement)
+        {
+            return Helpers.FeatureForbidden(connection, Host.RestrictPoolSize) && connection.Cache.HostCount + poolSizeIncrement > 3;
+        }
+
         private static bool HaEnabled(IXenConnection connection)
         {
             Pool pool = Helpers.GetPoolOfOne(connection);
@@ -457,7 +505,7 @@ namespace XenAdmin.Core
             var slavePool = Helpers.GetPoolOfOne(slave.Connection);
 
             return masterPool != null && slavePool != null &&
-                   masterPool.vSwitchController && slavePool.vSwitchController &&
+                   masterPool.vSwitchController() && slavePool.vSwitchController() &&
                    masterPool.vswitch_controller != slavePool.vswitch_controller;
         }
 
@@ -476,7 +524,8 @@ namespace XenAdmin.Core
             Dictionary<string, string> homogeneousPacks = new Dictionary<string, string>();
             foreach (Host host in allHosts)
             {
-                foreach (Host.SuppPack suppPack in host.SuppPacks)
+                var suppPacks = host.SuppPacks();
+                foreach (Host.SuppPack suppPack in suppPacks)
                 {
                     if (suppPack.Homogeneous)
                         homogeneousPacks[suppPack.OriginatorAndName] = suppPack.Description;
@@ -497,7 +546,7 @@ namespace XenAdmin.Core
 
                 foreach (Host host in allHosts)
                 {
-                    Host.SuppPack matchingPack = host.SuppPacks.Find(sp => (sp.OriginatorAndName == pack));
+                    Host.SuppPack matchingPack = host.SuppPacks().Find(sp => (sp.OriginatorAndName == pack));
                     if (matchingPack == null)
                         missingHosts.Add(host);
                     else if (expectedVersion == null)

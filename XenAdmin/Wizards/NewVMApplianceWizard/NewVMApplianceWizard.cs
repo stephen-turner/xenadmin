@@ -97,7 +97,7 @@ namespace XenAdmin.Wizards.NewVMApplianceWizard
             var sb = new StringBuilder();
             foreach (var selectedVM in selectedVMs)
             {
-                sb.Append(selectedVM.Name);
+                sb.Append(selectedVM.Name());
                 sb.Append(", ");
             }
             if (sb.Length > 2)
@@ -117,9 +117,9 @@ namespace XenAdmin.Wizards.NewVMApplianceWizard
             var action = new CreateVMApplianceAction(vmAppliance, xenTabPageVMs.SelectedVMs);
             action.RunAsync();
 
-            var vmSettings = xenTabPageVMOrderAndDelays.getCurrentSettings();
+            var vmSettings = xenTabPageVMOrderAndDelays.GetChangedSettings();
             if (vmSettings != null && vmSettings.Count > 0)
-                new SetVMStartupOptionsAction(Pool.Connection, xenTabPageVMOrderAndDelays.getCurrentSettings(), false).RunAsync();
+                new SetVMStartupOptionsAction(Pool.Connection, vmSettings, false).RunAsync();
 
             base.FinishWizard();
         }

@@ -1,19 +1,19 @@
 /*
  * Copyright (c) Citrix Systems, Inc.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  *   1) Redistributions of source code must retain the above copyright
  *      notice, this list of conditions and the following disclaimer.
- * 
+ *
  *   2) Redistributions in binary form must reproduce the above
  *      copyright notice, this list of conditions and the following
  *      disclaimer in the documentation and/or other materials
  *      provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -32,8 +32,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
-using CookComputing.XmlRpc;
+using System.ComponentModel;
+using System.Globalization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 
 namespace XenAPI
@@ -68,6 +70,10 @@ namespace XenAPI
             this.UpdateFromProxy(proxy);
         }
 
+        /// <summary>
+        /// Updates each field of this instance with the value of
+        /// the corresponding field of a given Crashdump.
+        /// </summary>
         public override void UpdateFrom(Crashdump update)
         {
             uuid = update.uuid;
@@ -87,23 +93,40 @@ namespace XenAPI
         public Proxy_Crashdump ToProxy()
         {
             Proxy_Crashdump result_ = new Proxy_Crashdump();
-            result_.uuid = (uuid != null) ? uuid : "";
-            result_.VM = (VM != null) ? VM : "";
-            result_.VDI = (VDI != null) ? VDI : "";
+            result_.uuid = uuid ?? "";
+            result_.VM = VM ?? "";
+            result_.VDI = VDI ?? "";
             result_.other_config = Maps.convert_to_proxy_string_string(other_config);
             return result_;
         }
 
         /// <summary>
         /// Creates a new Crashdump from a Hashtable.
+        /// Note that the fields not contained in the Hashtable
+        /// will be created with their default values.
         /// </summary>
         /// <param name="table"></param>
-        public Crashdump(Hashtable table)
+        public Crashdump(Hashtable table) : this()
         {
-            uuid = Marshalling.ParseString(table, "uuid");
-            VM = Marshalling.ParseRef<VM>(table, "VM");
-            VDI = Marshalling.ParseRef<VDI>(table, "VDI");
-            other_config = Maps.convert_from_proxy_string_string(Marshalling.ParseHashTable(table, "other_config"));
+            UpdateFrom(table);
+        }
+
+        /// <summary>
+        /// Given a Hashtable with field-value pairs, it updates the fields of this Crashdump
+        /// with the values listed in the Hashtable. Note that only the fields contained
+        /// in the Hashtable will be updated and the rest will remain the same.
+        /// </summary>
+        /// <param name="table"></param>
+        public void UpdateFrom(Hashtable table)
+        {
+            if (table.ContainsKey("uuid"))
+                uuid = Marshalling.ParseString(table, "uuid");
+            if (table.ContainsKey("VM"))
+                VM = Marshalling.ParseRef<VM>(table, "VM");
+            if (table.ContainsKey("VDI"))
+                VDI = Marshalling.ParseRef<VDI>(table, "VDI");
+            if (table.ContainsKey("other_config"))
+                other_config = Maps.convert_from_proxy_string_string(Marshalling.ParseHashTable(table, "other_config"));
         }
 
         public bool DeepEquals(Crashdump other)
@@ -117,6 +140,15 @@ namespace XenAPI
                 Helper.AreEqual2(this._VM, other._VM) &&
                 Helper.AreEqual2(this._VDI, other._VDI) &&
                 Helper.AreEqual2(this._other_config, other._other_config);
+        }
+
+        internal static List<Crashdump> ProxyArrayToObjectList(Proxy_Crashdump[] input)
+        {
+            var result = new List<Crashdump>();
+            foreach (var item in input)
+                result.Add(new Crashdump(item));
+
+            return result;
         }
 
         public override string SaveChanges(Session session, string opaqueRef, Crashdump server)
@@ -139,23 +171,33 @@ namespace XenAPI
         /// <summary>
         /// Get a record containing the current state of the given crashdump.
         /// First published in XenServer 4.0.
+        /// Deprecated since XenServer 7.3.
         /// </summary>
         /// <param name="session">The session</param>
         /// <param name="_crashdump">The opaque_ref of the given crashdump</param>
+        [Deprecated("XenServer 7.3")]
         public static Crashdump get_record(Session session, string _crashdump)
         {
-            return new Crashdump((Proxy_Crashdump)session.proxy.crashdump_get_record(session.uuid, (_crashdump != null) ? _crashdump : "").parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.crashdump_get_record(session.opaque_ref, _crashdump);
+            else
+                return new Crashdump((Proxy_Crashdump)session.proxy.crashdump_get_record(session.opaque_ref, _crashdump ?? "").parse());
         }
 
         /// <summary>
         /// Get a reference to the crashdump instance with the specified UUID.
         /// First published in XenServer 4.0.
+        /// Deprecated since XenServer 7.3.
         /// </summary>
         /// <param name="session">The session</param>
         /// <param name="_uuid">UUID of object to return</param>
+        [Deprecated("XenServer 7.3")]
         public static XenRef<Crashdump> get_by_uuid(Session session, string _uuid)
         {
-            return XenRef<Crashdump>.Create(session.proxy.crashdump_get_by_uuid(session.uuid, (_uuid != null) ? _uuid : "").parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.crashdump_get_by_uuid(session.opaque_ref, _uuid);
+            else
+                return XenRef<Crashdump>.Create(session.proxy.crashdump_get_by_uuid(session.opaque_ref, _uuid ?? "").parse());
         }
 
         /// <summary>
@@ -166,7 +208,10 @@ namespace XenAPI
         /// <param name="_crashdump">The opaque_ref of the given crashdump</param>
         public static string get_uuid(Session session, string _crashdump)
         {
-            return (string)session.proxy.crashdump_get_uuid(session.uuid, (_crashdump != null) ? _crashdump : "").parse();
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.crashdump_get_uuid(session.opaque_ref, _crashdump);
+            else
+                return (string)session.proxy.crashdump_get_uuid(session.opaque_ref, _crashdump ?? "").parse();
         }
 
         /// <summary>
@@ -177,7 +222,10 @@ namespace XenAPI
         /// <param name="_crashdump">The opaque_ref of the given crashdump</param>
         public static XenRef<VM> get_VM(Session session, string _crashdump)
         {
-            return XenRef<VM>.Create(session.proxy.crashdump_get_vm(session.uuid, (_crashdump != null) ? _crashdump : "").parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.crashdump_get_vm(session.opaque_ref, _crashdump);
+            else
+                return XenRef<VM>.Create(session.proxy.crashdump_get_vm(session.opaque_ref, _crashdump ?? "").parse());
         }
 
         /// <summary>
@@ -188,7 +236,10 @@ namespace XenAPI
         /// <param name="_crashdump">The opaque_ref of the given crashdump</param>
         public static XenRef<VDI> get_VDI(Session session, string _crashdump)
         {
-            return XenRef<VDI>.Create(session.proxy.crashdump_get_vdi(session.uuid, (_crashdump != null) ? _crashdump : "").parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.crashdump_get_vdi(session.opaque_ref, _crashdump);
+            else
+                return XenRef<VDI>.Create(session.proxy.crashdump_get_vdi(session.opaque_ref, _crashdump ?? "").parse());
         }
 
         /// <summary>
@@ -199,7 +250,10 @@ namespace XenAPI
         /// <param name="_crashdump">The opaque_ref of the given crashdump</param>
         public static Dictionary<string, string> get_other_config(Session session, string _crashdump)
         {
-            return Maps.convert_from_proxy_string_string(session.proxy.crashdump_get_other_config(session.uuid, (_crashdump != null) ? _crashdump : "").parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.crashdump_get_other_config(session.opaque_ref, _crashdump);
+            else
+                return Maps.convert_from_proxy_string_string(session.proxy.crashdump_get_other_config(session.opaque_ref, _crashdump ?? "").parse());
         }
 
         /// <summary>
@@ -211,7 +265,10 @@ namespace XenAPI
         /// <param name="_other_config">New value to set</param>
         public static void set_other_config(Session session, string _crashdump, Dictionary<string, string> _other_config)
         {
-            session.proxy.crashdump_set_other_config(session.uuid, (_crashdump != null) ? _crashdump : "", Maps.convert_to_proxy_string_string(_other_config)).parse();
+            if (session.JsonRpcClient != null)
+                session.JsonRpcClient.crashdump_set_other_config(session.opaque_ref, _crashdump, _other_config);
+            else
+                session.proxy.crashdump_set_other_config(session.opaque_ref, _crashdump ?? "", Maps.convert_to_proxy_string_string(_other_config)).parse();
         }
 
         /// <summary>
@@ -224,7 +281,10 @@ namespace XenAPI
         /// <param name="_value">Value to add</param>
         public static void add_to_other_config(Session session, string _crashdump, string _key, string _value)
         {
-            session.proxy.crashdump_add_to_other_config(session.uuid, (_crashdump != null) ? _crashdump : "", (_key != null) ? _key : "", (_value != null) ? _value : "").parse();
+            if (session.JsonRpcClient != null)
+                session.JsonRpcClient.crashdump_add_to_other_config(session.opaque_ref, _crashdump, _key, _value);
+            else
+                session.proxy.crashdump_add_to_other_config(session.opaque_ref, _crashdump ?? "", _key ?? "", _value ?? "").parse();
         }
 
         /// <summary>
@@ -236,7 +296,10 @@ namespace XenAPI
         /// <param name="_key">Key to remove</param>
         public static void remove_from_other_config(Session session, string _crashdump, string _key)
         {
-            session.proxy.crashdump_remove_from_other_config(session.uuid, (_crashdump != null) ? _crashdump : "", (_key != null) ? _key : "").parse();
+            if (session.JsonRpcClient != null)
+                session.JsonRpcClient.crashdump_remove_from_other_config(session.opaque_ref, _crashdump, _key);
+            else
+                session.proxy.crashdump_remove_from_other_config(session.opaque_ref, _crashdump ?? "", _key ?? "").parse();
         }
 
         /// <summary>
@@ -247,7 +310,10 @@ namespace XenAPI
         /// <param name="_crashdump">The opaque_ref of the given crashdump</param>
         public static void destroy(Session session, string _crashdump)
         {
-            session.proxy.crashdump_destroy(session.uuid, (_crashdump != null) ? _crashdump : "").parse();
+            if (session.JsonRpcClient != null)
+                session.JsonRpcClient.crashdump_destroy(session.opaque_ref, _crashdump);
+            else
+                session.proxy.crashdump_destroy(session.opaque_ref, _crashdump ?? "").parse();
         }
 
         /// <summary>
@@ -258,17 +324,25 @@ namespace XenAPI
         /// <param name="_crashdump">The opaque_ref of the given crashdump</param>
         public static XenRef<Task> async_destroy(Session session, string _crashdump)
         {
-            return XenRef<Task>.Create(session.proxy.async_crashdump_destroy(session.uuid, (_crashdump != null) ? _crashdump : "").parse());
+          if (session.JsonRpcClient != null)
+              return session.JsonRpcClient.async_crashdump_destroy(session.opaque_ref, _crashdump);
+          else
+              return XenRef<Task>.Create(session.proxy.async_crashdump_destroy(session.opaque_ref, _crashdump ?? "").parse());
         }
 
         /// <summary>
         /// Return a list of all the crashdumps known to the system.
         /// First published in XenServer 4.0.
+        /// Deprecated since XenServer 7.3.
         /// </summary>
         /// <param name="session">The session</param>
+        [Deprecated("XenServer 7.3")]
         public static List<XenRef<Crashdump>> get_all(Session session)
         {
-            return XenRef<Crashdump>.Create(session.proxy.crashdump_get_all(session.uuid).parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.crashdump_get_all(session.opaque_ref);
+            else
+                return XenRef<Crashdump>.Create(session.proxy.crashdump_get_all(session.opaque_ref).parse());
         }
 
         /// <summary>
@@ -278,7 +352,10 @@ namespace XenAPI
         /// <param name="session">The session</param>
         public static Dictionary<XenRef<Crashdump>, Crashdump> get_all_records(Session session)
         {
-            return XenRef<Crashdump>.Create<Proxy_Crashdump>(session.proxy.crashdump_get_all_records(session.uuid).parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.crashdump_get_all_records(session.opaque_ref);
+            else
+                return XenRef<Crashdump>.Create<Proxy_Crashdump>(session.proxy.crashdump_get_all_records(session.opaque_ref).parse());
         }
 
         /// <summary>
@@ -297,11 +374,12 @@ namespace XenAPI
                 }
             }
         }
-        private string _uuid;
+        private string _uuid = "";
 
         /// <summary>
         /// the virtual machine
         /// </summary>
+        [JsonConverter(typeof(XenRefConverter<VM>))]
         public virtual XenRef<VM> VM
         {
             get { return _VM; }
@@ -315,11 +393,12 @@ namespace XenAPI
                 }
             }
         }
-        private XenRef<VM> _VM;
+        private XenRef<VM> _VM = new XenRef<VM>(Helper.NullOpaqueRef);
 
         /// <summary>
         /// the virtual disk
         /// </summary>
+        [JsonConverter(typeof(XenRefConverter<VDI>))]
         public virtual XenRef<VDI> VDI
         {
             get { return _VDI; }
@@ -333,12 +412,13 @@ namespace XenAPI
                 }
             }
         }
-        private XenRef<VDI> _VDI;
+        private XenRef<VDI> _VDI = new XenRef<VDI>(Helper.NullOpaqueRef);
 
         /// <summary>
         /// additional configuration
         /// First published in XenServer 4.1.
         /// </summary>
+        [JsonConverter(typeof(StringStringMapConverter))]
         public virtual Dictionary<string, string> other_config
         {
             get { return _other_config; }
@@ -352,6 +432,6 @@ namespace XenAPI
                 }
             }
         }
-        private Dictionary<string, string> _other_config;
+        private Dictionary<string, string> _other_config = new Dictionary<string, string>() {};
     }
 }

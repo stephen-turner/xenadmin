@@ -51,7 +51,7 @@ namespace XenAdmin.TabPages
                 if (Status != null && Status.LicencedHost != null && Status.LicenseExpiresIn != null
                     && !LicenseStatus.IsInfinite(Status.LicenseExpiresIn))
                 {
-                    return HelpersGUI.DateTimeToString(Status.LicencedHost.LicenseExpiryUTC.ToLocalTime(),
+                    return HelpersGUI.DateTimeToString(Status.LicencedHost.LicenseExpiryUTC().ToLocalTime(),
                         Messages.DATEFORMAT_DMY_LONG, true);
                 }
 
@@ -73,13 +73,13 @@ namespace XenAdmin.TabPages
 
                     if (Status.CurrentState == LicenseStatus.HostState.Expired)
                     {
-                      
-                        return Status.PoolLicensingModel == LicenseStatus.LicensingModel.Clearwater ? Messages.LICENSE_UNSUPPORTED : Messages.LICENSE_EXPIRED;
+
+                        return Status.PoolLicensingModel == LicenseStatus.LicensingModel.Clearwater ? Messages.LICENSE_UNSUPPORTED : Messages.LICENSE_UNLICENSED;
                     }
 
                     if (Status.CurrentState == LicenseStatus.HostState.Free)
                     {
-                        return Status.PoolLicensingModel == LicenseStatus.LicensingModel.Clearwater ? Messages.LICENSE_UNSUPPORTED : Messages.LICENSE_EXPIRED;
+                        return Status.PoolLicensingModel == LicenseStatus.LicensingModel.Clearwater ? Messages.LICENSE_UNSUPPORTED : Messages.LICENSE_UNLICENSED;
                     }
 
                     TimeSpan s = Status.LicenseExpiresExactlyIn;

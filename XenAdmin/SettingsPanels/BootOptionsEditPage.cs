@@ -36,12 +36,11 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-using XenAdmin;
 using XenAPI;
 using System.Collections;
 using XenAdmin.Properties;
 using XenAdmin.Actions;
-using XenAdmin.Core;
+using XenCenterLib;
 
 
 namespace XenAdmin.SettingsPanels
@@ -79,13 +78,13 @@ namespace XenAdmin.SettingsPanels
 		{
 			get
 			{
-				return (vm.IsHVM && GetOrder() != vm.BootOrder) || (m_textBoxOsParams.Text != vm.PV_args) || (VMPVBootableDVD() != bootFromCD);
+				return (vm.IsHVM() && GetOrder() != vm.GetBootOrder()) || (m_textBoxOsParams.Text != vm.PV_args) || (VMPVBootableDVD() != bootFromCD);
 			}
 		}
 
 		public AsyncAction SaveSettings()
 		{
-			vm.BootOrder = GetOrder();
+			vm.SetBootOrder(GetOrder());
 			
 			vm.PV_args = m_textBoxOsParams.Text;
 
@@ -95,7 +94,7 @@ namespace XenAdmin.SettingsPanels
 			                                		if (bootFromCD)
 			                                		{
 			                                			foreach (var vbd in vm.Connection.ResolveAll(vm.VBDs))
-			                                				VBD.set_bootable(session, vbd.opaque_ref, vbd.IsCDROM);
+			                                				VBD.set_bootable(session, vbd.opaque_ref, vbd.IsCDROM());
 			                                		}
 			                                		else
 			                                		{
@@ -145,7 +144,7 @@ namespace XenAdmin.SettingsPanels
 				if (vm == null)
 					return "";
 
-				if (vm.IsHVM)
+				if (vm.IsHVM())
 				{
 					List<String> driveLetters = new List<String>();
 
@@ -184,9 +183,9 @@ namespace XenAdmin.SettingsPanels
 
 		private void Repopulate()
 		{
-            BootDeviceAndOrderEnabled(vm.IsHVM);
+            BootDeviceAndOrderEnabled(vm.IsHVM());
 
-			if (vm.IsHVM)
+			if (vm.IsHVM())
 			{
 				m_tlpHvm.Visible = true;
 				m_autoHeightLabelHvm.Visible = true;
@@ -194,7 +193,7 @@ namespace XenAdmin.SettingsPanels
 				m_autoHeightLabelNonHvm.Visible = false;
 				
 				m_checkedListBox.Items.Clear();
-				string order = vm.BootOrder.ToUpper();
+				string order = vm.GetBootOrder().ToUpper();
 
 				foreach (char c in order)
 					m_checkedListBox.Items.Add(new BootDevice(c),true);
@@ -219,7 +218,7 @@ namespace XenAdmin.SettingsPanels
 				m_comboBoxBootDevice.Items.Clear();
 				m_comboBoxBootDevice.Items.Add(Messages.BOOT_HARD_DISK);
 
-				if (vm.HasCD)
+				if (vm.HasCD())
 				{
 					m_comboBoxBootDevice.Items.Add(Messages.DVD_DRIVE);
 					m_comboBoxBootDevice.SelectedItem = VMPVBootableDVD() ? Messages.DVD_DRIVE : Messages.BOOT_HARD_DISK;
@@ -235,7 +234,7 @@ namespace XenAdmin.SettingsPanels
 		{
 			foreach (var vbd in vm.Connection.ResolveAll(vm.VBDs))
 			{
-				if (vbd.IsCDROM && vbd.bootable)
+				if (vbd.IsCDROM() && vbd.bootable)
 					return true;
 			}
 			return false;

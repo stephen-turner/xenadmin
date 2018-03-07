@@ -37,7 +37,7 @@ using XenAdmin.Network;
 using System.Threading;
 using XenAPI;
 using XenCenterLib.Archive;
-
+using XenCenterLib;
 
 namespace XenAdmin.Actions
 {
@@ -74,7 +74,7 @@ namespace XenAdmin.Actions
         /// <param name="verify"></param>
         public ExportVmAction(IXenConnection connection, Host host,
             VM vm, string filename, bool verify)
-            : base(connection, string.Format(Messages.EXPORT_VM_TITLE, vm.Name, Helpers.GetName(connection)),
+            : base(connection, string.Format(Messages.EXPORT_VM_TITLE, vm.Name(), Helpers.GetName(connection)),
             Messages.ACTION_EXPORT_DESCRIPTION_PREPARING)
         {
             #region RBAC Dependencies
@@ -98,21 +98,21 @@ namespace XenAdmin.Actions
             Description = Messages.ACTION_EXPORT_DESCRIPTION_IN_PROGRESS;
 
             RelatedTask = XenAPI.Task.create(Session,
-                string.Format(Messages.ACTION_EXPORT_TASK_NAME, VM.Name),
-                string.Format(Messages.ACTION_EXPORT_TASK_DESCRIPTION, VM.Name));
+                string.Format(Messages.ACTION_EXPORT_TASK_NAME, VM.Name()),
+                string.Format(Messages.ACTION_EXPORT_TASK_DESCRIPTION, VM.Name()));
 
             UriBuilder uriBuilder = new UriBuilder(this.Session.Url);
             uriBuilder.Path = "export";
             uriBuilder.Query = string.Format("session_id={0}&uuid={1}&task_id={2}",
-                Uri.EscapeDataString(this.Session.uuid),
+                Uri.EscapeDataString(this.Session.opaque_ref),
                 Uri.EscapeDataString(this.VM.uuid),
                 Uri.EscapeDataString(this.RelatedTask.opaque_ref));
 
-            log.DebugFormat("Exporting {0} from {1} to {2}", VM.Name, uriBuilder.ToString(), _filename);
+            log.DebugFormat("Exporting {0} from {1} to {2}", VM.Name(), uriBuilder.ToString(), _filename);
 
             // The DownloadFile call will block, so we need a separate thread to poll for task status.
             Thread taskThread = new Thread((ThreadStart)progressPoll);
-            taskThread.Name = "Progress polling thread for ExportVmAction for " + VM.Name.Ellipsise(20);
+            taskThread.Name = "Progress polling thread for ExportVmAction for " + VM.Name().Ellipsise(20);
             taskThread.IsBackground = true;
             taskThread.Start();
 
@@ -175,7 +175,7 @@ namespace XenAdmin.Actions
                 {
                     using (FileStream fs = new FileStream(tmpFile, FileMode.Open, FileAccess.Read))
                     {
-                        log.DebugFormat("Verifying export of {0} in {1}", VM.Name, _filename);
+                        log.DebugFormat("Verifying export of {0} in {1}", VM.Name(), _filename);
                         this.Description = Messages.ACTION_EXPORT_VERIFY;
 
                         export = new Export();
@@ -191,7 +191,7 @@ namespace XenAdmin.Actions
 
             if (Cancelling || _exception is CancelledException)
             {
-                log.InfoFormat("Export of VM {0} cancelled", VM.Name);
+                log.InfoFormat("Export of VM {0} cancelled", VM.Name());
                 this.Description = Messages.ACTION_EXPORT_DESCRIPTION_CANCELLED;
 
                 log.DebugFormat("Deleting {0}", tmpFile);
@@ -200,7 +200,7 @@ namespace XenAdmin.Actions
             }
             else if (_exception != null)
             {
-                log.Warn(string.Format("Export of VM {0} failed", VM.Name), _exception);
+                log.Warn(string.Format("Export of VM {0} failed", VM.Name()), _exception);
 
                 if (_exception is HeaderChecksumFailed || _exception is FormatException)
                     this.Description = Messages.ACTION_EXPORT_DESCRIPTION_HEADER_CHECKSUM_FAILED;
@@ -236,7 +236,7 @@ namespace XenAdmin.Actions
             }
             else
             {
-                log.InfoFormat("Export of VM {0} successful", VM.Name);
+                log.InfoFormat("Export of VM {0} successful", VM.Name());
                 this.Description = Messages.ACTION_EXPORT_DESCRIPTION_SUCCESSFUL;
 
                 log.DebugFormat("Renaming {0} to {1}", tmpFile, _filename);

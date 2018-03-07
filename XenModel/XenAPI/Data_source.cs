@@ -1,19 +1,19 @@
 /*
  * Copyright (c) Citrix Systems, Inc.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  *   1) Redistributions of source code must retain the above copyright
  *      notice, this list of conditions and the following disclaimer.
- * 
+ *
  *   2) Redistributions in binary form must reproduce the above
  *      copyright notice, this list of conditions and the following
  *      disclaimer in the documentation and/or other materials
  *      provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -32,8 +32,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
-using CookComputing.XmlRpc;
+using System.ComponentModel;
+using System.Globalization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 
 namespace XenAPI
@@ -76,6 +78,10 @@ namespace XenAPI
             this.UpdateFromProxy(proxy);
         }
 
+        /// <summary>
+        /// Updates each field of this instance with the value of
+        /// the corresponding field of a given Data_source.
+        /// </summary>
         public override void UpdateFrom(Data_source update)
         {
             name_label = update.name_label;
@@ -103,11 +109,11 @@ namespace XenAPI
         public Proxy_Data_source ToProxy()
         {
             Proxy_Data_source result_ = new Proxy_Data_source();
-            result_.name_label = (name_label != null) ? name_label : "";
-            result_.name_description = (name_description != null) ? name_description : "";
+            result_.name_label = name_label ?? "";
+            result_.name_description = name_description ?? "";
             result_.enabled = enabled;
             result_.standard = standard;
-            result_.units = (units != null) ? units : "";
+            result_.units = units ?? "";
             result_.min = min;
             result_.max = max;
             result_.value = value;
@@ -116,18 +122,39 @@ namespace XenAPI
 
         /// <summary>
         /// Creates a new Data_source from a Hashtable.
+        /// Note that the fields not contained in the Hashtable
+        /// will be created with their default values.
         /// </summary>
         /// <param name="table"></param>
-        public Data_source(Hashtable table)
+        public Data_source(Hashtable table) : this()
         {
-            name_label = Marshalling.ParseString(table, "name_label");
-            name_description = Marshalling.ParseString(table, "name_description");
-            enabled = Marshalling.ParseBool(table, "enabled");
-            standard = Marshalling.ParseBool(table, "standard");
-            units = Marshalling.ParseString(table, "units");
-            min = Marshalling.ParseDouble(table, "min");
-            max = Marshalling.ParseDouble(table, "max");
-            value = Marshalling.ParseDouble(table, "value");
+            UpdateFrom(table);
+        }
+
+        /// <summary>
+        /// Given a Hashtable with field-value pairs, it updates the fields of this Data_source
+        /// with the values listed in the Hashtable. Note that only the fields contained
+        /// in the Hashtable will be updated and the rest will remain the same.
+        /// </summary>
+        /// <param name="table"></param>
+        public void UpdateFrom(Hashtable table)
+        {
+            if (table.ContainsKey("name_label"))
+                name_label = Marshalling.ParseString(table, "name_label");
+            if (table.ContainsKey("name_description"))
+                name_description = Marshalling.ParseString(table, "name_description");
+            if (table.ContainsKey("enabled"))
+                enabled = Marshalling.ParseBool(table, "enabled");
+            if (table.ContainsKey("standard"))
+                standard = Marshalling.ParseBool(table, "standard");
+            if (table.ContainsKey("units"))
+                units = Marshalling.ParseString(table, "units");
+            if (table.ContainsKey("min"))
+                min = Marshalling.ParseDouble(table, "min");
+            if (table.ContainsKey("max"))
+                max = Marshalling.ParseDouble(table, "max");
+            if (table.ContainsKey("value"))
+                value = Marshalling.ParseDouble(table, "value");
         }
 
         public bool DeepEquals(Data_source other)
@@ -145,6 +172,15 @@ namespace XenAPI
                 Helper.AreEqual2(this._min, other._min) &&
                 Helper.AreEqual2(this._max, other._max) &&
                 Helper.AreEqual2(this._value, other._value);
+        }
+
+        internal static List<Data_source> ProxyArrayToObjectList(Proxy_Data_source[] input)
+        {
+            var result = new List<Data_source>();
+            foreach (var item in input)
+                result.Add(new Data_source(item));
+
+            return result;
         }
 
         public override string SaveChanges(Session session, string opaqueRef, Data_source server)
@@ -175,7 +211,7 @@ namespace XenAPI
                 }
             }
         }
-        private string _name_label;
+        private string _name_label = "";
 
         /// <summary>
         /// a notes field containing human-readable description
@@ -193,7 +229,7 @@ namespace XenAPI
                 }
             }
         }
-        private string _name_description;
+        private string _name_description = "";
 
         /// <summary>
         /// true if the data source is being logged
@@ -247,7 +283,7 @@ namespace XenAPI
                 }
             }
         }
-        private string _units;
+        private string _units = "";
 
         /// <summary>
         /// the minimum value of the data source

@@ -49,9 +49,10 @@ namespace XenAdmin.Actions
         private Random random = new Random();
 
         private readonly Uri address;
-        private readonly string outFileName;
+        private readonly string zippedFileName;
         private readonly string updateName;
-        private readonly string updateFileExtension;
+        private readonly string[] updateFileExtensions;
+        private readonly bool downloadUpdate;
         private DownloadState patchDownloadState;
         private Exception patchDownloadError;
 
@@ -60,17 +61,15 @@ namespace XenAdmin.Actions
             get; private set;
         }
 
-        public DownloadAndUnzipXenServerPatchAction(string patchName, Uri uri, string outputFileName)
-            : this(patchName, uri, outputFileName, InvisibleMessages.XEN_UPDATE)
-        { }
-
-        public DownloadAndUnzipXenServerPatchAction(string patchName, Uri uri, string outputFileName, string updateFileExtension)
-            : base(null, string.Format(Messages.DOWNLOAD_AND_EXTRACT_ACTION_TITLE, patchName), string.Empty, false)
+        public DownloadAndUnzipXenServerPatchAction(string patchName, Uri uri, string outputFileName, bool suppressHist, params string[] updateFileExtensions)
+            : base(null, uri == null ?  string.Format(Messages.UPDATES_WIZARD_EXTRACT_ACTION_TITLE, patchName)
+            : string.Format(Messages.DOWNLOAD_AND_EXTRACT_ACTION_TITLE, patchName), string.Empty, suppressHist)
         {
             updateName = patchName;
             address = uri;
-            outFileName = outputFileName;
-            this.updateFileExtension = updateFileExtension;
+            downloadUpdate = address != null;
+            zippedFileName = outputFileName;
+            this.updateFileExtensions = updateFileExtensions;
         }
 
         private void DownloadFile()
@@ -93,7 +92,7 @@ namespace XenAdmin.Actions
                         client.DownloadProgressChanged += client_DownloadProgressChanged;
                         client.DownloadFileCompleted += client_DownloadFileCompleted;
                         //start the download
-                        client.DownloadFileAsync(address, outFileName);
+                        client.DownloadFileAsync(address, zippedFileName);
 
                         patchDownloadState = DownloadState.InProgress;
                         bool patchDownloadCancelling = false;
@@ -153,7 +152,7 @@ namespace XenAdmin.Actions
             ArchiveIterator iterator = null;
             try
             {
-                using (Stream stream = new FileStream(outFileName, FileMode.Open, FileAccess.Read))
+                using (Stream stream = new FileStream(zippedFileName, FileMode.Open, FileAccess.Read))
                 {
                     iterator = ArchiveFactory.Reader(ArchiveFactory.Type.Zip, stream);
                     DotNetZipZipIterator zipIterator = iterator as DotNetZipZipIterator;
@@ -165,20 +164,21 @@ namespace XenAdmin.Actions
 
                     while (iterator.HasNext())
                     {
-                        string currentExtension = Path.GetExtension(iterator.CurrentFileName());
+                        string currentExtension = Path.GetExtension(iterator.CurrentFileName()).Replace(".","");
 
-                        if (!string.IsNullOrEmpty(updateFileExtension) && currentExtension == "." + updateFileExtension)
+                        if (Array.Exists(updateFileExtensions, item => item == currentExtension))
                         {
-                            string path = Path.Combine(Path.GetDirectoryName(outFileName), iterator.CurrentFileName());
+                            string path = downloadUpdate ? Path.Combine(Path.GetDirectoryName(zippedFileName), iterator.CurrentFileName())
+                                : Path.Combine(Path.GetTempPath(), iterator.CurrentFileName());
 
-                            log.DebugFormat("Found '{0}' in the downloaded archive when looking for a '{1}' file. Extracting...", iterator.CurrentFileName(), currentExtension);
+                            log.InfoFormat("Found '{0}' in the downloaded archive when looking for a '{1}' file. Extracting...", iterator.CurrentFileName(), currentExtension);
 
                             using (Stream outputStream = new FileStream(path, FileMode.Create))
                             {
                                 iterator.ExtractCurrentFile(outputStream);
                                 PatchPath = path;
 
-                                log.DebugFormat("Update file extracted to '{0}'", path);
+                                log.InfoFormat("Update file extracted to '{0}'", path);
                                 
                                 break;
                             }
@@ -201,30 +201,36 @@ namespace XenAdmin.Actions
             {
                 if (iterator != null)
                     iterator.Dispose();
-                File.Delete(outFileName);
+
+                if (downloadUpdate)
+                    File.Delete(zippedFileName);
             }
             
-            if (string.IsNullOrEmpty(PatchPath))
+            if (string.IsNullOrEmpty(PatchPath) && downloadUpdate)
             {
                 MarkCompleted(new Exception(Messages.DOWNLOAD_AND_EXTRACT_ACTION_FILE_NOT_FOUND));
-                log.DebugFormat("File '{0}.{1}' could not be located in downloaded archive", updateName, updateFileExtension);
+                log.InfoFormat("The downloaded archive does not contain a file with any of the following extensions: {0}", string.Join(", ", updateFileExtensions));
             }
         }
 
         protected override void Run()
         {
-            log.DebugFormat("Downloading XenServer patch '{0}' (url: {1})", updateName, address);
+            if (downloadUpdate)
+            {
+                log.InfoFormat("Downloading update '{0}' (from from '{1}') to '{2}'", updateName, address, zippedFileName);
 
-            Description = string.Format(Messages.DOWNLOAD_AND_EXTRACT_ACTION_DOWNLOADING_DESC, updateName);
-            LogDescriptionChanges = false;
-            DownloadFile();
-            LogDescriptionChanges = true;
 
-            if (IsCompleted || Cancelled)
-                return;
+                Description = string.Format(Messages.DOWNLOAD_AND_EXTRACT_ACTION_DOWNLOADING_DESC, updateName);
+                LogDescriptionChanges = false;
+                DownloadFile();
+                LogDescriptionChanges = true;
 
-            if (Cancelling)
-                throw new CancelledException();
+                if (IsCompleted || Cancelled)
+                    return;
+
+                if (Cancelling)
+                    throw new CancelledException();
+            }
 
             log.DebugFormat("Extracting XenServer patch '{0}'", updateName);
             Description = string.Format(Messages.DOWNLOAD_AND_EXTRACT_ACTION_EXTRACTING_DESC, updateName);
@@ -237,7 +243,7 @@ namespace XenAdmin.Actions
 
         void archiveIterator_CurrentFileExtractProgressChanged(object sender, ExtractProgressChangedEventArgs e)
         {
-            int pc = 95 + (int)(5.0 * e.BytesTransferred / e.TotalBytesToTransfer);
+            int pc = downloadUpdate ? 95 + (int)(5.0 * e.BytesTransferred / e.TotalBytesToTransfer) : (int)(100.0 * e.BytesTransferred / e.TotalBytesToTransfer);
             if (pc != PercentComplete)
                 PercentComplete = pc;
         }
@@ -248,7 +254,10 @@ namespace XenAdmin.Actions
             if (pc != PercentComplete)
             {
                 PercentComplete = pc;
-                Description = string.Format(Messages.DOWNLOAD_AND_EXTRACT_ACTION_DOWNLOADING_DETAILS_DESC, updateName,
+
+                DownloadProgressDescription
+                    = Description 
+                    = string.Format(Messages.DOWNLOAD_AND_EXTRACT_ACTION_DOWNLOADING_DETAILS_DESC, updateName,
                                             Util.DiskSizeString(e.BytesReceived),
                                             Util.DiskSizeString(e.TotalBytesToReceive));
             }
@@ -284,5 +293,7 @@ namespace XenAdmin.Actions
         protected override void CancelRelatedTask()
         {
         }
+
+        public string DownloadProgressDescription { get; set; }
     }
 }

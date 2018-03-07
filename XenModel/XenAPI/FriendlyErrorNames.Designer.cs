@@ -97,6 +97,15 @@ namespace XenAPI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to External authentication has been disabled with errors: Some AD machine accounts were not disabled on the AD server due to invalid account.
+        /// </summary>
+        public static string AUTH_DISABLE_FAILED_INVALID_ACCOUNT {
+            get {
+                return ResourceManager.GetString("AUTH_DISABLE_FAILED_INVALID_ACCOUNT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to External authentication has been disabled with errors: Your AD machine account was not disabled on the AD server as permission was denied..
         /// </summary>
         public static string AUTH_DISABLE_FAILED_PERMISSION_DENIED {
@@ -129,6 +138,24 @@ namespace XenAPI {
         public static string AUTH_ENABLE_FAILED_DOMAIN_LOOKUP_FAILED {
             get {
                 return ResourceManager.GetString("AUTH_ENABLE_FAILED_DOMAIN_LOOKUP_FAILED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The host failed to enable external authentication..
+        /// </summary>
+        public static string AUTH_ENABLE_FAILED_INVALID_ACCOUNT {
+            get {
+                return ResourceManager.GetString("AUTH_ENABLE_FAILED_INVALID_ACCOUNT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The host failed to enable external authentication..
+        /// </summary>
+        public static string AUTH_ENABLE_FAILED_INVALID_OU {
+            get {
+                return ResourceManager.GetString("AUTH_ENABLE_FAILED_INVALID_OU", resourceCulture);
             }
         }
         
@@ -192,6 +219,15 @@ namespace XenAPI {
         public static string BACKUP_SCRIPT_FAILED {
             get {
                 return ResourceManager.GetString("BACKUP_SCRIPT_FAILED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Timeout trying to balloon down memory before VM migration. If the error occurs repeatedly, consider increasing the memory-dynamic-min value..
+        /// </summary>
+        public static string BALLOONING_TIMEOUT_BEFORE_MIGRATION {
+            get {
+                return ResourceManager.GetString("BALLOONING_TIMEOUT_BEFORE_MIGRATION", resourceCulture);
             }
         }
         
@@ -358,7 +394,7 @@ namespace XenAPI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This VM cannot be started, as its network interfaces could not be connected.  One of the NICs is in use elsewhere..
+        ///   Looks up a localized string similar to This VM cannot be started because its network interfaces could not be connected.  One of the NICs is in use elsewhere..
         /// </summary>
         public static string CANNOT_PLUG_VIF {
             get {
@@ -453,6 +489,15 @@ namespace XenAPI {
         public static string COULD_NOT_IMPORT_DATABASE {
             get {
                 return ResourceManager.GetString("COULD_NOT_IMPORT_DATABASE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The IGMP Snooping setting cannot be applied for some of the host, network(s)..
+        /// </summary>
+        public static string COULD_NOT_UPDATE_IGMP_SNOOPING_EVERYWHERE {
+            get {
+                return ResourceManager.GetString("COULD_NOT_UPDATE_IGMP_SNOOPING_EVERYWHERE", resourceCulture);
             }
         }
         
@@ -1051,7 +1096,7 @@ namespace XenAPI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This operation cannot be completed as the server is in use..
+        ///   Looks up a localized string similar to This operation cannot be completed because the server is in use..
         /// </summary>
         public static string HOST_IN_USE {
             get {
@@ -1060,7 +1105,7 @@ namespace XenAPI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This operation cannot be completed as the server is still live..
+        ///   Looks up a localized string similar to This operation cannot be completed because the server is still live..
         /// </summary>
         public static string HOST_IS_LIVE {
             get {
@@ -1168,7 +1213,7 @@ namespace XenAPI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This operation cannot be completed as the server power on mode is disabled..
+        ///   Looks up a localized string similar to This operation cannot be completed because the server power on mode is disabled..
         /// </summary>
         public static string HOST_POWER_ON_MODE_DISABLED {
             get {
@@ -1735,6 +1780,15 @@ namespace XenAPI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You tried to add a purpose to a network but the new purpose is not compatible with an existing purpose of the network or other networks..
+        /// </summary>
+        public static string NETWORK_INCOMPATIBLE_PURPOSES {
+            get {
+                return ResourceManager.GetString("NETWORK_INCOMPATIBLE_PURPOSES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The network is not managed by xapi..
         /// </summary>
         public static string NETWORK_UNMANAGED {
@@ -1803,6 +1857,15 @@ namespace XenAPI {
         public static string NOT_SYSTEM_DOMAIN {
             get {
                 return ResourceManager.GetString("NOT_SYSTEM_DOMAIN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nvidia tools error. Please ensure that the latest Nvidia tools are installed.
+        /// </summary>
+        public static string NVIDIA_TOOLS_ERROR {
+            get {
+                return ResourceManager.GetString("NVIDIA_TOOLS_ERROR", resourceCulture);
             }
         }
         
@@ -1879,6 +1942,15 @@ namespace XenAPI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The passthrough_enabled must be true before passthrough usb to vm..
+        /// </summary>
+        public static string PASSTHROUGH_NOT_ENABLED {
+            get {
+                return ResourceManager.GetString("PASSTHROUGH_NOT_ENABLED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The update {0} has already been applied.
         /// </summary>
         public static string PATCH_ALREADY_APPLIED {
@@ -1906,7 +1978,7 @@ namespace XenAPI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The patch apply failed: there are backup files created while applying patch. Please remove these backup files before applying patch again..
+        ///   Looks up a localized string similar to The patch apply failed: backup files were created while applying the patch. Please remove these backup files before applying the patch again..
         /// </summary>
         public static string PATCH_APPLY_FAILED_BACKUP_FILES_EXIST {
             get {
@@ -2149,6 +2221,15 @@ namespace XenAPI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This host has no PIF on the given network..
+        /// </summary>
+        public static string PIF_NOT_PRESENT {
+            get {
+                return ResourceManager.GetString("PIF_NOT_PRESENT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Operation cannot proceed while a tunnel exists on this interface..
         /// </summary>
         public static string PIF_TUNNEL_STILL_EXISTS {
@@ -2203,6 +2284,15 @@ namespace XenAPI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to External authentication has been disabled with errors: Some AD machine accounts were not disabled on the AD server due to invalid account..
+        /// </summary>
+        public static string POOL_AUTH_DISABLE_FAILED_INVALID_ACCOUNT {
+            get {
+                return ResourceManager.GetString("POOL_AUTH_DISABLE_FAILED_INVALID_ACCOUNT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to External authentication has been disabled with errors: Some AD machine accounts were not disabled on the AD server as permission was denied..
         /// </summary>
         public static string POOL_AUTH_DISABLE_FAILED_PERMISSION_DENIED {
@@ -2244,6 +2334,15 @@ namespace XenAPI {
         public static string POOL_AUTH_ENABLE_FAILED_DUPLICATE_HOSTNAME {
             get {
                 return ResourceManager.GetString("POOL_AUTH_ENABLE_FAILED_DUPLICATE_HOSTNAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to enable external authentication, the supplied account was invalid..
+        /// </summary>
+        public static string POOL_AUTH_ENABLE_FAILED_INVALID_ACCOUNT {
+            get {
+                return ResourceManager.GetString("POOL_AUTH_ENABLE_FAILED_INVALID_ACCOUNT", resourceCulture);
             }
         }
         
@@ -2338,6 +2437,24 @@ namespace XenAPI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The host joining the pool must have the same API version as the pool master..
+        /// </summary>
+        public static string POOL_JOINING_HOST_MUST_HAVE_SAME_API_VERSION {
+            get {
+                return ResourceManager.GetString("POOL_JOINING_HOST_MUST_HAVE_SAME_API_VERSION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The host joining the pool must have the same database schema as the pool master..
+        /// </summary>
+        public static string POOL_JOINING_HOST_MUST_HAVE_SAME_DB_SCHEMA {
+            get {
+                return ResourceManager.GetString("POOL_JOINING_HOST_MUST_HAVE_SAME_DB_SCHEMA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The server joining the pool must have the same product version as the pool master..
         /// </summary>
         public static string POOL_JOINING_HOST_MUST_HAVE_SAME_PRODUCT_VERSION {
@@ -2370,6 +2487,15 @@ namespace XenAPI {
         public static string PROVISION_ONLY_ALLOWED_ON_TEMPLATE {
             get {
                 return ResourceManager.GetString("PROVISION_ONLY_ALLOWED_ON_TEMPLATE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The VDI corresponding to this PUSB has existing VBDs..
+        /// </summary>
+        public static string PUSB_VDI_CONFLICT {
+            get {
+                return ResourceManager.GetString("PUSB_VDI_CONFLICT", resourceCulture);
             }
         }
         
@@ -2753,6 +2879,15 @@ namespace XenAPI {
         public static string SR_BACKEND_FAILURE_120 {
             get {
                 return ResourceManager.GetString("SR_BACKEND_FAILURE_120", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SM has thrown a generic python exception.
+        /// </summary>
+        public static string SR_BACKEND_FAILURE_1200 {
+            get {
+                return ResourceManager.GetString("SR_BACKEND_FAILURE_1200", resourceCulture);
             }
         }
         
@@ -3279,6 +3414,24 @@ namespace XenAPI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Given SMB version is not allowed. Choose either 1.0 or 3.0.
+        /// </summary>
+        public static string SR_BACKEND_FAILURE_227 {
+            get {
+                return ResourceManager.GetString("SR_BACKEND_FAILURE_227", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Require &quot;-o&quot; along with xe-mount-isosr.
+        /// </summary>
+        public static string SR_BACKEND_FAILURE_228 {
+            get {
+                return ResourceManager.GetString("SR_BACKEND_FAILURE_228", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The specified VDI is currently in use.
         /// </summary>
         public static string SR_BACKEND_FAILURE_24 {
@@ -3801,11 +3954,47 @@ namespace XenAPI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to activate changed block tracking..
+        /// </summary>
+        public static string SR_BACKEND_FAILURE_457 {
+            get {
+                return ResourceManager.GetString("SR_BACKEND_FAILURE_457", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to deactivate changed block tracking..
+        /// </summary>
+        public static string SR_BACKEND_FAILURE_458 {
+            get {
+                return ResourceManager.GetString("SR_BACKEND_FAILURE_458", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changed block tracking log is in an inconsistent state..
+        /// </summary>
+        public static string SR_BACKEND_FAILURE_459 {
+            get {
+                return ResourceManager.GetString("SR_BACKEND_FAILURE_459", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The VDI is not available.
         /// </summary>
         public static string SR_BACKEND_FAILURE_46 {
             get {
                 return ResourceManager.GetString("SR_BACKEND_FAILURE_46", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to calculate changed blocks for given VDIs..
+        /// </summary>
+        public static string SR_BACKEND_FAILURE_460 {
+            get {
+                return ResourceManager.GetString("SR_BACKEND_FAILURE_460", resourceCulture);
             }
         }
         
@@ -3864,7 +4053,7 @@ namespace XenAPI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The attempt to unmount/deactivate the specified logical volume failed.
+        ///   Looks up a localized string similar to The attempt to umount/deactivate the specified logical volume failed.
         /// </summary>
         public static string SR_BACKEND_FAILURE_53 {
             get {
@@ -4332,7 +4521,7 @@ namespace XenAPI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The SR {0} is still connected to a server via a PBD. It cannot be destroyed..
+        ///   Looks up a localized string similar to The SR {0} is still connected to a server by a PBD. It cannot be destroyed..
         /// </summary>
         public static string SR_HAS_PBD {
             get {
@@ -4341,7 +4530,7 @@ namespace XenAPI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The SR could not be destroyed, as the &apos;indestructible&apos; flag was set on it..
+        ///   Looks up a localized string similar to The SR could not be destroyed because the &apos;indestructible&apos; flag was set on it..
         /// </summary>
         public static string SR_INDESTRUCTIBLE {
             get {
@@ -4494,6 +4683,15 @@ namespace XenAPI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot contact the other host using TLS on the specified address and port.
+        /// </summary>
+        public static string TLS_CONNECTION_FAILED {
+            get {
+                return ResourceManager.GetString("TLS_CONNECTION_FAILED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The request was rejected because the server is too busy..
         /// </summary>
         public static string TOO_BUSY {
@@ -4517,6 +4715,15 @@ namespace XenAPI {
         public static string TOO_MANY_STORAGE_MIGRATES {
             get {
                 return ResourceManager.GetString("TOO_MANY_STORAGE_MIGRATES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The VM has too many VUSBs..
+        /// </summary>
+        public static string TOO_MANY_VUSBS {
+            get {
+                return ResourceManager.GetString("TOO_MANY_VUSBS", resourceCulture);
             }
         }
         
@@ -4656,7 +4863,52 @@ namespace XenAPI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Only the local superuser can execute this operation.
+        ///   Looks up a localized string similar to The USB device is currently attached to a VM..
+        /// </summary>
+        public static string USB_ALREADY_ATTACHED {
+            get {
+                return ResourceManager.GetString("USB_ALREADY_ATTACHED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to USB_groups are currently restricted to contain no more than one VUSB..
+        /// </summary>
+        public static string USB_GROUP_CONFLICT {
+            get {
+                return ResourceManager.GetString("USB_GROUP_CONFLICT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The USB group does not contain any PUSBs..
+        /// </summary>
+        public static string USB_GROUP_CONTAINS_NO_PUSBS {
+            get {
+                return ResourceManager.GetString("USB_GROUP_CONTAINS_NO_PUSBS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The USB group contains active PUSBs and cannot be deleted..
+        /// </summary>
+        public static string USB_GROUP_CONTAINS_PUSB {
+            get {
+                return ResourceManager.GetString("USB_GROUP_CONTAINS_PUSB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The USB group contains active VUSBs and cannot be deleted..
+        /// </summary>
+        public static string USB_GROUP_CONTAINS_VUSB {
+            get {
+                return ResourceManager.GetString("USB_GROUP_CONTAINS_VUSB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only the local superuser can perform this operation.
         /// </summary>
         public static string USER_IS_NOT_LOCAL_SUPERUSER {
             get {
@@ -4782,6 +5034,15 @@ namespace XenAPI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The requested operation is not allowed for VDIs with CBT enabled or VMs having such VDIs, and CBT is enabled for the specified VDI..
+        /// </summary>
+        public static string VDI_CBT_ENABLED {
+            get {
+                return ResourceManager.GetString("VDI_CBT_ENABLED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The VDI could not be opened for metadata recovery as it contains the current pool&apos;s metadata..
         /// </summary>
         public static string VDI_CONTAINS_METADATA_OF_THIS_POOL {
@@ -4872,6 +5133,15 @@ namespace XenAPI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The requested operation is not allowed because the specified VDI does not have changed block tracking metadata..
+        /// </summary>
+        public static string VDI_NO_CBT_METADATA {
+            get {
+                return ResourceManager.GetString("VDI_NO_CBT_METADATA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This operation cannot be performed because VDI {0} could not be properly attached to the VM..
         /// </summary>
         public static string VDI_NOT_AVAILABLE {
@@ -4908,7 +5178,7 @@ namespace XenAPI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This operation is not permitted on VMs containing VDIs in the &apos;on-boot=reset&apos; mode.
+        ///   Looks up a localized string similar to This operation is not permitted on VDIs in the &apos;on-boot=reset&apos; mode, or on VMs having such VDIs..
         /// </summary>
         public static string VDI_ON_BOOT_MODE_INCOMPATIBLE_WITH_OPERATION {
             get {
@@ -4931,6 +5201,15 @@ namespace XenAPI {
         public static string VDI_TOO_SMALL {
             get {
                 return ResourceManager.GetString("VDI_TOO_SMALL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The VGPU is not compatible with any PGPU in the destination..
+        /// </summary>
+        public static string VGPU_DESTINATION_INCOMPATIBLE {
+            get {
+                return ResourceManager.GetString("VGPU_DESTINATION_INCOMPATIBLE", resourceCulture);
             }
         }
         
@@ -5052,7 +5331,7 @@ namespace XenAPI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The BIOS strings for this VM have already been set and cannot be changed anymore..
+        ///   Looks up a localized string similar to The BIOS strings for this VM have already been set and cannot be changed..
         /// </summary>
         public static string VM_BIOS_STRINGS_ALREADY_SET {
             get {
@@ -5142,6 +5421,15 @@ namespace XenAPI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to VM cannot be resumed because it has no suspend VDI.
+        /// </summary>
+        public static string VM_HAS_NO_SUSPEND_VDI {
+            get {
+                return ResourceManager.GetString("VM_HAS_NO_SUSPEND_VDI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This operation could not be performed because the VM has one or more PCI devices passed through..
         /// </summary>
         public static string VM_HAS_PCI_ATTACHED {
@@ -5169,6 +5457,15 @@ namespace XenAPI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The operation is not allowed when the VM has VUSBs..
+        /// </summary>
+        public static string VM_HAS_VUSBS {
+            get {
+                return ResourceManager.GetString("VM_HAS_VUSBS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This VM operation cannot be performed on an older-versioned host during an upgrade..
         /// </summary>
         public static string VM_HOST_INCOMPATIBLE_VERSION {
@@ -5178,7 +5475,7 @@ namespace XenAPI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You attempted to migrate a VM to a destination host running a version of XenServer older than the source host..
+        ///   Looks up a localized string similar to You attempted to migrate a VM to a destination host which is older than the source host..
         /// </summary>
         public static string VM_HOST_INCOMPATIBLE_VERSION_MIGRATE {
             get {
@@ -5489,6 +5786,15 @@ namespace XenAPI {
         public static string VM_REQUIRES_VGPU {
             get {
                 return ResourceManager.GetString("VM_REQUIRES_VGPU", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You attempted to run a VM on a host on which the VUSB required by the VM cannot be allocated on any PUSBs in the USB_group needed by the VM..
+        /// </summary>
+        public static string VM_REQUIRES_VUSB {
+            get {
+                return ResourceManager.GetString("VM_REQUIRES_VUSB", resourceCulture);
             }
         }
         

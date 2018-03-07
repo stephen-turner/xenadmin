@@ -1,19 +1,19 @@
 /*
  * Copyright (c) Citrix Systems, Inc.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  *   1) Redistributions of source code must retain the above copyright
  *      notice, this list of conditions and the following disclaimer.
- * 
+ *
  *   2) Redistributions in binary form must reproduce the above
  *      copyright notice, this list of conditions and the following
  *      disclaimer in the documentation and/or other materials
  *      provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -32,8 +32,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
-using CookComputing.XmlRpc;
+using System.ComponentModel;
+using System.Globalization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 
 namespace XenAPI
@@ -74,6 +76,10 @@ namespace XenAPI
             this.UpdateFromProxy(proxy);
         }
 
+        /// <summary>
+        /// Updates each field of this instance with the value of
+        /// the corresponding field of a given Blob.
+        /// </summary>
         public override void UpdateFrom(Blob update)
         {
             uuid = update.uuid;
@@ -99,29 +105,49 @@ namespace XenAPI
         public Proxy_Blob ToProxy()
         {
             Proxy_Blob result_ = new Proxy_Blob();
-            result_.uuid = (uuid != null) ? uuid : "";
-            result_.name_label = (name_label != null) ? name_label : "";
-            result_.name_description = (name_description != null) ? name_description : "";
+            result_.uuid = uuid ?? "";
+            result_.name_label = name_label ?? "";
+            result_.name_description = name_description ?? "";
             result_.size = size.ToString();
             result_.pubblic = pubblic;
             result_.last_updated = last_updated;
-            result_.mime_type = (mime_type != null) ? mime_type : "";
+            result_.mime_type = mime_type ?? "";
             return result_;
         }
 
         /// <summary>
         /// Creates a new Blob from a Hashtable.
+        /// Note that the fields not contained in the Hashtable
+        /// will be created with their default values.
         /// </summary>
         /// <param name="table"></param>
-        public Blob(Hashtable table)
+        public Blob(Hashtable table) : this()
         {
-            uuid = Marshalling.ParseString(table, "uuid");
-            name_label = Marshalling.ParseString(table, "name_label");
-            name_description = Marshalling.ParseString(table, "name_description");
-            size = Marshalling.ParseLong(table, "size");
-            pubblic = Marshalling.ParseBool(table, "pubblic");
-            last_updated = Marshalling.ParseDateTime(table, "last_updated");
-            mime_type = Marshalling.ParseString(table, "mime_type");
+            UpdateFrom(table);
+        }
+
+        /// <summary>
+        /// Given a Hashtable with field-value pairs, it updates the fields of this Blob
+        /// with the values listed in the Hashtable. Note that only the fields contained
+        /// in the Hashtable will be updated and the rest will remain the same.
+        /// </summary>
+        /// <param name="table"></param>
+        public void UpdateFrom(Hashtable table)
+        {
+            if (table.ContainsKey("uuid"))
+                uuid = Marshalling.ParseString(table, "uuid");
+            if (table.ContainsKey("name_label"))
+                name_label = Marshalling.ParseString(table, "name_label");
+            if (table.ContainsKey("name_description"))
+                name_description = Marshalling.ParseString(table, "name_description");
+            if (table.ContainsKey("size"))
+                size = Marshalling.ParseLong(table, "size");
+            if (table.ContainsKey("pubblic"))
+                pubblic = Marshalling.ParseBool(table, "pubblic");
+            if (table.ContainsKey("last_updated"))
+                last_updated = Marshalling.ParseDateTime(table, "last_updated");
+            if (table.ContainsKey("mime_type"))
+                mime_type = Marshalling.ParseString(table, "mime_type");
         }
 
         public bool DeepEquals(Blob other)
@@ -138,6 +164,15 @@ namespace XenAPI
                 Helper.AreEqual2(this._pubblic, other._pubblic) &&
                 Helper.AreEqual2(this._last_updated, other._last_updated) &&
                 Helper.AreEqual2(this._mime_type, other._mime_type);
+        }
+
+        internal static List<Blob> ProxyArrayToObjectList(Proxy_Blob[] input)
+        {
+            var result = new List<Blob>();
+            foreach (var item in input)
+                result.Add(new Blob(item));
+
+            return result;
         }
 
         public override string SaveChanges(Session session, string opaqueRef, Blob server)
@@ -169,7 +204,10 @@ namespace XenAPI
         /// <param name="_blob">The opaque_ref of the given blob</param>
         public static Blob get_record(Session session, string _blob)
         {
-            return new Blob((Proxy_Blob)session.proxy.blob_get_record(session.uuid, (_blob != null) ? _blob : "").parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.blob_get_record(session.opaque_ref, _blob);
+            else
+                return new Blob((Proxy_Blob)session.proxy.blob_get_record(session.opaque_ref, _blob ?? "").parse());
         }
 
         /// <summary>
@@ -180,7 +218,10 @@ namespace XenAPI
         /// <param name="_uuid">UUID of object to return</param>
         public static XenRef<Blob> get_by_uuid(Session session, string _uuid)
         {
-            return XenRef<Blob>.Create(session.proxy.blob_get_by_uuid(session.uuid, (_uuid != null) ? _uuid : "").parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.blob_get_by_uuid(session.opaque_ref, _uuid);
+            else
+                return XenRef<Blob>.Create(session.proxy.blob_get_by_uuid(session.opaque_ref, _uuid ?? "").parse());
         }
 
         /// <summary>
@@ -191,7 +232,10 @@ namespace XenAPI
         /// <param name="_label">label of object to return</param>
         public static List<XenRef<Blob>> get_by_name_label(Session session, string _label)
         {
-            return XenRef<Blob>.Create(session.proxy.blob_get_by_name_label(session.uuid, (_label != null) ? _label : "").parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.blob_get_by_name_label(session.opaque_ref, _label);
+            else
+                return XenRef<Blob>.Create(session.proxy.blob_get_by_name_label(session.opaque_ref, _label ?? "").parse());
         }
 
         /// <summary>
@@ -202,7 +246,10 @@ namespace XenAPI
         /// <param name="_blob">The opaque_ref of the given blob</param>
         public static string get_uuid(Session session, string _blob)
         {
-            return (string)session.proxy.blob_get_uuid(session.uuid, (_blob != null) ? _blob : "").parse();
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.blob_get_uuid(session.opaque_ref, _blob);
+            else
+                return (string)session.proxy.blob_get_uuid(session.opaque_ref, _blob ?? "").parse();
         }
 
         /// <summary>
@@ -213,7 +260,10 @@ namespace XenAPI
         /// <param name="_blob">The opaque_ref of the given blob</param>
         public static string get_name_label(Session session, string _blob)
         {
-            return (string)session.proxy.blob_get_name_label(session.uuid, (_blob != null) ? _blob : "").parse();
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.blob_get_name_label(session.opaque_ref, _blob);
+            else
+                return (string)session.proxy.blob_get_name_label(session.opaque_ref, _blob ?? "").parse();
         }
 
         /// <summary>
@@ -224,7 +274,10 @@ namespace XenAPI
         /// <param name="_blob">The opaque_ref of the given blob</param>
         public static string get_name_description(Session session, string _blob)
         {
-            return (string)session.proxy.blob_get_name_description(session.uuid, (_blob != null) ? _blob : "").parse();
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.blob_get_name_description(session.opaque_ref, _blob);
+            else
+                return (string)session.proxy.blob_get_name_description(session.opaque_ref, _blob ?? "").parse();
         }
 
         /// <summary>
@@ -235,7 +288,10 @@ namespace XenAPI
         /// <param name="_blob">The opaque_ref of the given blob</param>
         public static long get_size(Session session, string _blob)
         {
-            return long.Parse((string)session.proxy.blob_get_size(session.uuid, (_blob != null) ? _blob : "").parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.blob_get_size(session.opaque_ref, _blob);
+            else
+                return long.Parse((string)session.proxy.blob_get_size(session.opaque_ref, _blob ?? "").parse());
         }
 
         /// <summary>
@@ -246,7 +302,10 @@ namespace XenAPI
         /// <param name="_blob">The opaque_ref of the given blob</param>
         public static bool get_public(Session session, string _blob)
         {
-            return (bool)session.proxy.blob_get_public(session.uuid, (_blob != null) ? _blob : "").parse();
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.blob_get_public(session.opaque_ref, _blob);
+            else
+                return (bool)session.proxy.blob_get_public(session.opaque_ref, _blob ?? "").parse();
         }
 
         /// <summary>
@@ -257,7 +316,10 @@ namespace XenAPI
         /// <param name="_blob">The opaque_ref of the given blob</param>
         public static DateTime get_last_updated(Session session, string _blob)
         {
-            return session.proxy.blob_get_last_updated(session.uuid, (_blob != null) ? _blob : "").parse();
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.blob_get_last_updated(session.opaque_ref, _blob);
+            else
+                return session.proxy.blob_get_last_updated(session.opaque_ref, _blob ?? "").parse();
         }
 
         /// <summary>
@@ -268,7 +330,10 @@ namespace XenAPI
         /// <param name="_blob">The opaque_ref of the given blob</param>
         public static string get_mime_type(Session session, string _blob)
         {
-            return (string)session.proxy.blob_get_mime_type(session.uuid, (_blob != null) ? _blob : "").parse();
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.blob_get_mime_type(session.opaque_ref, _blob);
+            else
+                return (string)session.proxy.blob_get_mime_type(session.opaque_ref, _blob ?? "").parse();
         }
 
         /// <summary>
@@ -280,7 +345,10 @@ namespace XenAPI
         /// <param name="_label">New value to set</param>
         public static void set_name_label(Session session, string _blob, string _label)
         {
-            session.proxy.blob_set_name_label(session.uuid, (_blob != null) ? _blob : "", (_label != null) ? _label : "").parse();
+            if (session.JsonRpcClient != null)
+                session.JsonRpcClient.blob_set_name_label(session.opaque_ref, _blob, _label);
+            else
+                session.proxy.blob_set_name_label(session.opaque_ref, _blob ?? "", _label ?? "").parse();
         }
 
         /// <summary>
@@ -292,7 +360,10 @@ namespace XenAPI
         /// <param name="_description">New value to set</param>
         public static void set_name_description(Session session, string _blob, string _description)
         {
-            session.proxy.blob_set_name_description(session.uuid, (_blob != null) ? _blob : "", (_description != null) ? _description : "").parse();
+            if (session.JsonRpcClient != null)
+                session.JsonRpcClient.blob_set_name_description(session.opaque_ref, _blob, _description);
+            else
+                session.proxy.blob_set_name_description(session.opaque_ref, _blob ?? "", _description ?? "").parse();
         }
 
         /// <summary>
@@ -304,7 +375,10 @@ namespace XenAPI
         /// <param name="_public">New value to set</param>
         public static void set_public(Session session, string _blob, bool _public)
         {
-            session.proxy.blob_set_public(session.uuid, (_blob != null) ? _blob : "", _public).parse();
+            if (session.JsonRpcClient != null)
+                session.JsonRpcClient.blob_set_public(session.opaque_ref, _blob, _public);
+            else
+                session.proxy.blob_set_public(session.opaque_ref, _blob ?? "", _public).parse();
         }
 
         /// <summary>
@@ -315,7 +389,10 @@ namespace XenAPI
         /// <param name="_mime_type">The mime-type of the blob. Defaults to 'application/octet-stream' if the empty string is supplied</param>
         public static XenRef<Blob> create(Session session, string _mime_type)
         {
-            return XenRef<Blob>.Create(session.proxy.blob_create(session.uuid, (_mime_type != null) ? _mime_type : "").parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.blob_create(session.opaque_ref, _mime_type);
+            else
+                return XenRef<Blob>.Create(session.proxy.blob_create(session.opaque_ref, _mime_type ?? "").parse());
         }
 
         /// <summary>
@@ -327,7 +404,10 @@ namespace XenAPI
         /// <param name="_public">True if the blob should be publicly available First published in XenServer 6.1.</param>
         public static XenRef<Blob> create(Session session, string _mime_type, bool _public)
         {
-            return XenRef<Blob>.Create(session.proxy.blob_create(session.uuid, (_mime_type != null) ? _mime_type : "", _public).parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.blob_create(session.opaque_ref, _mime_type, _public);
+            else
+                return XenRef<Blob>.Create(session.proxy.blob_create(session.opaque_ref, _mime_type ?? "", _public).parse());
         }
 
         /// <summary>
@@ -338,7 +418,10 @@ namespace XenAPI
         /// <param name="_blob">The opaque_ref of the given blob</param>
         public static void destroy(Session session, string _blob)
         {
-            session.proxy.blob_destroy(session.uuid, (_blob != null) ? _blob : "").parse();
+            if (session.JsonRpcClient != null)
+                session.JsonRpcClient.blob_destroy(session.opaque_ref, _blob);
+            else
+                session.proxy.blob_destroy(session.opaque_ref, _blob ?? "").parse();
         }
 
         /// <summary>
@@ -348,7 +431,10 @@ namespace XenAPI
         /// <param name="session">The session</param>
         public static List<XenRef<Blob>> get_all(Session session)
         {
-            return XenRef<Blob>.Create(session.proxy.blob_get_all(session.uuid).parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.blob_get_all(session.opaque_ref);
+            else
+                return XenRef<Blob>.Create(session.proxy.blob_get_all(session.opaque_ref).parse());
         }
 
         /// <summary>
@@ -358,7 +444,10 @@ namespace XenAPI
         /// <param name="session">The session</param>
         public static Dictionary<XenRef<Blob>, Blob> get_all_records(Session session)
         {
-            return XenRef<Blob>.Create<Proxy_Blob>(session.proxy.blob_get_all_records(session.uuid).parse());
+            if (session.JsonRpcClient != null)
+                return session.JsonRpcClient.blob_get_all_records(session.opaque_ref);
+            else
+                return XenRef<Blob>.Create<Proxy_Blob>(session.proxy.blob_get_all_records(session.opaque_ref).parse());
         }
 
         /// <summary>
@@ -377,7 +466,7 @@ namespace XenAPI
                 }
             }
         }
-        private string _uuid;
+        private string _uuid = "";
 
         /// <summary>
         /// a human-readable name
@@ -395,7 +484,7 @@ namespace XenAPI
                 }
             }
         }
-        private string _name_label;
+        private string _name_label = "";
 
         /// <summary>
         /// a notes field containing human-readable description
@@ -413,7 +502,7 @@ namespace XenAPI
                 }
             }
         }
-        private string _name_description;
+        private string _name_description = "";
 
         /// <summary>
         /// Size of the binary data, in bytes
@@ -450,11 +539,12 @@ namespace XenAPI
                 }
             }
         }
-        private bool _pubblic;
+        private bool _pubblic = false;
 
         /// <summary>
         /// Time at which the data in the blob was last updated
         /// </summary>
+        [JsonConverter(typeof(XenDateTimeConverter))]
         public virtual DateTime last_updated
         {
             get { return _last_updated; }
@@ -486,6 +576,6 @@ namespace XenAPI
                 }
             }
         }
-        private string _mime_type;
+        private string _mime_type = "";
     }
 }

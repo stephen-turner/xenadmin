@@ -53,7 +53,7 @@ namespace XenAdmin.Actions
         /// <param name="connection"></param>
         /// <param name="sr">Must not be null.</param>
         public SrRepairAction(IXenConnection connection, SR sr,bool isSharedAction)
-            : base(connection, isSharedAction ? string.Format(Messages.ACTION_SR_SHARING, sr.NameWithoutHost) : string.Format(Messages.ACTION_SR_REPAIRING, sr.NameWithoutHost))
+            : base(connection, isSharedAction ? string.Format(Messages.ACTION_SR_SHARING, sr.NameWithoutHost()) : string.Format(Messages.ACTION_SR_REPAIRING, sr.NameWithoutHost()))
         {
             if (sr == null)
                 throw new ArgumentNullException("sr");
@@ -72,7 +72,7 @@ namespace XenAdmin.Actions
         protected override void Run()
         {
             log.Debug("Running SR repair");
-            log.DebugFormat("SR='{0}'", SR.Name);
+            log.DebugFormat("SR='{0}'", SR.Name());
 
             //CA-176935, CA-173497 - we need to run Plug for the master first - creating a new list of hosts where the master is always first
             var allHosts = new List<Host>();
@@ -102,7 +102,7 @@ namespace XenAdmin.Actions
 
             for (int i = 0; i < _hostList.Count; i++)
             {
-                log.DebugFormat("_hostList[{0}]='{1}'", i, _hostList[i].Name);
+                log.DebugFormat("_hostList[{0}]='{1}'", i, _hostList[i].Name());
             }
 
             int max = _hostList.Count * 2;
@@ -118,15 +118,17 @@ namespace XenAdmin.Actions
                         this.Description = string.Format(Messages.ACTION_SR_REPAIR_CREATE_PBD, Helpers.GetName(host));
                         log.Debug(this.Description);
 
-                        Proxy_PBD proxyPBD = new Proxy_PBD();
-                        proxyPBD.currently_attached = false;
-                        proxyPBD.device_config = new Hashtable(template.device_config);
-                        proxyPBD.SR = template.SR;
-                        proxyPBD.host = new XenRef<Host>(host.opaque_ref);
+                        var newPbd = new PBD
+                        {
+                            currently_attached = false,
+                            device_config = new Dictionary<string, string>(template.device_config),
+                            SR = template.SR,
+                            host = new XenRef<Host>(host.opaque_ref)
+                        };
 
                         try
                         {
-                            RelatedTask = XenAPI.PBD.async_create(this.Session, new PBD(proxyPBD));
+                            RelatedTask = XenAPI.PBD.async_create(this.Session, newPbd);
 
                             if (PercentComplete + delta <= 100)
                             {
@@ -196,9 +198,9 @@ namespace XenAdmin.Actions
             //    throw new Exception(Messages.ACTION_SR_REPAIR_FAILED);
             //}
             if (isSharedAction)
-                Description = string.Format(Messages.ACTION_SR_SHARE_SUCCESSFUL, SR.NameWithoutHost);
+                Description = string.Format(Messages.ACTION_SR_SHARE_SUCCESSFUL, SR.NameWithoutHost());
             else
-                Description = string.Format(Messages.ACTION_SR_REPAIR_SUCCESSFUL, SR.NameWithoutHost);
+                Description = string.Format(Messages.ACTION_SR_REPAIR_SUCCESSFUL, SR.NameWithoutHost());
         }
 
         protected override void CancelRelatedTask()

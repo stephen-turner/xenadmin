@@ -94,7 +94,7 @@ namespace XenAdmin.Commands
 							{
 								SR curSr = sr;
 								var action = new DelegatedAsyncAction(pool.Connection,
-									String.Format(Messages.ACTION_DR_DISABLING_ON, sr.Name), Messages.ACTION_DR_DISABLING, Messages.ACTION_DR_DISABLED, 
+									String.Format(Messages.ACTION_DR_DISABLING_ON, sr.Name()), Messages.ACTION_DR_DISABLING, Messages.ACTION_DR_DISABLED, 
 									s => SR.disable_database_replication(s, curSr.opaque_ref)) {Pool = pool};
 								actions.Add(action);
 							}
@@ -103,7 +103,7 @@ namespace XenAdmin.Commands
 							{
 								SR curSr = sr;
 								var action = new DelegatedAsyncAction(pool.Connection, 
-									String.Format(Messages.ACTION_DR_ENABLING_ON, sr.Name), Messages.ACTION_DR_ENABLING, Messages.ACTION_DR_ENABLED, 
+									String.Format(Messages.ACTION_DR_ENABLING_ON, sr.Name()), Messages.ACTION_DR_ENABLING, Messages.ACTION_DR_ENABLED, 
 									s => SR.enable_database_replication(s, curSr.opaque_ref)) { Pool = pool };
 								actions.Add(action);
 							}
@@ -118,8 +118,8 @@ namespace XenAdmin.Commands
     	private static void ShowUpsellDialog(IWin32Window parent)
         {
             // Show upsell dialog
-            using (var dlg = new UpsellDialog(HiddenFeatures.LinkLabelHidden ? Messages.UPSELL_BLURB_DR : Messages.UPSELL_BLURB_DR + Messages.UPSELL_BLURB_DR_MORE,
-                                                InvisibleMessages.UPSELL_LEARNMOREURL_DR))
+            using (var dlg = new UpsellDialog(HiddenFeatures.LinkLabelHidden ? Messages.UPSELL_BLURB_DR : Messages.UPSELL_BLURB_DR + Messages.UPSELL_BLURB_TRIAL,
+                                                InvisibleMessages.UPSELL_LEARNMOREURL_TRIAL))
                 dlg.ShowDialog(parent);
         }
 

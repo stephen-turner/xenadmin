@@ -31,13 +31,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.Text;
 using System.Drawing;
 using XenAPI;
-using System.Drawing.Drawing2D;
 using XenAdmin.Core;
-using XenAdmin.XenSearch;
+using XenCenterLib;
 
 
 namespace XenAdmin.Controls.CustomDataGraph
@@ -76,7 +74,7 @@ namespace XenAdmin.Controls.CustomDataGraph
 
         public override string ToString()
         {
-            return HelpersGUI.DateTimeToString(Message.TimestampLocal, Messages.DATEFORMAT_DMY_HM, true);
+            return HelpersGUI.DateTimeToString(Message.TimestampLocal(), Messages.DATEFORMAT_DMY_HM, true);
         }
 
         public bool Equals(DataEvent other)

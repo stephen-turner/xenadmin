@@ -46,8 +46,8 @@ namespace XenAdmin.Actions.DR
 
         public DrRecoverAction(IXenConnection connection, IXenObject xenObject)
             : base(connection, xenObject is VM
-                                   ? string.Format(Messages.ACTION_DR_RECOVER_VM_TITLE, xenObject.Name)
-                                   : string.Format(Messages.ACTION_DR_RECOVER_APPLIANCE_TITLE, xenObject.Name))
+                                   ? string.Format(Messages.ACTION_DR_RECOVER_VM_TITLE, xenObject.Name())
+                                   : string.Format(Messages.ACTION_DR_RECOVER_APPLIANCE_TITLE, xenObject.Name()))
         {
             this.xenObject = xenObject;
 
@@ -72,11 +72,11 @@ namespace XenAdmin.Actions.DR
             if (MetadataSession != null)
             {
                 if (xenObject is VM)
-                    RelatedTask = VM.async_recover(MetadataSession, xenObject.opaque_ref, Session.uuid, true);
+                    RelatedTask = VM.async_recover(MetadataSession, xenObject.opaque_ref, Session.opaque_ref, true);
                 if (xenObject is VM_appliance)
                 {
                     // if appliance already exists in target pool, it will be replaced during recovery and the uuid is preserved
-                    RelatedTask = VM_appliance.async_recover(MetadataSession, xenObject.opaque_ref, Session.uuid, true);
+                    RelatedTask = VM_appliance.async_recover(MetadataSession, xenObject.opaque_ref, Session.opaque_ref, true);
                 }
                 PollToCompletion();
             }
@@ -86,7 +86,7 @@ namespace XenAdmin.Actions.DR
                                 Helpers.GetName(xenObject).Ellipsise(50), 
                                 Helpers.GetName(Pool).Ellipsise(50));
             }
-            Description = String.Format(Messages.ACTION_DR_RECOVER_DONE, xenObject.Name);
+            Description = String.Format(Messages.ACTION_DR_RECOVER_DONE, xenObject.Name());
         }
     }
 }

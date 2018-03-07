@@ -1,19 +1,19 @@
 /*
  * Copyright (c) Citrix Systems, Inc.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  *   1) Redistributions of source code must retain the above copyright
  *      notice, this list of conditions and the following disclaimer.
- * 
+ *
  *   2) Redistributions in binary form must reproduce the above
  *      copyright notice, this list of conditions and the following
  *      disclaimer in the documentation and/or other materials
  *      provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -32,14 +32,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using CookComputing.XmlRpc;
 
 
 namespace XenAPI
 {
     internal class Maps
     {
-        internal static Dictionary<string, string>
-        convert_from_proxy_string_string(Object o)
+        internal static Dictionary<string, string> convert_from_proxy_string_string(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<string, string> result = new Dictionary<string, string>();
@@ -62,18 +62,17 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_string_string(Dictionary<string, string> table)
+        internal static Hashtable convert_to_proxy_string_string(Dictionary<string, string> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (string key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
-                        string v = (table[key] != null) ? table[key] : "";
+                        string k = key ?? "";
+                        string v = table[key] ?? "";
                         result[k] = v;
                     }
                     catch
@@ -85,8 +84,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<string, long>
-        convert_from_proxy_string_long(Object o)
+
+        internal static Dictionary<string, long> convert_from_proxy_string_long(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<string, long> result = new Dictionary<string, long>();
@@ -109,17 +108,16 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_string_long(Dictionary<string, long> table)
+        internal static Hashtable convert_to_proxy_string_long(Dictionary<string, long> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (string key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
+                        string k = key ?? "";
                         string v = table[key].ToString();
                         result[k] = v;
                     }
@@ -132,8 +130,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<string, host_allowed_operations>
-        convert_from_proxy_string_host_allowed_operations(Object o)
+
+        internal static Dictionary<string, host_allowed_operations> convert_from_proxy_string_host_allowed_operations(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<string, host_allowed_operations> result = new Dictionary<string, host_allowed_operations>();
@@ -156,17 +154,16 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_string_host_allowed_operations(Dictionary<string, host_allowed_operations> table)
+        internal static Hashtable convert_to_proxy_string_host_allowed_operations(Dictionary<string, host_allowed_operations> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (string key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
+                        string k = key ?? "";
                         string v = host_allowed_operations_helper.ToString(table[key]);
                         result[k] = v;
                     }
@@ -179,8 +176,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<string, network_operations>
-        convert_from_proxy_string_network_operations(Object o)
+
+        internal static Dictionary<string, network_operations> convert_from_proxy_string_network_operations(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<string, network_operations> result = new Dictionary<string, network_operations>();
@@ -203,17 +200,16 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_string_network_operations(Dictionary<string, network_operations> table)
+        internal static Hashtable convert_to_proxy_string_network_operations(Dictionary<string, network_operations> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (string key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
+                        string k = key ?? "";
                         string v = network_operations_helper.ToString(table[key]);
                         result[k] = v;
                     }
@@ -226,8 +222,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<string, pool_allowed_operations>
-        convert_from_proxy_string_pool_allowed_operations(Object o)
+
+        internal static Dictionary<string, pool_allowed_operations> convert_from_proxy_string_pool_allowed_operations(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<string, pool_allowed_operations> result = new Dictionary<string, pool_allowed_operations>();
@@ -250,17 +246,16 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_string_pool_allowed_operations(Dictionary<string, pool_allowed_operations> table)
+        internal static Hashtable convert_to_proxy_string_pool_allowed_operations(Dictionary<string, pool_allowed_operations> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (string key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
+                        string k = key ?? "";
                         string v = pool_allowed_operations_helper.ToString(table[key]);
                         result[k] = v;
                     }
@@ -273,8 +268,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<string, storage_operations>
-        convert_from_proxy_string_storage_operations(Object o)
+
+        internal static Dictionary<string, storage_operations> convert_from_proxy_string_storage_operations(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<string, storage_operations> result = new Dictionary<string, storage_operations>();
@@ -297,17 +292,16 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_string_storage_operations(Dictionary<string, storage_operations> table)
+        internal static Hashtable convert_to_proxy_string_storage_operations(Dictionary<string, storage_operations> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (string key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
+                        string k = key ?? "";
                         string v = storage_operations_helper.ToString(table[key]);
                         result[k] = v;
                     }
@@ -320,8 +314,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<string, task_allowed_operations>
-        convert_from_proxy_string_task_allowed_operations(Object o)
+
+        internal static Dictionary<string, task_allowed_operations> convert_from_proxy_string_task_allowed_operations(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<string, task_allowed_operations> result = new Dictionary<string, task_allowed_operations>();
@@ -344,17 +338,16 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_string_task_allowed_operations(Dictionary<string, task_allowed_operations> table)
+        internal static Hashtable convert_to_proxy_string_task_allowed_operations(Dictionary<string, task_allowed_operations> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (string key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
+                        string k = key ?? "";
                         string v = task_allowed_operations_helper.ToString(table[key]);
                         result[k] = v;
                     }
@@ -367,8 +360,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<string, vbd_operations>
-        convert_from_proxy_string_vbd_operations(Object o)
+
+        internal static Dictionary<string, vbd_operations> convert_from_proxy_string_vbd_operations(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<string, vbd_operations> result = new Dictionary<string, vbd_operations>();
@@ -391,17 +384,16 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_string_vbd_operations(Dictionary<string, vbd_operations> table)
+        internal static Hashtable convert_to_proxy_string_vbd_operations(Dictionary<string, vbd_operations> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (string key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
+                        string k = key ?? "";
                         string v = vbd_operations_helper.ToString(table[key]);
                         result[k] = v;
                     }
@@ -414,8 +406,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<string, vdi_operations>
-        convert_from_proxy_string_vdi_operations(Object o)
+
+        internal static Dictionary<string, vdi_operations> convert_from_proxy_string_vdi_operations(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<string, vdi_operations> result = new Dictionary<string, vdi_operations>();
@@ -438,17 +430,16 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_string_vdi_operations(Dictionary<string, vdi_operations> table)
+        internal static Hashtable convert_to_proxy_string_vdi_operations(Dictionary<string, vdi_operations> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (string key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
+                        string k = key ?? "";
                         string v = vdi_operations_helper.ToString(table[key]);
                         result[k] = v;
                     }
@@ -461,8 +452,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<string, vif_operations>
-        convert_from_proxy_string_vif_operations(Object o)
+
+        internal static Dictionary<string, vif_operations> convert_from_proxy_string_vif_operations(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<string, vif_operations> result = new Dictionary<string, vif_operations>();
@@ -485,17 +476,16 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_string_vif_operations(Dictionary<string, vif_operations> table)
+        internal static Hashtable convert_to_proxy_string_vif_operations(Dictionary<string, vif_operations> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (string key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
+                        string k = key ?? "";
                         string v = vif_operations_helper.ToString(table[key]);
                         result[k] = v;
                     }
@@ -508,8 +498,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<string, vm_appliance_operation>
-        convert_from_proxy_string_vm_appliance_operation(Object o)
+
+        internal static Dictionary<string, vm_appliance_operation> convert_from_proxy_string_vm_appliance_operation(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<string, vm_appliance_operation> result = new Dictionary<string, vm_appliance_operation>();
@@ -532,17 +522,16 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_string_vm_appliance_operation(Dictionary<string, vm_appliance_operation> table)
+        internal static Hashtable convert_to_proxy_string_vm_appliance_operation(Dictionary<string, vm_appliance_operation> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (string key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
+                        string k = key ?? "";
                         string v = vm_appliance_operation_helper.ToString(table[key]);
                         result[k] = v;
                     }
@@ -555,8 +544,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<string, vm_operations>
-        convert_from_proxy_string_vm_operations(Object o)
+
+        internal static Dictionary<string, vm_operations> convert_from_proxy_string_vm_operations(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<string, vm_operations> result = new Dictionary<string, vm_operations>();
@@ -579,17 +568,16 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_string_vm_operations(Dictionary<string, vm_operations> table)
+        internal static Hashtable convert_to_proxy_string_vm_operations(Dictionary<string, vm_operations> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (string key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
+                        string k = key ?? "";
                         string v = vm_operations_helper.ToString(table[key]);
                         result[k] = v;
                     }
@@ -602,8 +590,54 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<string, XenRef<Blob>>
-        convert_from_proxy_string_XenRefBlob(Object o)
+
+        internal static Dictionary<string, vusb_operations> convert_from_proxy_string_vusb_operations(Object o)
+        {
+            Hashtable table = (Hashtable)o;
+            Dictionary<string, vusb_operations> result = new Dictionary<string, vusb_operations>();
+            if (table != null)
+            {
+                foreach (string key in table.Keys)
+                {
+                    try
+                    {
+                        string k = key;
+                        vusb_operations v = table[key] == null ? (vusb_operations) 0 : (vusb_operations)Helper.EnumParseDefault(typeof(vusb_operations), (string)table[key]);
+                        result[k] = v;
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                }
+            }
+            return result;
+        }
+
+        internal static Hashtable convert_to_proxy_string_vusb_operations(Dictionary<string, vusb_operations> table)
+        {
+            var result = new XmlRpcStruct();
+            if (table != null)
+            {
+                foreach (string key in table.Keys)
+                {
+                    try
+                    {
+                        string k = key ?? "";
+                        string v = vusb_operations_helper.ToString(table[key]);
+                        result[k] = v;
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                }
+            }
+            return result;
+        }
+
+
+        internal static Dictionary<string, XenRef<Blob>> convert_from_proxy_string_XenRefBlob(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<string, XenRef<Blob>> result = new Dictionary<string, XenRef<Blob>>();
@@ -626,18 +660,17 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_string_XenRefBlob(Dictionary<string, XenRef<Blob>> table)
+        internal static Hashtable convert_to_proxy_string_XenRefBlob(Dictionary<string, XenRef<Blob>> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (string key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
-                        string v = (table[key] != null) ? table[key] : "";
+                        string k = key ?? "";
+                        string v = table[key] ?? "";
                         result[k] = v;
                     }
                     catch
@@ -649,8 +682,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<long, long>
-        convert_from_proxy_long_long(Object o)
+
+        internal static Dictionary<long, long> convert_from_proxy_long_long(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<long, long> result = new Dictionary<long, long>();
@@ -673,10 +706,9 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_long_long(Dictionary<long, long> table)
+        internal static Hashtable convert_to_proxy_long_long(Dictionary<long, long> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (long key in table.Keys)
@@ -696,8 +728,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<long, double>
-        convert_from_proxy_long_double(Object o)
+
+        internal static Dictionary<long, double> convert_from_proxy_long_double(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<long, double> result = new Dictionary<long, double>();
@@ -720,10 +752,9 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_long_double(Dictionary<long, double> table)
+        internal static Hashtable convert_to_proxy_long_double(Dictionary<long, double> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (long key in table.Keys)
@@ -743,8 +774,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<long, string[]>
-        convert_from_proxy_long_string_array(Object o)
+
+        internal static Dictionary<long, string[]> convert_from_proxy_long_string_array(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<long, string[]> result = new Dictionary<long, string[]>();
@@ -767,10 +798,9 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_long_string_array(Dictionary<long, string[]> table)
+        internal static Hashtable convert_to_proxy_long_string_array(Dictionary<long, string[]> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (long key in table.Keys)
@@ -790,8 +820,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<vm_operations, string>
-        convert_from_proxy_vm_operations_string(Object o)
+
+        internal static Dictionary<vm_operations, string> convert_from_proxy_vm_operations_string(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<vm_operations, string> result = new Dictionary<vm_operations, string>();
@@ -814,10 +844,9 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_vm_operations_string(Dictionary<vm_operations, string> table)
+        internal static Hashtable convert_to_proxy_vm_operations_string(Dictionary<vm_operations, string> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (vm_operations key in table.Keys)
@@ -825,7 +854,7 @@ namespace XenAPI
                     try
                     {
                         string k = vm_operations_helper.ToString(key);
-                        string v = (table[key] != null) ? table[key] : "";
+                        string v = table[key] ?? "";
                         result[k] = v;
                     }
                     catch
@@ -837,8 +866,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<XenRef<VDI>, XenRef<SR>>
-        convert_from_proxy_XenRefVDI_XenRefSR(Object o)
+
+        internal static Dictionary<XenRef<VDI>, XenRef<SR>> convert_from_proxy_XenRefVDI_XenRefSR(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<XenRef<VDI>, XenRef<SR>> result = new Dictionary<XenRef<VDI>, XenRef<SR>>();
@@ -861,18 +890,17 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_XenRefVDI_XenRefSR(Dictionary<XenRef<VDI>, XenRef<SR>> table)
+        internal static Hashtable convert_to_proxy_XenRefVDI_XenRefSR(Dictionary<XenRef<VDI>, XenRef<SR>> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (XenRef<VDI> key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
-                        string v = (table[key] != null) ? table[key] : "";
+                        string k = key ?? "";
+                        string v = table[key] ?? "";
                         result[k] = v;
                     }
                     catch
@@ -884,8 +912,54 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<XenRef<VGPU_type>, long>
-        convert_from_proxy_XenRefVGPU_type_long(Object o)
+
+        internal static Dictionary<XenRef<VGPU>, XenRef<GPU_group>> convert_from_proxy_XenRefVGPU_XenRefGPU_group(Object o)
+        {
+            Hashtable table = (Hashtable)o;
+            Dictionary<XenRef<VGPU>, XenRef<GPU_group>> result = new Dictionary<XenRef<VGPU>, XenRef<GPU_group>>();
+            if (table != null)
+            {
+                foreach (string key in table.Keys)
+                {
+                    try
+                    {
+                        XenRef<VGPU> k = XenRef<VGPU>.Create(key);
+                        XenRef<GPU_group> v = table[key] == null ? null : XenRef<GPU_group>.Create(table[key]);
+                        result[k] = v;
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                }
+            }
+            return result;
+        }
+
+        internal static Hashtable convert_to_proxy_XenRefVGPU_XenRefGPU_group(Dictionary<XenRef<VGPU>, XenRef<GPU_group>> table)
+        {
+            var result = new XmlRpcStruct();
+            if (table != null)
+            {
+                foreach (XenRef<VGPU> key in table.Keys)
+                {
+                    try
+                    {
+                        string k = key ?? "";
+                        string v = table[key] ?? "";
+                        result[k] = v;
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                }
+            }
+            return result;
+        }
+
+
+        internal static Dictionary<XenRef<VGPU_type>, long> convert_from_proxy_XenRefVGPU_type_long(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<XenRef<VGPU_type>, long> result = new Dictionary<XenRef<VGPU_type>, long>();
@@ -908,17 +982,16 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_XenRefVGPU_type_long(Dictionary<XenRef<VGPU_type>, long> table)
+        internal static Hashtable convert_to_proxy_XenRefVGPU_type_long(Dictionary<XenRef<VGPU_type>, long> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (XenRef<VGPU_type> key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
+                        string k = key ?? "";
                         string v = table[key].ToString();
                         result[k] = v;
                     }
@@ -931,8 +1004,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<XenRef<VIF>, string>
-        convert_from_proxy_XenRefVIF_string(Object o)
+
+        internal static Dictionary<XenRef<VIF>, string> convert_from_proxy_XenRefVIF_string(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<XenRef<VIF>, string> result = new Dictionary<XenRef<VIF>, string>();
@@ -955,18 +1028,17 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_XenRefVIF_string(Dictionary<XenRef<VIF>, string> table)
+        internal static Hashtable convert_to_proxy_XenRefVIF_string(Dictionary<XenRef<VIF>, string> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (XenRef<VIF> key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
-                        string v = (table[key] != null) ? table[key] : "";
+                        string k = key ?? "";
+                        string v = table[key] ?? "";
                         result[k] = v;
                     }
                     catch
@@ -978,8 +1050,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<XenRef<VIF>, XenRef<Network>>
-        convert_from_proxy_XenRefVIF_XenRefNetwork(Object o)
+
+        internal static Dictionary<XenRef<VIF>, XenRef<Network>> convert_from_proxy_XenRefVIF_XenRefNetwork(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<XenRef<VIF>, XenRef<Network>> result = new Dictionary<XenRef<VIF>, XenRef<Network>>();
@@ -1002,18 +1074,17 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_XenRefVIF_XenRefNetwork(Dictionary<XenRef<VIF>, XenRef<Network>> table)
+        internal static Hashtable convert_to_proxy_XenRefVIF_XenRefNetwork(Dictionary<XenRef<VIF>, XenRef<Network>> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (XenRef<VIF> key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
-                        string v = (table[key] != null) ? table[key] : "";
+                        string k = key ?? "";
+                        string v = table[key] ?? "";
                         result[k] = v;
                     }
                     catch
@@ -1025,8 +1096,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<XenRef<VM>, string>
-        convert_from_proxy_XenRefVM_string(Object o)
+
+        internal static Dictionary<XenRef<VM>, string> convert_from_proxy_XenRefVM_string(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<XenRef<VM>, string> result = new Dictionary<XenRef<VM>, string>();
@@ -1049,18 +1120,17 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_XenRefVM_string(Dictionary<XenRef<VM>, string> table)
+        internal static Hashtable convert_to_proxy_XenRefVM_string(Dictionary<XenRef<VM>, string> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (XenRef<VM> key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
-                        string v = (table[key] != null) ? table[key] : "";
+                        string k = key ?? "";
+                        string v = table[key] ?? "";
                         result[k] = v;
                     }
                     catch
@@ -1072,8 +1142,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<XenRef<VM>, string[]>
-        convert_from_proxy_XenRefVM_string_array(Object o)
+
+        internal static Dictionary<XenRef<VM>, string[]> convert_from_proxy_XenRefVM_string_array(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<XenRef<VM>, string[]> result = new Dictionary<XenRef<VM>, string[]>();
@@ -1096,17 +1166,16 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_XenRefVM_string_array(Dictionary<XenRef<VM>, string[]> table)
+        internal static Hashtable convert_to_proxy_XenRefVM_string_array(Dictionary<XenRef<VM>, string[]> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (XenRef<VM> key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
+                        string k = key ?? "";
                         string [] v = table[key];
                         result[k] = v;
                     }
@@ -1119,8 +1188,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<XenRef<VM>, Dictionary<string, string>>
-        convert_from_proxy_XenRefVM_Dictionary_string_string(Object o)
+
+        internal static Dictionary<XenRef<VM>, Dictionary<string, string>> convert_from_proxy_XenRefVM_Dictionary_string_string(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<XenRef<VM>, Dictionary<string, string>> result = new Dictionary<XenRef<VM>, Dictionary<string, string>>();
@@ -1143,17 +1212,16 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_XenRefVM_Dictionary_string_string(Dictionary<XenRef<VM>, Dictionary<string, string>> table)
+        internal static Hashtable convert_to_proxy_XenRefVM_Dictionary_string_string(Dictionary<XenRef<VM>, Dictionary<string, string>> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (XenRef<VM> key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
+                        string k = key ?? "";
                         Object v = Maps.convert_to_proxy_string_string(table[key]);
                         result[k] = v;
                     }
@@ -1166,8 +1234,8 @@ namespace XenAPI
             return result;
         }
 
-        internal static Dictionary<XenRef<Host>, string[]>
-        convert_from_proxy_XenRefHost_string_array(Object o)
+
+        internal static Dictionary<XenRef<Host>, string[]> convert_from_proxy_XenRefHost_string_array(Object o)
         {
             Hashtable table = (Hashtable)o;
             Dictionary<XenRef<Host>, string[]> result = new Dictionary<XenRef<Host>, string[]>();
@@ -1190,17 +1258,16 @@ namespace XenAPI
             return result;
         }
 
-        internal static Hashtable
-        convert_to_proxy_XenRefHost_string_array(Dictionary<XenRef<Host>, string[]> table)
+        internal static Hashtable convert_to_proxy_XenRefHost_string_array(Dictionary<XenRef<Host>, string[]> table)
         {
-            CookComputing.XmlRpc.XmlRpcStruct result = new CookComputing.XmlRpc.XmlRpcStruct();
+            var result = new XmlRpcStruct();
             if (table != null)
             {
                 foreach (XenRef<Host> key in table.Keys)
                 {
                     try
                     {
-                        string k = (key != null) ? key : "";
+                        string k = key ?? "";
                         string [] v = table[key];
                         result[k] = v;
                     }

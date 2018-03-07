@@ -45,8 +45,6 @@ namespace XenAdmin.Wizards.PatchingWizard
     {
         private bool _tooltipShowing;
 
-        public XenServerPatchAlert SelectedUpdateAlert { private get; set; }
-
         public PatchingWizard_ModePage()
         {
             InitializeComponent();          
@@ -223,7 +221,7 @@ namespace XenAdmin.Wizards.PatchingWizard
             foreach (var server in SelectedServers)
             {
                 var pool = Helpers.GetPoolOfOne(server.Connection);
-                if (pool.IsAutoUpdateRestartsForbidden)
+                if (pool.IsAutoUpdateRestartsForbidden())
                 {
                     return true;
                 }

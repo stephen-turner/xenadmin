@@ -39,13 +39,14 @@ using CookComputing.XmlRpc;
 using XenAdmin.Actions;
 using XenAdmin.Core;
 using XenAPI;
+using XenCenterLib;
 using System.Diagnostics;
-
 using System.Xml.Serialization;
+using XenAdmin.ServerDBs;
+
 
 namespace XenAdmin.Network
-{
-    
+{   
     [DebuggerDisplay("IXenConnection :{HostnameWithPort}")]
     public class XenConnection : IXenConnection,IXmlSerializable
     {
@@ -266,20 +267,6 @@ namespace XenAdmin.Network
         }
 
         /// <summary>
-        /// Used by the automated tests. Initializes a new instance of the <see cref="XenConnection"/> class.
-        /// <param name="hostname"></param>
-        /// <param name="friendlyName"></param>
-        /// </summary>
-        public XenConnection(string hostname, string friendlyName)
-            : this()
-        {
-            this.Hostname = hostname;
-            this.FriendlyName = friendlyName;
-            this.Port = 443;
-            this.SaveDisconnected = true;
-        }
-
-        /// <summary>
         /// For use by unit tests only.
         /// </summary>
         /// <param name="user"></param>
@@ -394,7 +381,7 @@ namespace XenAdmin.Network
             Session s = Session;
             if (s == null)
                 throw new DisconnectionException();
-            return SessionFactory.CreateSession(s, this, timeout);
+            return SessionFactory.DuplicateSession(s, this, timeout);
         }
 
         /// <summary>
@@ -408,23 +395,6 @@ namespace XenAdmin.Network
         public Session ElevatedSession(string username, string password)
         {
             return GetNewSession(Hostname, Port, username, password, true);
-        }
-
-        /// <summary>
-        /// For retrieving a new session. Changes connection's Username and Password.
-        /// </summary>
-        /// <param name="hostname"></param>
-        /// <param name="port"></param>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        /// <param name="isElevated"></param>
-        /// <returns></returns>
-        private Session NewSession(string hostname, int port, string username, string password, bool isElevated)
-        {
-            Password = password;
-            Username = username;
-
-            return GetNewSession(hostname, port, username, password, isElevated);
         }
 
         /// <summary>
@@ -712,8 +682,8 @@ namespace XenAdmin.Network
         /// 
         /// This blocks, so must only be used on a background thread.
         /// </summary>
-        /// <param name="xenRef"></param>
-        /// <param name="Cancelling">A delegate to check whether to cancel.  May be null, in which case it's ignored</param>
+        /// <param name="xenref"></param>
+        /// <param name="cancelling">A delegate to check whether to cancel.  May be null, in which case it's ignored</param>
         public T WaitForCache<T>(XenRef<T> xenref, Func<bool> cancelling) where T : XenObject<T>
         {
             lock (WaitForEventRegisteredLock)
@@ -757,11 +727,11 @@ namespace XenAdmin.Network
         }
 
         /// <param name="resetState">Whether the cache should be cleared (requires invoking onto the GUI thread)</param>
-        public void EndConnect(bool resetState)
+        public void EndConnect(bool resetState, bool exiting = false)
         {
             ConnectTask t = connectTask;
             connectTask = null;
-            EndConnect(resetState, t);
+            EndConnect(resetState, t, exiting);
         }
 
         /// <summary>
@@ -770,7 +740,7 @@ namespace XenAdmin.Network
         /// </summary>
         /// <param name="clearCache">Whether the cache should be cleared (requires invoking onto the GUI thread)</param>
         /// <param name="task"></param>
-        private void EndConnect(bool clearCache, ConnectTask task)
+        private void EndConnect(bool clearCache, ConnectTask task, bool exiting)
         {
             OnBeforeConnectionEnd();
 
@@ -784,7 +754,7 @@ namespace XenAdmin.Network
                     task.Session = null;
                     if (session != null)
                     {
-                        Logout(session);
+                        Logout(session, exiting);
                     }
                 }
             }
@@ -817,17 +787,27 @@ namespace XenAdmin.Network
         /// a XenAPI.Failure (which is better than them hanging around forever).
         /// Do on a background thread - otherwise, if the master has died, then this will block
         /// until the timeout is reached (default 20s).
+        /// However, in the case of exiting, the thread need to be set as foreground. 
+        /// Otherwise the logging out operation can be terminated when other foreground threads finish.
         /// </summary>
         /// <param name="session">May be null, in which case nothing happens.</param>
-        public void Logout(Session session)
+        public void Logout(Session session, bool exiting = false)
         {
-            if (session == null || session.uuid == null)
+            if (session == null || session.opaque_ref == null)
                 return;
 
             Thread t = new Thread(Logout_);
-            t.Name = string.Format("Logging out session {0}", session.uuid);
-            t.IsBackground = true;
-            t.Priority = ThreadPriority.Lowest;
+            t.Name = string.Format("Logging out session {0}", session.opaque_ref);
+            if (exiting)
+            {
+                t.IsBackground = false;
+                t.Priority = ThreadPriority.AboveNormal;
+            }
+            else
+            {
+                t.IsBackground = true;
+                t.Priority = ThreadPriority.Lowest;
+            }
             t.Start(session);
         }
 
@@ -1177,7 +1157,7 @@ namespace XenAdmin.Network
         {
             get
             {
-                return Helpers.DbProxyIsSimulatorUrl(this.Hostname);
+                return DbProxy.IsSimulatorUrl(this.Hostname);
             }
         }
 
@@ -1198,7 +1178,7 @@ namespace XenAdmin.Network
             {
                 log.DebugFormat("IXenConnection: trying to connect to {0}", HostnameWithPort);
 
-                Session session = NewSession(task.Hostname, task.Port, Username, Password, false);
+                Session session = GetNewSession(task.Hostname, task.Port, Username, Password, false);
                 // Save the session so we can log it out later
                 task.Session = session;
 
@@ -1307,10 +1287,13 @@ namespace XenAdmin.Network
 
                             task.Connected = true;
 
-                            FriendlyName =
-                                !string.IsNullOrEmpty(pool.Name) ? pool.Name :
-                                !string.IsNullOrEmpty(master.Name) ? master.Name :
-                                task.Hostname;
+                            string poolName = pool.Name();
+                            
+                            FriendlyName = !string.IsNullOrEmpty(poolName)
+                                ? poolName
+                                : !string.IsNullOrEmpty(master.Name())
+                                    ? master.Name()
+                                    : task.Hostname;
                         } // ConnectionsLock
 
                         // Remove any other (disconnected) entries for this server from the tree
@@ -1433,7 +1416,7 @@ namespace XenAdmin.Network
 
                 if (error is ExpressRestriction)
                 {
-                    EndConnect(true, task);
+                    EndConnect(true, task, false);
 
                     ExpressRestriction e = (ExpressRestriction)error;
                     string msg = string.Format(Messages.CONNECTION_RESTRICTED_MESSAGE, e.HostName, e.ExistingHostName);
@@ -1447,7 +1430,7 @@ namespace XenAdmin.Network
                 }
                 else if (error is ServerNotSupported)
                 {
-                    EndConnect(true, task);
+                    EndConnect(true, task, false);
                     log.Info(error.Message);
                     OnConnectionResult(false, error.Message, error);
                 }
@@ -1455,7 +1438,7 @@ namespace XenAdmin.Network
                 {
                     task.Connected = false;
                     log.InfoFormat("IXenConnection: closing connection to {0}", this.HostnameWithPort);
-                    EndConnect(true, task);
+                    EndConnect(true, task, false);
                     OnConnectionClosed();
                 }
                 else if (task.Connected)
@@ -1586,11 +1569,11 @@ namespace XenAdmin.Network
             bool ha_enabled = IsHAEnabled();
 
             // NB line below clears the cache
-            EndConnect(true, task);
+            EndConnect(true, task, false);
 
             string description;
             LastMasterHostname = Hostname;
-            string poolName = pool.Name;
+            string poolName = pool.Name();
             if (string.IsNullOrEmpty(poolName))
             {
                 LastConnectionFullName = HostnameWithPort;
@@ -1970,7 +1953,7 @@ namespace XenAdmin.Network
                     if (master.address == hostname)
                     {
                         // we have tried to connect to a slave that is a member of a pool we are already connected to.
-                        return pool.Name;
+                        return pool.Name();
                     }
                 }
             }
@@ -2098,8 +2081,7 @@ namespace XenAdmin.Network
             if (p == null)
                 return String.Format(Messages.ALREADY_CONNECTED, _this.Hostname);
 
-            return String.Format(Messages.SLAVE_ALREADY_CONNECTED,
-                _this.Hostname, p.Name);
+            return String.Format(Messages.SLAVE_ALREADY_CONNECTED, _this.Hostname, p.Name());
         }
     }
 

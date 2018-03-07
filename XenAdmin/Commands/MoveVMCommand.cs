@@ -66,22 +66,41 @@ namespace XenAdmin.Commands
 
         protected override void ExecuteCore(SelectedItemCollection selection)
         {
-            VM vm = (VM)selection[0].XenObject;
 
-            if (CrossPoolMoveVMCommand.CanExecute(vm, null))
+            if (new CrossPoolMoveVMCommand(MainWindowCommandInterface, selection).CanExecute())
+            {
                 new CrossPoolMoveVMCommand(MainWindowCommandInterface, selection).Execute();
+            }
             else
+            {
+                VM vm = (VM) selection[0].XenObject;
                 MainWindowCommandInterface.ShowPerXenModelObjectWizard(vm, new MoveVMDialog(vm));
+            }
         }
 
         protected override bool CanExecuteCore(SelectedItemCollection selection)
         {
-            return selection.ContainsOneItemOfType<VM>() && selection.AtLeastOneXenObjectCan<VM>(CanExecute);
+            return selection.AllItemsAre<VM>(CBTDisabled) &&
+                   (new CrossPoolMoveVMCommand(MainWindowCommandInterface, selection).CanExecute() ||
+                   selection.ContainsOneItemOfType<VM>(CanExecute));
+        }
+
+        private bool CBTDisabled(VM vm)
+        {
+            if (vm == null)
+                return false;
+            foreach (var vbd in vm.Connection.ResolveAll(vm.VBDs))
+            {
+                var vdi = vm.Connection.Resolve(vbd.VDI);
+                if (vdi != null && vdi.cbt_enabled) 
+                    return false;
+            }
+            return true;
         }
 
         private static bool CanExecute(VM vm)
         {
-            return vm != null && (CrossPoolMoveVMCommand.CanExecute(vm, null) || vm.CanBeMoved);
+            return vm != null && (CrossPoolMoveVMCommand.CanExecute(vm, null) || vm.CanBeMoved());
         }
 
         public override string MenuText

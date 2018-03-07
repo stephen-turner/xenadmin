@@ -132,7 +132,7 @@ namespace XenAdmin.Actions
 
         private Pool_patch UploadRetailPatch(Host host)
         {
-            log.InfoFormat("Uploading file '{0}' to server '{1}'", Path.GetFileName(retailPatchPath), host.Name);
+            log.InfoFormat("Uploading file '{0}' to server '{1}'", Path.GetFileName(retailPatchPath), host.Name());
             this.Description = Messages.UPLOAD_PATCH_DESCRIPTION;
 
             long size = FileSize(retailPatchPath);
@@ -156,7 +156,7 @@ namespace XenAdmin.Actions
                 try
                 {
                     result = HTTPHelper.Put(progressDelegate, GetCancelling, true, Connection, RelatedTask, ref session, retailPatchPath,
-                        h.address, (HTTP_actions.put_ss)HTTP_actions.put_pool_patch_upload, session.uuid);
+                        h.address, (HTTP_actions.put_ss)HTTP_actions.put_pool_patch_upload, session.opaque_ref);
                 }
                 catch(CancelledException)
                 {
@@ -185,7 +185,7 @@ namespace XenAdmin.Actions
             }
             finally
             {
-                log.InfoFormat("File '{0}' uploaded to server '{1}'", Path.GetFileName(retailPatchPath), host.Name);
+                log.InfoFormat("File '{0}' uploaded to server '{1}'", Path.GetFileName(retailPatchPath), host.Name());
                 Description = Messages.UPLOAD_PATCH_UPLOADED;
             }
         }

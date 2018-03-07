@@ -34,7 +34,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using XenAdmin;
-using XenAdmin.Core;
+using XenCenterLib;
 using XenAdmin.Network;
 using XenAdmin.Actions;
 
@@ -264,7 +264,7 @@ namespace XenAPI
                     // RBAC Failure
                     List<Role> roles = connection.Session.Roles;
                     roles.Sort();
-                    throw new Exception(String.Format(Messages.RBAC_HTTP_FAILURE, roles[0].FriendlyName), e);
+                    throw new Exception(String.Format(Messages.RBAC_HTTP_FAILURE, roles[0].FriendlyName()), e);
                 }
                 else
                     throw e.InnerException;

@@ -121,11 +121,11 @@ namespace XenAdmin.TabPages
 
             VM vm = XenObject as VM;
             bool isRunning = XenObject != null && (vm != null)
-                                 ? vm.current_operations.Count == 0 && vm.IsRunning
+                                 ? vm.current_operations.Count == 0 && vm.IsRunning()
                                  : (XenObject is Host);
             
             string newText = (vm != null && !isRunning)
-                                 ? string.Format(Messages.GRAPHS_CANNOT_ADD_VM_HALTED, vm.Name)
+                                 ? string.Format(Messages.GRAPHS_CANNOT_ADD_VM_HALTED, vm.Name())
                                  : string.Empty;
 
             newGraphToolStripMenuItem.Enabled = isRunning;
@@ -135,7 +135,7 @@ namespace XenAdmin.TabPages
             newGraphToolStripContextMenuItem.ToolTipText = newText;
 
             string editText=(vm != null && !isRunning)
-                                 ? string.Format(Messages.GRAPHS_CANNOT_EDIT_VM_HALTED, vm.Name)
+                                 ? string.Format(Messages.GRAPHS_CANNOT_EDIT_VM_HALTED, vm.Name())
                                  : string.Empty;
 
             editGraphToolStripMenuItem.Enabled = canEnable && isRunning;
@@ -164,27 +164,28 @@ namespace XenAdmin.TabPages
 
         public IXenObject XenObject
         {
-            get
+            private get
             {
                 return _xenObject;
             }
             set
             {
                 ArchiveMaintainer.Pause();
-                ArchiveMaintainer.XenObject = null;
                 DataEventList.Clear();
 
                 DeregEvents();
                 _xenObject = value;
                 RegEvents();
 
+                ArchiveMaintainer.XenObject = value;
+
                 if (_xenObject != null)
                 {
                     GraphList.LoadGraphs(XenObject);
                     LoadEvents();
-                    ArchiveMaintainer.XenObject = value;
                     ArchiveMaintainer.Start(); 
                 }
+                RefreshAll();
             }
         }
 
@@ -203,7 +204,7 @@ namespace XenAdmin.TabPages
 
         private void CheckMessage(XenAPI.Message m, CollectionChangeAction a)
         {
-            if (!m.ShowOnGraphs || m.cls != cls.VM)
+            if (!m.ShowOnGraphs() || m.cls != cls.VM)
                 return;
 
             Host h = XenObject as Host;
@@ -259,7 +260,32 @@ namespace XenAdmin.TabPages
         private void pool_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "gui_config")
-                Program.Invoke(this, () => GraphList.LoadGraphs(XenObject));
+            {
+                Dictionary<string, string> gui_config = Helpers.GetGuiConfig((IXenObject)sender);
+                string uuid = Helpers.GetUuid(XenObject);
+
+                foreach (string key in gui_config.Keys)
+                {
+                    if (!Palette.OtherConfigUUIDRegex.IsMatch(key) || !key.Contains(uuid))
+                        continue;
+
+                    string value = gui_config[key];
+                    int argb;
+                    if (!Int32.TryParse(value, out argb))
+                        continue;
+
+                    string[] strs = key.Split('.');
+
+                    // just set the color, we dont care what it is
+                    Palette.SetCustomColor(Palette.GetUuid(strs[strs.Length - 1], XenObject), Color.FromArgb(argb));
+                }
+
+                Program.Invoke(this, () =>
+                {
+                    GraphList.LoadGraphs(XenObject);
+                    RefreshAll();
+                });
+            }
         }
 
         private void DeregEvents()
@@ -278,14 +304,12 @@ namespace XenAdmin.TabPages
         public override void PageHidden()
         {
             DeregEvents();
-            if (ArchiveMaintainer != null && XenObject != null)
-            {
+
+            if (ArchiveMaintainer != null)
                 ArchiveMaintainer.Pause();
-                ArchiveMaintainer.DeregEvents();
-            }
         }
-        
-        private void ArchiveMaintainer_ArchivesUpdated(object sender, EventArgs args)
+
+        private void ArchiveMaintainer_ArchivesUpdated()
         {
             Program.Invoke(this, RefreshAll);
         }
@@ -297,8 +321,8 @@ namespace XenAdmin.TabPages
 
         private void ShowUpsell()
         {
-            using (var upsellDialog = new UpsellDialog(HiddenFeatures.LinkLabelHidden ? Messages.UPSELL_BLURB_PERFORMANCE : Messages.UPSELL_BLURB_PERFORMANCE + Messages.UPSELL_BLURB_PERFORMANCE_MORE,
-                                                        InvisibleMessages.UPSELL_LEARNMOREURL_PERFORMANCE))
+            using (var upsellDialog = new UpsellDialog(HiddenFeatures.LinkLabelHidden ? Messages.UPSELL_BLURB_PERFORMANCE : Messages.UPSELL_BLURB_PERFORMANCE + Messages.UPSELL_BLURB_TRIAL,
+                                                        InvisibleMessages.UPSELL_LEARNMOREURL_TRIAL))
                 upsellDialog.ShowDialog(this);
         }
 

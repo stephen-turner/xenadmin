@@ -799,6 +799,15 @@ namespace XenAdmin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to XenApp/XenDesktop [Citrix] Cloud.
+        /// </summary>
+        public static string Label_host_edition_desktop_cloud {
+            get {
+                return ResourceManager.GetString("Label-host.edition-desktop-cloud", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to XenApp/XenDesktop Platinum.
         /// </summary>
         public static string Label_host_edition_desktop_plus {
@@ -3418,6 +3427,15 @@ namespace XenAdmin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Repair Storage.
+        /// </summary>
+        public static string Message_action_pbd_plug_failed_on_server_start {
+            get {
+                return ResourceManager.GetString("Message.action-pbd_plug_failed_on_server_start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Apply License.
         /// </summary>
         public static string Message_action_vbd_qos_failed {
@@ -3654,7 +3672,7 @@ namespace XenAdmin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The license on host &apos;{0}&apos; will expire at {1}..
+        ///   Looks up a localized string similar to The license on host &apos;{0}&apos; will expire within 30 days..
         /// </summary>
         public static string Message_body_license_expires_soon {
             get {
@@ -3762,7 +3780,7 @@ namespace XenAdmin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A storage repository could not be attached when server &apos;{0}&apos; started.  You may be able to fix this using the &apos;Repair Storage&apos; option in the Storage menu..
+        ///   Looks up a localized string similar to A storage repository could not be attached when server &apos;{0}&apos; started..
         /// </summary>
         public static string Message_body_pbd_plug_failed_on_server_start {
             get {
@@ -3821,6 +3839,33 @@ namespace XenAdmin {
         public static string Message_body_vcpu_qos_failed {
             get {
                 return ResourceManager.GetString("Message.body-vcpu_qos_failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changed block tracking has been disabled for virtual disk {0} due to inconsistent metadata. To continue using changed block tracking with this virtual disk, you will need to do the backup setup again, including re-enabling changed block tracking, taking a snapshot and backing it up..
+        /// </summary>
+        public static string Message_body_vdi_cbt_metadata_inconsistent {
+            get {
+                return ResourceManager.GetString("Message.body-vdi_cbt_metadata_inconsistent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changed block tracking has been disabled for virtual disk {0} due to a resizing failure. To continue using changed block tracking with this virtual disk, you will need to do the backup setup again, including re-enabling changed block tracking, taking a snapshot and backing it up..
+        /// </summary>
+        public static string Message_body_vdi_cbt_resize_failed {
+            get {
+                return ResourceManager.GetString("Message.body-vdi_cbt_resize_failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changed block tracking has been disabled for virtual disk {0} due to a snapshot failure. To continue using changed block tracking with this virtual disk, you will need to do the backup setup again, including re-enabling changed block tracking, taking a snapshot and backing it up..
+        /// </summary>
+        public static string Message_body_vdi_cbt_snapshot_failed {
+            get {
+                return ResourceManager.GetString("Message.body-vdi_cbt_snapshot_failed", resourceCulture);
             }
         }
         
@@ -3906,7 +3951,7 @@ namespace XenAdmin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The XenServer license you are using does not allow you to use the Scheduled Snapshots feature..
+        ///   Looks up a localized string similar to The [XenServer] license you are using does not allow you to use the Scheduled Snapshots feature..
         /// </summary>
         public static string Message_body_vmss_license_error {
             get {
@@ -4586,6 +4631,33 @@ namespace XenAdmin {
         public static string Message_name_vcpu_qos_failed {
             get {
                 return ResourceManager.GetString("Message.name-vcpu_qos_failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changed block tracking disabled due to inconsistent metadata.
+        /// </summary>
+        public static string Message_name_vdi_cbt_metadata_inconsistent {
+            get {
+                return ResourceManager.GetString("Message.name-vdi_cbt_metadata_inconsistent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changed block tracking disabled due to a virtual disk resizing failure.
+        /// </summary>
+        public static string Message_name_vdi_cbt_resize_failed {
+            get {
+                return ResourceManager.GetString("Message.name-vdi_cbt_resize_failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changed block tracking disabled due to a snapshot failure.
+        /// </summary>
+        public static string Message_name_vdi_cbt_snapshot_failed {
+            get {
+                return ResourceManager.GetString("Message.name-vdi_cbt_snapshot_failed", resourceCulture);
             }
         }
         

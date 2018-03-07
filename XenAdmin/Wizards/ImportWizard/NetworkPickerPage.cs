@@ -40,6 +40,7 @@ using XenAdmin.Core;
 using XenAdmin.Dialogs;
 using XenAdmin.Network;
 using XenAPI;
+using XenCenterLib;
 
 
 namespace XenAdmin.Wizards.ImportWizard
@@ -109,11 +110,11 @@ namespace XenAdmin.Wizards.ImportWizard
 
 		#region Accessors
 
-		public List<Proxy_VIF> ProxyVIFs
+		public List<VIF> VIFs
 		{
 			get
 			{
-				var vifs = new List<Proxy_VIF>();
+				var vifs = new List<VIF>();
 
 				foreach (DataGridViewRow row in m_networkGridView.Rows)
 				{
@@ -128,7 +129,7 @@ namespace XenAdmin.Wizards.ImportWizard
 					if (vif.MAC == Messages.MAC_AUTOGENERATE)
 						vif.MAC = "";
 
-					vifs.Add(vif.ToProxy());
+					vifs.Add(vif);
 				}
 
 				return vifs;
@@ -172,7 +173,7 @@ namespace XenAdmin.Wizards.ImportWizard
         	var networks = m_selectedConnection.Cache.Networks.Where(ShowNetwork);
 
 			foreach (XenAPI.Network network in networks)
-                col.Items.Add(new ToStringWrapper<XenAPI.Network>(network, network.Name));
+                col.Items.Add(new ToStringWrapper<XenAPI.Network>(network, network.Name()));
 
 		    col.DisplayMember = ToStringWrapper<XenAPI.Network>.DisplayMember;
 		    col.ValueMember = ToStringWrapper<XenAPI.Network>.ValueMember;
@@ -193,7 +194,7 @@ namespace XenAdmin.Wizards.ImportWizard
 					var networks = m_selectedConnection.Cache.Networks;
 					foreach (XenAPI.Network network in networks)
 					{
-						if (m_networkGridView.Rows.Count < m_vm.MaxVIFsAllowed && ShowNetwork(network) && network.AutoPlug)
+						if (m_networkGridView.Rows.Count < m_vm.MaxVIFsAllowed() && ShowNetwork(network) && network.GetAutoPlug())
 						{
 							AddVIFRow(new VIF
 							          	{
@@ -258,13 +259,13 @@ namespace XenAdmin.Wizards.ImportWizard
 			if (!network.Show(Properties.Settings.Default.ShowHiddenVMs))
 				return false;
 
-			if (network.IsSlave)
+			if (network.IsSlave())
 				return false;
 
 			if (m_selectedAffinity != null && !m_selectedAffinity.CanSeeNetwork(network))
 				return false;
 
-			if (m_selectedAffinity == null && !network.AllHostsCanSeeNetwork)
+			if (m_selectedAffinity == null && !network.AllHostsCanSeeNetwork())
 				return false;
 
 			return true;
@@ -274,7 +275,7 @@ namespace XenAdmin.Wizards.ImportWizard
 		{
             var row = new VifRow(vif);
             XenAPI.Network network = m_selectedConnection.Resolve(vif.network);
-            bool isGuestInstallerNetwork = network != null && network.IsGuestInstallerNetwork;
+            bool isGuestInstallerNetwork = network != null && network.IsGuestInstallerNetwork();
 
             ToStringWrapper<XenAPI.Network> comboBoxEntry = FindComboBoxEntryForNetwork(network);
             // CA-66962: Don't choose disallowed networks: choose a better one instead.
@@ -342,7 +343,7 @@ namespace XenAdmin.Wizards.ImportWizard
 
 		private void m_buttonAddNetwork_Click(object sender, EventArgs e)
 		{
-			if (m_networkGridView.Rows.Count >= m_vm.MaxVIFsAllowed)
+			if (m_networkGridView.Rows.Count >= m_vm.MaxVIFsAllowed())
 			{
 				using (var dlg = new ThreeButtonDialog(new ThreeButtonDialog.Details(
 				                      	SystemIcons.Error,

@@ -54,7 +54,7 @@ namespace XenAdmin.Actions
         public const string IMPORT_TASK = "import_task";
 
 		private bool m_startAutomatically;
-    	private List<Proxy_VIF> m_proxyVIFs;
+    	private List<VIF> m_VIFs;
 
     	private object monitor = new object();
 		private bool m_wizardDone;
@@ -146,6 +146,15 @@ namespace XenAdmin.Actions
                     throw new CancelledException();
 
                 isTemplate = VM.get_is_a_template(Session, vmRef);
+                if (isTemplate && Helpers.FalconOrGreater(Connection) && VM.get_is_default_template(Session, vmRef))
+                {
+                    var otherConfig = VM.get_other_config(Session, vmRef);
+                    if (!otherConfig.ContainsKey(IMPORT_TASK) || otherConfig[IMPORT_TASK] != RelatedTask.opaque_ref)
+                    {
+                        throw new Exception(Messages.IMPORT_TEMPLATE_ALREADY_EXISTS);
+                    }
+                }
+
                 Description = isTemplate ? Messages.IMPORT_TEMPLATE_UPDATING_TEMPLATE : Messages.IMPORTVM_UPDATING_VM;
                 VM.set_name_label(Session, vmRef, DefaultVMName(VM.get_name_label(Session, vmRef)));
 
@@ -163,7 +172,7 @@ namespace XenAdmin.Actions
                 if (Cancelling)
                     throw new CancelledException();
 
-                if (m_proxyVIFs != null)
+                if (m_VIFs != null)
                 {
                     Description = isTemplate ? Messages.IMPORT_TEMPLATE_UPDATING_NETWORKS : Messages.IMPORTVM_UPDATING_NETWORKS;
 
@@ -188,13 +197,13 @@ namespace XenAdmin.Actions
                             if (vifObj == null)
                                 continue;
                             // try to find a matching VIF in the m_proxyVIFs list, based on the device field
-                            var matchingProxyVif = m_proxyVIFs.FirstOrDefault(proxyVIF => proxyVIF.device == vifObj.device);
+                            var matchingProxyVif = m_VIFs.FirstOrDefault(proxyVIF => proxyVIF.device == vifObj.device);
                             if (matchingProxyVif != null)
                             {
                                 // move the VIF to the desired network
                                 VIF.move(Session, vif, matchingProxyVif.network);
                                 // remove matchingProxyVif from the list, so we don't create the VIF again later
-                                m_proxyVIFs.Remove(matchingProxyVif); 
+                                m_VIFs.Remove(matchingProxyVif); 
                                 continue;
                             }
                         }
@@ -203,9 +212,9 @@ namespace XenAdmin.Actions
                     }
 
                     // recreate VIFs if needed (m_proxyVIFs can be empty, if we moved all the VIFs in the previous step)
-                    foreach (Proxy_VIF proxyVIF in m_proxyVIFs)
+                    foreach (VIF vif in m_VIFs)
                     {
-                        VIF vif = new VIF(proxyVIF) {VM = new XenRef<VM>(vmRef)};
+                        vif.VM = new XenRef<VM>(vmRef);
                         VIF.create(Session, vif);
                     }
 
@@ -231,7 +240,7 @@ namespace XenAdmin.Actions
                         }
                         catch (Exception e)
                         {
-                            log.ErrorFormat("Exception while deleting network {0}. Squashing.", network.Name);
+                            log.ErrorFormat("Exception while deleting network {0}. Squashing.", network.Name());
                             log.Error(e, e);
                         }
                     }
@@ -342,7 +351,7 @@ namespace XenAdmin.Actions
 
                 string body = string.Format("vm-import\nsr-uuid={0}\nfilename={1}\ntask_id={2}\n",
 											SR.uuid, m_filename, RelatedTask.opaque_ref);
-				log.DebugFormat("Importing Geneva-style XVA from {0} to SR {1} using {2}", m_filename, SR.Name, body);
+				log.DebugFormat("Importing Geneva-style XVA from {0} to SR {1} using {2}", m_filename, SR.Name(), body);
                 CommandLib.Messages.performCommand(body, tCLIprotocol);
 
                 // Check the task status -- Geneva-style XVAs don't raise an error, so we need to check manually.
@@ -372,7 +381,7 @@ namespace XenAdmin.Actions
 
         private string applyFile()
         {
-            log.DebugFormat("Importing Rio-style XVA from {0} to SR {1}", m_filename, SR.Name);
+            log.DebugFormat("Importing Rio-style XVA from {0} to SR {1}", m_filename, SR.Name());
 
             Host host = SR.GetStorageHost();
 
@@ -392,7 +401,7 @@ namespace XenAdmin.Actions
 
             return HTTPHelper.Put(this, HTTP_PUT_TIMEOUT, m_filename, hostURL,
                                   (HTTP_actions.put_ssbbs)HTTP_actions.put_import,
-                                  Session.uuid, false, false, SR.opaque_ref);
+                                  Session.opaque_ref, false, false, SR.opaque_ref);
         }
 
 		public override void RecomputeCanCancel()
@@ -412,10 +421,10 @@ namespace XenAdmin.Actions
             base.CancelRelatedTask();
         }
 
-		public void EndWizard(bool start, List<Proxy_VIF> vifs)
+		public void EndWizard(bool start, List<VIF> vifs)
 		{
 			m_startAutomatically = start;
-			m_proxyVIFs = vifs;
+			m_VIFs = vifs;
 
 			lock (monitor)
 			{

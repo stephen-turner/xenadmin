@@ -1,69 +1,70 @@
-# Copyright (c) Citrix Systems, Inc. 
+# Copyright (c) Citrix Systems, Inc.
 # All rights reserved.
-# 
-# Redistribution and use in source and binary forms, 
-# with or without modification, are permitted provided 
-# that the following conditions are met: 
-# 
-# *   Redistributions of source code must retain the above 
-#     copyright notice, this list of conditions and the 
-#     following disclaimer. 
-# *   Redistributions in binary form must reproduce the above 
-#     copyright notice, this list of conditions and the 
-#     following disclaimer in the documentation and/or other 
-#     materials provided with the distribution. 
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND 
-# CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-# INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
-# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
-# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
-# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
-# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
+#
+# Redistribution and use in source and binary forms,
+# with or without modification, are permitted provided
+# that the following conditions are met:
+#
+# *   Redistributions of source code must retain the above
+#     copyright notice, this list of conditions and the
+#     following disclaimer.
+# *   Redistributions in binary form must reproduce the above
+#     copyright notice, this list of conditions and the
+#     following disclaimer in the documentation and/or other
+#     materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+# CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+# INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
 # help script to download third party binaries to local dev environment
+# NOTE: do not remove the Requires directive
 
-if ($PSVersionTable.PSVersion.Major -lt 3)
-{
-    Write-Host "Failed to execute: Powershell version 3.x (or above) is required"
-    exit 1
-}
+#Requires -Version 3.0
 
-$DOMAIN = Read-Host "Artifactory domain (e.g. artifactory.domain.com): "
+Param(
+    [Parameter(Mandatory=$true, HelpMessage ="Artifactory domain (e.g. artifactory.domain.com)")]
+    [String]$DOMAIN,
+
+    [Parameter(HelpMessage ="Whether to download symbols (*.pdb files)")]
+    [switch]$SYMBOLS
+)
+
 $DOMAIN = $DOMAIN.Trim()
-$CREDENTIALS = Get-Credential
 $PACKAGE_DIR = Get-Item "$PSScriptRoot\..\packages" | select -ExpandProperty FullName
+$MK_DIR = Get-Item "$PSScriptRoot\..\mk" | select -ExpandProperty FullName
 
 #dotnet packages
 
-$BUILD_LOCATION = Get-Content "$PACKAGE_DIR\DOTNET_BUILD_LOCATION"
-$BUILD_LOCATION = $BUILD_LOCATION.Trim()
-$DOTNET = "https://$DOMAIN/api/archive/download/$BUILD_LOCATION/dotnet46?archiveType=zip"
-$ZIP_PATH = "$PACKAGE_DIR\dotnetpackages.zip"
+$BUILD_LOCATION = (Get-Content "$PACKAGE_DIR\DOTNET_BUILD_LOCATION").Trim()
+$DEPS_MAP = Get-Content "$MK_DIR\deps-map.json" `
+            | foreach {$_ -replace '@REMOTE_DOTNET@',"$BUILD_LOCATION"} `
+            | ConvertFrom-Json
 
-Invoke-WebRequest -Uri $DOTNET -Credential $CREDENTIALS -Method Get -OutFile $ZIP_PATH
+foreach($dep in $DEPS_MAP.files) {
+    $pattern = "https://$DOMAIN/" + $dep.pattern
+    $filename = Split-Path $pattern -leaf
 
-$shell = New-Object -COM 'Shell.Application'
-$zip = $shell.NameSpace($ZIP_PATH)
+    if (($filename -eq "putty.exe") -or ($filename -like "*.dll")) {
+        Invoke-WebRequest -Uri $pattern -Method Get -OutFile "$PACKAGE_DIR\$filename"
 
-foreach($item in $zip.items())
-{
-    $name = [System.IO.Path]::GetFileName($item.Path)
-    $ext = [System.IO.Path]::GetExtension($item.Path)
-    
-    if (($name -eq "putty.exe") -or ($ext -like "*.dll")) {
-        $shell.Namespace($PACKAGE_DIR).CopyHere($item, 4 -bor 16)
+        if ($SYMBOLS) {
+            $symbolfile = [IO.Path]::GetFileNameWithoutExtension($filename) + ".pdb"
+            Invoke-WebRequest -Uri $pattern -Method Get -OutFile "$PACKAGE_DIR\$symbolfile"
+        }
     }
 }
-
-Remove-Item $ZIP_PATH
 
 #unit test dependencies
 

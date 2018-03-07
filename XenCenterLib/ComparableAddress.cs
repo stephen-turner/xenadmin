@@ -34,7 +34,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
-namespace XenAdmin.Core
+namespace XenCenterLib
 {
     // A ComparableAddress represents either an IP address (IPv4 or IPv6) or a PartialIP or a hostname
     public class ComparableAddress : IComparable
@@ -68,6 +68,8 @@ namespace XenAdmin.Core
         {
             get { return partialIP != null; }
         }
+
+        public IPAddress AddressIP { get { return addressIP; } }
 
         public static bool TryParse(String candidate, bool allowPartialIP, bool allowName, out ComparableAddress address)
         {

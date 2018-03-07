@@ -31,16 +31,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Windows.Forms;
 using XenAdmin.Controls;
 using XenAdmin.Core;
-using XenAdmin.Dialogs;
 using XenAdmin.Mappings;
 using XenAdmin.Network;
 using XenAPI;
 using System.Linq;
-using XenOvf;
+using XenCenterLib;
 
 namespace XenAdmin.Wizards.GenericPages
 {
@@ -247,9 +245,9 @@ namespace XenAdmin.Wizards.GenericPages
 
 			foreach (XenAPI.Network netWork in availableNetworks)
 			{
-				if (!Messages.IMPORT_SELECT_NETWORK_PAGE_NETWORK_FILTER.Contains(netWork.Name))
+				if (!Messages.IMPORT_SELECT_NETWORK_PAGE_NETWORK_FILTER.Contains(netWork.Name()))
 				{
-					var wrapperItem = new ToStringWrapper<XenAPI.Network>(netWork, netWork.Name);
+					var wrapperItem = new ToStringWrapper<XenAPI.Network>(netWork, netWork.Name());
 
 					if (!cb.Items.Contains(wrapperItem))
 						cb.Items.Add(wrapperItem);
@@ -264,13 +262,13 @@ namespace XenAdmin.Wizards.GenericPages
             if (!network.Show(Properties.Settings.Default.ShowHiddenVMs))
                 return false;
 
-            if (network.IsSlave)
+            if (network.IsSlave())
                 return false;
 
             if (targetHost != null && !targetHost.CanSeeNetwork(network))
                 return false;
 
-            if (targetHost == null && !network.AllHostsCanSeeNetwork)
+            if (targetHost == null && !network.AllHostsCanSeeNetwork())
                 return false;
 
             return true;

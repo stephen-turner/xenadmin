@@ -40,7 +40,7 @@ using XenAdmin.Core;
 using XenAdmin.Dialogs;
 using XenAdmin.Wizards;
 using XenAPI;
-
+using XenCenterLib;
 
 namespace XenAdmin.TabPages
 {
@@ -51,6 +51,14 @@ namespace XenAdmin.TabPages
         private Pool pool;
 
         private IXenObject xenObject;
+
+        private bool restartHBInitializationTimer;
+
+        private bool initializationDelayElapsed;
+
+        private System.Timers.Timer initializationDelayTimer;
+
+        private const int HB_INITIALIZATION_DELAY = 30000;
 
         private readonly CollectionChangeEventHandler Host_CollectionChangedWithInvoke;
         /// <summary>
@@ -90,6 +98,7 @@ namespace XenAdmin.TabPages
             base.Text = Messages.HIGH_AVAILABILITY;
 
             pictureBoxWarningTriangle.Image = SystemIcons.Warning.ToBitmap();
+            restartHBInitializationTimer = true;
         }
 
         private void History_CollectionChanged(object sender, CollectionChangeEventArgs e)
@@ -209,13 +218,15 @@ namespace XenAdmin.TabPages
 
                         if (PassedRbacChecks())
                         {
-                            buttonConfigure.Visible = true;
-                            buttonConfigure.Enabled = true;
+                            bool haRestricted = Helpers.FeatureForbidden(pool, Host.RestrictHA);
+
+                            buttonConfigure.Visible = !haRestricted;
+                            buttonConfigure.Enabled = !haRestricted;
                             buttonEnableDisableHa.Visible = true;
                             buttonEnableDisableHa.Enabled = true;
 
                             pictureBoxWarningTriangle.Visible = false;
-                            labelStatus.Text = string.Format(Messages.HA_TAB_CONFIGURED_BLURB, Helpers.GetName(pool).Ellipsise(30));
+                            labelStatus.Text = string.Format(haRestricted ? Messages.HA_TAB_CONFIGURED_UNLICENSED : Messages.HA_TAB_CONFIGURED_BLURB, Helpers.GetName(pool).Ellipsise(30));
                         }
                         else
                         {
@@ -301,8 +312,17 @@ namespace XenAdmin.TabPages
         private void generatePoolHABox(Pool pool)
         {
             if (!pool.ha_enabled)
+            {
+                restartHBInitializationTimer = true;
                 return;
+            }
 
+            if (restartHBInitializationTimer)
+            {
+                restartHBInitializationTimer = false;
+                SetNetworkHBInitDelay();
+            }
+            
             // 'High Availability' heading
             CustomListRow header = CreateHeader(Messages.HA_CONFIGURATION_TITLE);
             customListPanel.AddRow(header);
@@ -359,14 +379,14 @@ namespace XenAdmin.TabPages
             // Sort heartbeat SRs using NaturalCompare
             heartbeatSRs.Sort((Comparison<SR>)delegate(SR a, SR b)
             {
-                return StringUtility.NaturalCompare(a.Name, b.Name);
+                return StringUtility.NaturalCompare(a.Name(), b.Name());
             });
 
             List<Host> members = new List<Host>(pool.Connection.Cache.Hosts);
             // Sort pool members using NaturalCompare
             members.Sort((Comparison<Host>)delegate(Host a, Host b)
             {
-                return StringUtility.NaturalCompare(a.Name, b.Name);
+                return StringUtility.NaturalCompare(a.Name(), b.Name());
             });
             int numCols = 1 + 2 + (2 * heartbeatSRs.Count); // Hostnames col, then 2 each for each HB target (network + SRs)
             int numRows = 1 + members.Count;
@@ -409,7 +429,7 @@ namespace XenAdmin.TabPages
             {
                 // SR icon
                 PictureBox p = new PictureBox();
-                p.Image = Images.GetImage16For(heartbeatSRs[i].GetIcon);
+                p.Image = Images.GetImage16For(Images.GetIconFor(heartbeatSRs[i]));
                 p.SizeMode = PictureBoxSizeMode.AutoSize;
                 p.Padding = new Padding(0);
                 tableLatencies.Controls.Add(p);
@@ -422,7 +442,7 @@ namespace XenAdmin.TabPages
                 l.AutoSize = false;
                 l.Size = new Size(200, 25);
                 l.AutoEllipsis = true;
-                l.Text = heartbeatSRs[i].Name;
+                l.Text = heartbeatSRs[i].Name();
                 tableLatencies.Controls.Add(l);
                 tableLatencies.SetCellPosition(l, new TableLayoutPanelCellPosition((2 * i) + 4, 0));
             }
@@ -435,7 +455,7 @@ namespace XenAdmin.TabPages
                 l.Font = BaseTabPage.ItemLabelFont;
                 l.ForeColor = BaseTabPage.ItemLabelForeColor;
                 l.AutoSize = true;
-                l.Text = members[i].Name.Ellipsise(30);
+                l.Text = members[i].Name().Ellipsise(30);
                 tableLatencies.Controls.Add(l);
                 tableLatencies.SetCellPosition(l, new TableLayoutPanelCellPosition(0, i + 1));
 
@@ -444,27 +464,28 @@ namespace XenAdmin.TabPages
                 l.Padding = new Padding(0, 5, 0, 5);
                 l.Font = BaseTabPage.ItemValueFont;
                 l.AutoSize = true;
-                if (members[i].ha_network_peers.Length == members.Count)
+                l.ForeColor = (members[i].ha_network_peers.Length == members.Count && initializationDelayElapsed) ? Color.Green : BaseTabPage.ItemValueForeColor;
+
+                if (initializationDelayElapsed)
                 {
-                    l.ForeColor = Color.Green;
-                }
+                    if (members[i].ha_network_peers.Length == 0)
+                    {
+                        l.Text = Messages.HA_HEARTBEAT_UNHEALTHY;
+                    }
+                    else if (members[i].ha_network_peers.Length == members.Count)
+                    {
+                        l.Text = Messages.HA_HEARTBEAT_HEALTHY;
+                    }
+                    else
+                    {
+                        l.Text = String.Format(Messages.HA_HEARTBEAT_SERVERS, members[i].ha_network_peers.Length, members.Count);
+                    }
+                }                
                 else
                 {
-                    l.ForeColor = BaseTabPage.ItemValueForeColor;
+                    l.Text = Messages.HA_HEARTBEAT_SERVERS_INITIALISING;
                 }
 
-                if (members[i].ha_network_peers.Length == 0)
-                {
-                    l.Text = Messages.HA_HEARTBEAT_UNHEALTHY;
-                }
-                else if (members[i].ha_network_peers.Length == members.Count)
-                {
-                    l.Text = Messages.HA_HEARTBEAT_HEALTHY;
-                }
-                else
-                {
-                    l.Text = string.Format(Messages.HA_HEARTBEAT_SERVERS, members[i].ha_network_peers.Length, members.Count);
-                }
                 tableLatencies.Controls.Add(l);
                 tableLatencies.SetCellPosition(l, new TableLayoutPanelCellPosition(1, i + 1));
                 tableLatencies.SetColumnSpan(l, 2);
@@ -669,6 +690,23 @@ namespace XenAdmin.TabPages
                 // Show wizard to enable HA
                 Program.MainWindow.ShowPerConnectionWizard(pool.Connection, new HAWizard(pool));
             }
+        }
+
+        private void SetNetworkHBInitDelay()
+        {
+            initializationDelayElapsed = false;
+
+            //30 second delay to allow network HB status to initialize  
+            initializationDelayTimer = new System.Timers.Timer(HB_INITIALIZATION_DELAY);
+            initializationDelayTimer.Elapsed += HeartbeatInitialization_TimeElapsed;
+            initializationDelayTimer.AutoReset = false;
+            initializationDelayTimer.Enabled = true;
+        }
+
+        private void HeartbeatInitialization_TimeElapsed(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            initializationDelayElapsed = true;
+            Program.Invoke(Program.MainWindow, Rebuild);
         }
     }
 }
